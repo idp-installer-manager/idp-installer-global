@@ -1,0 +1,964 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
+<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css">
+<script>
+
+// Copyright 2011, 2012, 2013, 2014
+//  Anders Lördal, Högskolan i Gävle and SWAMID
+//  Chris Phillips, CANARIE Inc.
+//
+// This file is part of IDP-Deployer
+// 
+// IDP-Deployer is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// IDP-Deployer is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with IDP-Deployer. If not, see <http://www.gnu.org/licenses/>.
+
+
+// Set the value below to 1 to enable the logging which will include javascript console and alert popups.
+
+var loggingEnabled=2;
+
+var generatorVersion='v30';
+var builddate= new Date();
+
+if (loggingEnabled >1)  {  console.log('GeneratorVersion'+generatorVersion); }
+
+
+
+function simpleCksum(e){for(var r=0,i=0;i<e.length;i++)r=(r<<5)-r+e.charCodeAt(i),r&=r;return r}
+
+function duplicateContactInfo()
+{
+if ($("#dupeData1").is(':checked')) {
+    // duplicate information to fields below
+
+    $("#freeRADIUS_svr_state").val($("#freeRADIUS_ca_state").val());    
+    $("#freeRADIUS_svr_local").val($("#freeRADIUS_ca_local").val());    
+    $("#freeRADIUS_svr_org_name").val($("#freeRADIUS_ca_org_name").val());    
+    $("#freeRADIUS_svr_email").val($("#freeRADIUS_ca_email").val());    
+    }
+    update(); // update to ensure the configuration is constructed properly.
+
+
+}
+
+var PoundSignError="Sorry, the # is a reserved character due\nto the template parser.\nPlease remove or choose another special character.";
+var my_ctl_previousSettings= [];  // an associative array of settings as they appear in the config file
+
+
+
+
+function refreshComponentsList()
+{
+  // reconstructs the component list each time the checkbox is changed
+  // then calls update
+  var tmpFieldVal=""; // local field value is wiped to reconstruct it.
+
+  var varComponentStringEduroam="eduroam"
+  var varComponentStringShibboleth="shibboleth"
+  var varDelimiter=" "; 
+   if (loggingEnabled) {console.log ('refreshComponentsList:Starting pass'); }    
+  
+if ($("#ida_component_eduroam").is(':checked')) {
+    // duplicate information to fields below
+    tmpFieldVal += varDelimiter+varComponentStringEduroam;
+   if (loggingEnabled) {console.log ('refreshComponentsList:eduroam selected, tmpFieldVal:'+tmpFieldVal); }    
+
+  }
+
+if ($("#ida_component_shibboleth").is(':checked')) {
+    // duplicate information to fields below
+    tmpFieldVal+=varDelimiter+varComponentStringShibboleth;
+   if (loggingEnabled) {console.log ('refreshComponentsList:shibboleth selected, tmpFieldVal:'+tmpFieldVal); }    
+
+  }
+
+    $("#installer_section0_buildComponentList").val(tmpFieldVal);
+
+   if (loggingEnabled) {console.log ('refreshComponentsList:processing complete, components selected in tmpFieldVal:|'+    $("#installer_section0_buildComponentList").val()+'|' ); }    
+
+    update(); // update to ensure the configuration is constructed properly.
+
+
+}
+
+
+
+function importPreviousSettings ()
+{
+      // To do this, we need to split on the lines, then split on the '=' sign and take the right hand side as the value to store
+    
+try{
+      var arrayOfLines = $('#importPreviousConfigArea').val().split(/\n/);
+      var confirmMSG="";
+      if (loggingEnabled) {console.log ('Number of lines:'+arrayOfLines.length); }
+
+      for (var i=0; i < arrayOfLines.length; i++) {
+
+
+            var myCurrentLine=arrayOfLines[i];
+
+            if (loggingEnabled){ console.log('importPreviousSettings():working on line |'+myCurrentLine+'| '); }
+
+            // only begin interpretting a non empty line or  or zeroth location is not a comment sign
+            if  ( ( myCurrentLine.length > 0 ) && (myCurrentLine.indexOf('#') != 0) )
+            {
+
+              if ( myCurrentLine.indexOf('=') > -1 ) {  
+                    
+                    //var arrayOfNameValuePairs=arrayOfLines[i].split(/=/);
+//                    var lhs=arrayOfNameValuePairs[0];           // asscoiative array key
+      
+  //                var rhs=(arrayOfNameValuePairs[1]).trim();  // no trailing whitespace in value
+                    
+                    if (loggingEnabled){ console.log('importPreviousSettings():detected equals sign on line |'+myCurrentLine+'| '); }
+               
+                   var arrayOfNameValuePairs= /^(.*)\=\'(.*)\'$/.exec(myCurrentLine);
+                    
+
+
+                    var lhs=arrayOfNameValuePairs[1];           // asscoiative array key
+      
+                  var rhs=arrayOfNameValuePairs[2];  // no trailing whitespace in value
+
+                    if (loggingEnabled){ console.log('importPreviousSettings():LHS:RHS:'+arrayOfNameValuePairs.length+'|'+lhs+'|=|'+rhs+'|'); }
+              if (loggingEnabled){ console.log('importPreviousSettings():detected equals sign on line |'+myCurrentLine+'| '); }
+
+                    // trapping double quotes as a blank
+                      if (loggingEnabled){ console.log('checking for doublequote in: |'+rhs+'| '); }
+
+                    var testdoublequotes = new RegExp(/^\'\'$/);                     // SCRUB THE INPUT
+                    if (testdoublequotes.test(rhs)){ 
+                      if (loggingEnabled){ console.log('Detected doublequote and replacing with blank string'); }
+                      rhs='';
+                    }
+                    else{
+                        if (loggingEnabled){ console.log('skipping slice |'+rhs+'| '); }                         
+//                         rhs= rhs.slice(1,rhs.length-1);
+                    }
+                    my_ctl_previousSettings[lhs]=rhs;
+
+                  if(loggingEnabled){
+                     confirmMSG += 'Variable:'+lhs+' is '+ rhs + ' with length:'+rhs.length+' \n';
+                     } 
+
+                  }
+                  else {
+                    alert ('The line: '+myCurrentLine+'at row:'+i+'is missing an equals sign, please reload the page to start again');
+                      }
+            }
+              // skip the blank lines
+
+      }
+      if (loggingEnabled) { console.log (confirmMSG); }
+
+      applyImports();  // now load the imports into their respective fields.
+
+    }
+    catch (e)
+      { alert(e);}
+
+return false;
+
+}
+
+var suppressedImportKeys= {"installer_section0_version": 0,
+                           "installer_section0_builddate": 0,
+                           "installer_section0_fingerprint":0 
+                         };
+
+
+var requiredFieldKeysEduroam= {
+
+  "my_eduroamDomain" :0,
+
+  "krb5_libdef_default_realm": 0,
+"krb5_realms_def_dom": 0,
+"krb5_domain_realm": 0,
+"smb_workgroup": 0,
+"smb_netbios_name": 0,
+"smb_passwd_svr": 0,
+"smb_realm": 0,
+
+"installer_section2_title": 0,
+"freeRADIUS_realm": 0,
+"freeRADIUS_cdn_prod_passphrase": 0,
+
+"freeRADIUS_clcfg_ap1_ip": 0,
+"freeRADIUS_clcfg_ap1_secret": 0,
+"freeRADIUS_clcfg_ap2_ip": 0,
+"freeRADIUS_clcfg_ap2_secret": 0,
+
+"freeRADIUS_pxycfg_realm": 0,
+
+"installer_section3_title": 0,
+"freeRADIUS_ca_state": 0,
+"freeRADIUS_ca_local": 0,
+"freeRADIUS_ca_org_name": 0,
+"freeRADIUS_ca_email": 0,
+"freeRADIUS_ca_commonName": 0,
+
+"installer_section4_title": 0,
+"freeRADIUS_svr_state": 0,
+"freeRADIUS_svr_local": 0,
+"freeRADIUS_svr_org_name": 0,
+"freeRADIUS_svr_email": 0,
+"freeRADIUS_svr_commonName": 0,
+                         };
+
+
+var requiredFieldKeysShibboleth =
+{
+
+        "appserv": 0,
+      "type": 0,
+      "idpurl": 0,
+      "ntpserver": 0,
+      "ldapserver": 0,
+      "ldapbinddn": 0,
+      "ldappass": 0,
+      "ldapbasedn": 0,
+      "subsearch": 0,
+      "fticks": 0,
+      "eptid": 0,
+      "google": 0,
+      "ninc": 0,
+};
+
+//var cNeeded="#FFFF00"
+//var cNeeded="#FBE89C"
+var cNeeded="#FFDD20"
+
+var cFilled="#4CC552"
+
+function setDependantFieldColours (desiredHexColour,arrayOfFields)
+{
+
+  // document.getElementById('installer_section0_buildDescription').style.backgroundColor='#4CC552'
+   if (loggingEnabled) {console.log ('colourFields:entering'); }
+
+
+        for (var key in arrayOfFields)
+        {
+            var keyLength=(document.getElementById(key)).value.length;
+
+            if (loggingEnabled) {console.log ('colourFields:'+key+' is of length:'+keyLength); }
+
+          if (keyLength < 1 )
+          {
+          document.getElementById(key).style.backgroundColor= desiredHexColour
+          }else
+          {
+            if (loggingEnabled) {console.log ('colourFields:'+key+' is non empty, no colour change'); }
+
+          }
+          // yellow '#FFFF00'
+
+
+         
+         
+          if (loggingEnabled) {console.log ('colourFields:exiting'); }
+        } 
+        
+}
+
+
+function applyImports ()
+{
+
+        for (var key in my_ctl_previousSettings)
+        {
+          keyValue=my_ctl_previousSettings[key]; 
+          if (loggingEnabled) {console.log ('About to set field '+key+' to:|'+keyValue+'|'); }
+
+                  if ( key in suppressedImportKeys )
+                  {
+                      if (loggingEnabled) {console.log ('**SUPPRESSED setting field |'+key+'| to:|'+keyValue+'|'); }
+
+                  }
+                  else
+                  {
+                        $('#'+key).val(keyValue);  // jquery to set the value. 
+                        if (loggingEnabled) {console.log ('Setting field '+key+' to:|'+keyValue+'|'); }
+                  }
+
+          if (loggingEnabled) {console.log ('Completed setting field '+key+' to:|'+keyValue+'|'); }
+        } 
+
+        applyComponentCheckboxes()
+        update(); // refresh the updated section
+
+}
+
+function applyComponentCheckboxes ()
+
+{
+  // called to ensure checkboxes for the component list are checked
+
+  var varComponentStringEduroam="eduroam"
+  var varComponentStringShibboleth="shibboleth"
+    
+   if (loggingEnabled) {console.log ('applyComponentCheckboxes:Starting pass'); }    
+  
+  if (  ($("#installer_section0_buildComponentList").val() ).indexOf(varComponentStringEduroam)>-1) 
+  {
+      // set thit to true 
+      $("#ida_component_eduroam").prop("checked", true);
+     if (loggingEnabled) {console.log ('applyComponentCheckboxes:Setting eduroam checkbox on'); }    
+
+  }
+
+
+  if (  ($("#installer_section0_buildComponentList").val() ).indexOf(varComponentStringShibboleth)>-1) 
+  {
+      // set thit to true 
+      $("#ida_component_shibboleth").prop("checked", true);
+     if (loggingEnabled) {console.log ('applyComponentCheckboxes:Setting Shibboleth checkbox on'); }    
+
+  }
+
+   if (loggingEnabled) {console.log ('applyComponentCheckboxes:processing complete'); }
+
+}
+
+function update()
+{
+    var numFields=24;
+    var progressIncrement=1/numFields*100;
+    var progress=0;
+    var output = "";
+
+    // taking some exclusive variables on this page and plugging them in
+    // set the eduroam domain
+          if (loggingEnabled) {console.log ('Update():begin mapping'); }
+
+//////////////////////////// my_eduroamDomain
+
+if (loggingEnabled) {console.log ('Update():mapping my_eduroamDomain'); }          
+    if( ($("#my_eduroamDomain").val())==undefined )
+        {
+          if (loggingEnabled) {console.log ('my_eduroamDomain is undefined'); }          
+
+        }else{ 
+
+          if (loggingEnabled) {console.log ('Update():presets: my_eduroamDomain is:'+$("#my_eduroamDomain").val() ); }          
+
+            $("#freeRADIUS_realm").val($("#my_eduroamDomain").val());    
+            $("#freeRADIUS_pxycfg_realm").val($("#krb5_libdef_default_realm").val());  
+            $("#smb_realm").val($("#krb5_libdef_default_realm").val());  
+
+
+        };
+
+//////////////////////////// krb5_libdef_default_realm (lowercasing)
+
+if (loggingEnabled) {console.log ('Update():mapping krb5_libdef_default_realm to krb5_realms_def_dom lowercased'); }          
+    if( ($("#krb5_libdef_default_realm").val())==undefined )
+        {
+          if (loggingEnabled) {console.log ('krb5_libdef_default_realm is undefined'); }          
+
+        }else{ 
+
+          if (loggingEnabled) {console.log ('Update():presets: krb5_libdef_default_realm is:|'+$("#krb5_libdef_default_realm").val()+'|' ); }          
+
+            $("#krb5_realms_def_dom").val( ($("#krb5_libdef_default_realm").val()).toLowerCase() ) ;
+
+              if (loggingEnabled) {console.log ('Update():presets: krb5_realms_def_dom is:|'+$("#krb5_realms_def_dom").val()+'|' ); }          
+
+        };
+
+//////////////////////////// idpurl
+
+        if (loggingEnabled) {console.log ('Update():mapping idpurl'); }          
+
+//      if( ($("#idpurl").val())==undefined )
+      if( $("#idpurl").val()  )
+        { 
+
+          if (loggingEnabled) {console.log ('Update():presets: idpurl is:|'+$("#idpurl").val() +'|'); }          
+
+            $("#freeRADIUS_svr_commonName").val($("#idpurl").val());    
+       
+            var idpurlArray= /^https:\/\/(.*)$/.exec($("#idpurl").val());
+
+
+           $("#freeRADIUS_svr_commonName").val( idpurlArray[1] );  // blunt, and expects the https in place    
+
+
+
+        };
+ 
+
+
+          if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }          
+
+output += "installer_section0_version=\'"+generatorVersion+"\'\n";
+output += "installer_section0_builddate=\'"+builddate+"\'\n";
+output += "installer_section0_buildDescription=\'"+ $("#installer_section0_buildDescription").val()+ "\'\n";
+output += "installer_section0_buildComponentList=\'"+ $("#installer_section0_buildComponentList").val()+ "\'\n";
+
+output += "installer_section0_title=\'Federation Settings\'\n";
+output += "my_ctl_federation=\'"+ $("#my_ctl_federation").val()+ "\'\n";
+output += "installer_section1_title=\'Active Directory\'\n"; 
+output += "krb5_libdef_default_realm=\'"+ $("#krb5_libdef_default_realm").val()+ "\'\n";
+output += "krb5_realms_def_dom=\'"+ $("#krb5_realms_def_dom").val()+ "\'\n";
+output += "krb5_domain_realm=\'"+ $("#krb5_domain_realm").val()+ "\'\n";
+output += "smb_workgroup=\'"+ $("#smb_workgroup").val()+ "\'\n";
+output += "smb_netbios_name=\'"+ $("#smb_netbios_name").val()+ "\'\n";
+output += "smb_passwd_svr=\'"+ $("#smb_passwd_svr").val()+ "\'\n";
+output += "smb_realm=\'"+ $("#smb_realm").val()+ "\'\n";
+output += "\n";
+output += "installer_section2_title=\'FreeRADIUS\'\n";
+output += "freeRADIUS_realm=\'"+ $("#freeRADIUS_realm").val()+ "\'\n";
+output += "freeRADIUS_cdn_prod_passphrase=\'"+ $("#freeRADIUS_cdn_prod_passphrase").val()+ "\'\n";
+output += "\n";
+output += "freeRADIUS_clcfg_ap1_ip=\'"+ $("#freeRADIUS_clcfg_ap1_ip").val()+ "\'\n";
+output += "freeRADIUS_clcfg_ap1_secret=\'"+ $("#freeRADIUS_clcfg_ap1_secret").val()+ "\'\n";
+output += "freeRADIUS_clcfg_ap2_ip=\'"+ $("#freeRADIUS_clcfg_ap2_ip").val()+ "\'\n";
+output += "freeRADIUS_clcfg_ap2_secret=\'"+ $("#freeRADIUS_clcfg_ap2_secret").val()+ "\'\n";
+output += "\n";
+output += "freeRADIUS_pxycfg_realm=\'"+ $("#freeRADIUS_pxycfg_realm").val()+ "\'\n";
+output += "\n";
+output += "installer_section3_title=\'FreeRADIUS TLS Certificate Authority settings\'\n";
+output += "freeRADIUS_ca_state=\'"+ $("#freeRADIUS_ca_state").val()+ "\'\n";
+output += "freeRADIUS_ca_local=\'"+ $("#freeRADIUS_ca_local").val()+ "\'\n";
+output += "freeRADIUS_ca_org_name=\'"+ $("#freeRADIUS_ca_org_name").val()+ "\'\n";
+output += "freeRADIUS_ca_email=\'"+ $("#freeRADIUS_ca_email").val()+ "\'\n";
+output += "freeRADIUS_ca_commonName=\'"+ $("#freeRADIUS_ca_commonName").val()+ "\'\n";
+output += "\n";
+output += "installer_section4_title=\'FreeRADIUS TLS Server certificate settings\'\n";
+output += "freeRADIUS_svr_state=\'"+ $("#freeRADIUS_svr_state").val()+ "\'\n";
+output += "freeRADIUS_svr_local=\'"+ $("#freeRADIUS_svr_local").val()+ "\'\n";
+output += "freeRADIUS_svr_org_name=\'"+ $("#freeRADIUS_svr_org_name").val()+ "\'\n";
+output += "freeRADIUS_svr_email=\'"+ $("#freeRADIUS_svr_email").val()+ "\'\n";
+output += "freeRADIUS_svr_commonName=\'"+ $("#freeRADIUS_svr_commonName").val()+ "\'\n";
+
+// SAML configuration portions
+output += "appserv=\'"+ $("#appserv").val()+ "\'\n";
+output += "type=\'"+ $("#type").val()+ "\'\n";
+output += "idpurl=\'"+ $("#idpurl").val()+ "\'\n";
+output += "ntpserver=\'"+ $("#ntpserver").val()+ "\'\n";
+output += "ldapserver=\'"+ $("#ldapserver").val()+ "\'\n";
+output += "ldapbinddn=\'"+ $("#ldapbinddn").val()+ "\'\n";
+output += "ldappass=\'"+ $("#ldappass").val()+ "\'\n";
+output += "ldapbasedn=\'"+ $("#ldapbasedn").val()+ "\'\n";
+output += "subsearch=\'"+ $("#subsearch").val()+ "\'\n";
+output += "fticks=\'"+ $("#fticks").val()+ "\'\n";
+output += "eptid=\'"+ $("#eptid").val()+ "\'\n";
+output += "google=\'"+ $("#google").val()+ "\'\n";
+output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
+
+output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";
+
+
+//output += "pass=\'"+ $("#pass").val()+ "\'\n";
+//output += "httpspass=\'"+ $("#httpspass").val()+ "\'\n";
+
+
+output += "###\n";
+
+var mycksum= simpleCksum(output);
+output += "installer_section0_fingerprint=\'"+mycksum+"\'\n";
+
+
+    
+    $("#outputArea").text(output);    
+    return true;
+}
+
+function formSubmit() {
+    update();
+    return false;
+}
+
+
+// help window controls
+
+ var popupWidth = screen.width/3;
+ var popupHeight= screen.height;
+  var leftPos = screen.width - popupWidth;
+   // window.open(this.href, "customWindow", "width=" + popupWidth + ", height=1040, top=0, left=" + leftPos);
+
+var popupWinSettings='width='+popupWidth+',height='+popupHeight+',left='+leftPos+',top=100,scrollbars=no,resizable=yes,status=no,location=yes,toolbar=no,menubar=no';
+
+
+
+</script>
+</head>
+<body onload="update();">
+
+     <div class="container" style="margin-top: 5px;">
+            <div class="row">
+                <div class="span12">
+                    <div class="hero-unit">
+                        <div class="container">
+                            <div class="row">
+                                <div class="span10">
+
+     
+             
+             <!--   
+                <h5>The Steps</h5>
+                <ul>
+                  <li>Fill in your answers in the form below or  <a href="#use_existing_config">import an existing configuration</a>
+                  <li>When complete,  click 'Generate Configuration File'. This ensures the latest edits have been captured.
+                  <li>Cut and paste the results into a file named 'config' in the same directory as the installer on your server.
+                  <li>run the installer command: <i>./deploy_idp.sh</i> and follow the instructions during the build process.
+                  </ul>
+
+                  <a href="#more_info">Additional Details</a> (goes to bottom of this page)<br>
+               
+               <h4>Let's Begin!</h4>
+                <p id="begin">
+                
+-->
+
+
+            <form>
+              <input id="installer_section0_fingerprint" name="installer_section0_title" type="hidden" value="">
+              <input id="installer_section0_version" name="installer_section0_version" type="hidden" value="">
+              <input id="installer_section0_builddate" name="installer_section0_builddate" type="hidden" value="">
+              <input id="installer_section0_title" name="installer_section0_title" type="hidden" value="">
+              <input id="installer_section1_title" name="installer_section1_title" type="hidden" value="">
+              <input id="installer_section2_title" name="installer_section2_title" type="hidden" value="">
+              <input id="installer_section3_title" name="installer_section3_title" type="hidden" value="">
+              <input id="installer_section4_title" name="installer_section4_title" type="hidden" value="">
+              <input id="installer_section5_title" name="installer_section5_title" type="hidden" value="">
+
+
+
+              <h4>
+              <fieldset>
+<table width="100%" border=1>
+              
+
+
+<!--                  <tr  bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Your Federation: Canadian Access Federation - CAF</font><b></td></tr>
+    -->                <tr><td colspan="2" align="right" valign="center">
+
+<!--
+                    </td><td>
+
+                        <select id="my_ctl_federation"  onchange="update()">
+                            <option name="CAF" value="CAF" selected>Canadian Access Federation - CAF</option>
+                           <option name="SWAMID" value="SWAMID">Swedish Academic Identity - SWAMID</option>
+                            </select>
+    -->
+                            <input type="hidden" id="my_ctl_federation" value="CAF" onchange="update()">
+
+
+
+<a name="top_of_page"></a>
+
+ <table width=100% border=1>
+    <tr><td>
+      <font size="+2" ><b>Identity Appliance Interactive Configuration Builder</b></font>
+      <br>
+      An interactive tool to help build your eduroam and Shibboleth configuration
+
+    </td>
+        <td align=right colspan=2>
+          <img align="center" width="250" src="./img/logo.png" alt="Federation Operator logo" />
+  </td></tr>
+
+  <tr><td> 
+<!-- comments area -->
+
+<!-- end comments area -->
+
+    </td>
+
+
+    <td align="right"> <a href="#use_existing_config">import an existing configuration</a>
+  </td>
+  <td>
+
+                            <button class="btn" onclick="window.open ('help.html','help window',popupWinSettings);" >
+                                                Help
+                                            </button>
+    </td></tr>
+  </table>
+
+                    </td></tr>
+
+<!-- end tool header -->
+
+
+   <tr id="my_installer_section0_buildComponentListRow" class="status" bgcolor="#CCCCCC">
+    <td colspan="2">
+      <b><font size="+1">Please select components to configure for your installation</font><b>
+    </td></tr>
+
+
+   <tr><td colspan="2" align="left">
+
+<table border=1 cellpadding=10>
+  <tr><td>
+
+    <table border=0 cellpadding=4>
+      <tr><td>
+        eduroam service using FreeRADIUS:
+    </td>
+    <td>
+        <input id="ida_component_eduroam" onclick="refreshComponentsList();c=cFilled;if (this.checked==true){c=cNeeded} setDependantFieldColours(c,requiredFieldKeysEduroam);" type="checkbox" name="ida_component_eduroam" value="on"/>
+    </td></tr>
+     <tr><td>
+    Federated SSO Identity Provider service using Shibboleth: 
+       </td>
+    <td>
+
+    <input id="ida_component_shibboleth" onclick="return refreshComponentsList();" type="checkbox" name="ida_component_shibboleth" value="on" />
+    </td></tr>
+  </table>
+              <input type="hidden" id="installer_section0_buildComponentList" type="text" placeholder="" value="" >
+
+
+</td><td>
+
+<font size="-1">
+<b>Instructions</b>
+    <br> - Choose which service(s) you would like to configure or import an existing configuration.
+    <br> - Incomplete required fields will be highlighted yellow, green indicates field is ready
+    <br> - Once all the fields for the service are completed, cut and paste results into config file in same directory as the deploy tool
+    <br> - Initiate deployment by executing <i>./deploy_idp.sh</i> on the target server to initiate the install
+</font>
+
+</td></tr>
+</table>
+
+  </td></tr>
+
+
+<!-- general header section -->
+   <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">General Information</font><b></td></tr>
+    
+
+   <tr><td colspan="2" align="right">
+    
+  </td></tr>
+<!-- end header -->
+
+
+   <tr id="my_installer_section0buildDescriptionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Document This Configuration</font><b></td></tr>
+    
+
+   <tr><td colspan="2" align="right">
+     Brief description for this configuration:
+          <input style="width: 300px;" id="installer_section0_buildDescription" type="text" placeholder="My Development configuration" 
+                onchange="update();this.style.backgroundColor=cFilled;" > <br>
+
+<!--                c=cFilled;if (this.checked==true){c=cNeeded} 
+   --> 
+  </td></tr>
+
+
+   <tr id="my_idpurlRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Name of Server Running This Configuration</font><b></td></tr>
+    
+   <tr><td colspan="2" align="right">
+
+    Public URL of the Server:<input id="idpurl" type="text" placeholder="https://idpdev.mydomain.ca" onchange="update()"><BR>
+
+  </td></tr>
+
+   
+   <tr id="my_eduroamDomainRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Set the eduroam Domain and/or Federated SSO scope</font><b></td></tr>
+    
+   <tr><td colspan="2" align="right">
+    What is your organization's domain?:
+          <input id="my_eduroamDomain" type="text" placeholder="mydomain.ca" 
+                onchange="update(); document.getElementById('my_eduroamDomainRow').style.backgroundColor='#6AA121';" ><br>
+
+  </td></tr>
+
+<!-- general header section -->
+   <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">eduroam Specific Configuration Information</font><b></td></tr>
+    
+
+   <tr><td colspan="2" align="right">
+    
+  </td></tr>
+<!-- end header -->
+
+                                          
+<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Your Active Directory settings</font><b></td></tr>
+                                            <tr><td colspan="2">
+                                            For eduroam (RADIUS) MSCHAPv2  authentication to work, this machine must join your AD domain.
+                                          </td><td></tr>
+                                           <tr>
+<td colspan="2" align="right">
+<table><tr><td colspan="1" align="left"><font size="-1">WinBIND krb5 settings</font></td></tr></table>
+Active Directory Default AD DOMAIN:<input id="krb5_libdef_default_realm" type="text" placeholder="DOMAIN.LOCAL" onchange="update();this.style.backgroundColor=cFilled;"><br>
+
+<!-- AD Default AD DOMAIN lowercased: --> <input id="krb5_realms_def_dom" type="hidden" placeholder="e.g. domain.local" onchange="update()">
+
+Active Directory Internet Domain:<input id="krb5_domain_realm" type="domain.ca" placeholder="e.g. domain.ca" onchange="update()"><br>
+<hr>
+<table><tr><td colspan="1" align="left"><font size="-1">SAMBA settings</font></td></tr></table>
+Active Directory Domain Name - pre-windows2000/NETBIOS Name:<input id="smb_workgroup" type="text" placeholder="e.g. DOMAIN" onchange="update()"><br>
+Legacy NETBIOS host name in Active Directory:<input id="smb_netbios_name" type="text" placeholder="e.g. APP1" onchange="update()"><br>
+IP Address of your Primary AD DC:<input id="smb_passwd_svr" type="text" placeholder="e.g. 1.2.3.4" onchange="update()"><br>
+SAMBA Active Directory DOMAIN:<input id="smb_realm" type="text" placeholder="e.g. DOMAIN.LOCAL" onchange="update()"><br>
+
+</td></tr>
+
+<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Your RADIUS configuration</font><b></td></tr>
+                                            <tr><td colspan="2">
+                                            FreeRADIUS will behave as both a proxy and server for local clients.<br>
+                                            A Client can be anything that talks the RADIUS protocol, including other RADIUS servers, access points, laptops, and/or smart phones.<br>
+
+                                           
+                                          </td><td></tr>
+                                           <tr>
+<td colspan="2" align="right">
+
+domain used for eduroam:<input id="freeRADIUS_realm" type="text" placeholder="" onchange="update()"><br>
+Active Directory realm used to authenticate users:<input id="freeRADIUS_pxycfg_realm" type="text" placeholder="" onchange="update()"><br>
+Passphrase to your upstream eduroam servers:<input id="freeRADIUS_cdn_prod_passphrase" type="text" placeholder="" 
+onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}"><br>
+<hr>
+Access Point #1 IP Address:<input id="freeRADIUS_clcfg_ap1_ip" type="text" placeholder="" onchange="update()"><br>
+Access Point #1 Passphrase(min 8 char):<input id="freeRADIUS_clcfg_ap1_secret" type="text" placeholder="" 
+onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}"><br>
+<hr>
+Access Point #2 IP Address:<input id="freeRADIUS_clcfg_ap2_ip" type="text" placeholder="" onchange="update()"><br>
+Access Point #1 Passphrase(min 8 char):<input id="freeRADIUS_clcfg_ap2_secret" type="text" placeholder="" 
+onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}"><br>
+
+<!-- <tr><td>installer_section3_title:</td><td><input id="installer_section3_title" type="text" placeholder="" onchange="update()"></td></tr>
+-->
+
+</td></tr>
+
+
+
+   <tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Information for the TLS Generation</font><b></td></tr>
+                                            <tr><td colspan="2">
+                                            eduroam needs TLS for encrypting tunnels between your server and the person authenticating. Please provide details to create a self signed Certificate Authority(CA) and Server certificate.
+<br> 
+                                          </td><td></tr>
+                                           <tr>
+<td colspan="2" align="right">
+Certificate Authority Prov/State:<input id="freeRADIUS_ca_state" type="text" placeholder="" onchange="update()"><BR>
+Certificate Authority City:<input id="freeRADIUS_ca_local" type="text" placeholder="" onchange="update()"><BR>
+Certificate Authority Org Name:<input id="freeRADIUS_ca_org_name" type="text" placeholder="Institution X" onchange="update()"><BR>
+Certificate Authority Contact email:<input id="freeRADIUS_ca_email" type="text" placeholder="" onchange="update()"><BR>
+Certificate Authority Common Name:<input id="freeRADIUS_ca_commonName" type="text" placeholder="Inst. X SelfSigned CA Authority" 
+onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}"><br>
+<!-- installer_section4_title:<input id="installer_section4_title" type="text" placeholder="" onchange="update()"><BR> -->
+ Copy info to fields below? 
+    <input id="dupeData1" onclick="return duplicateContactInfo();" type="checkbox" name="dupeData1" value="yes" />
+                                            <br><br>
+Server Certificate Prov/State:<input id="freeRADIUS_svr_state" type="text" placeholder="" onchange="update()"><BR>
+Server Certificate City:<input id="freeRADIUS_svr_local" type="text" placeholder="" onchange="update()"><BR>
+Server Certificate Org Name:<input id="freeRADIUS_svr_org_name" type="text" placeholder="" onchange="update()"><BR>
+Server Certificate Contact email:<input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="update()"><BR>
+Server Certificate Common Name:<input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.ca" onchange="update()"><BR>
+
+</td></tr>
+
+<!-- general header section -->
+   <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">Federated Single Sign On Configuration  Information</font><b></td></tr>
+    
+
+   <tr><td colspan="2" align="right">
+    
+  </td></tr>
+<!-- end header -->
+
+<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Base Configuration for FedSSO</font><b></td></tr>
+                                            <tr><td colspan="2">
+Federated SSO needs credentials to connect to your Directory for 'find and bind' operations as well as to access data about a user.<br> 
+                                          </td><td></tr>
+                                           <tr>
+<td colspan="2" align="right">
+Servlet Container:<input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="update()"><BR>
+Authentication type (ldap):<input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="update()"><BR>
+ntpserver:
+<!-- <input id="fedSSO_ntpserver" type="text" placeholder="" onchange="update()"> --> 
+<select id="ntpserver"  onchange="update()">
+      <option name="Vancouver1" value="nt1-cdma.vncv1.bc.net" selected>Vancouver - nt1-cdma.vncv1.bc.net (Stratum 1 - CDMA)</option>
+     <option name="Kelowna" value="t1-cdma.keltx1.bc.net">Kelowna - t1-cdma.keltx1.bc.net (Stratum 1 - CDMA)</option>
+     <option name="Saskatoon1" value="tick.usask.ca">Saskatoon - tick.usask.ca (Stratum 1 - GPS)</option>
+     <option name="Saskatoon2" value="tock.usask.ca">Saskatoon - tock.usask.ca (Stratum 1 - GPS)</option>
+     <option name="Winnipeg1" value="tick.umanitoba.ca">Winnipeg - tick.umanitoba.ca (Stratum 1 - GPS)</option>
+     <option name="Winnipeg2" value="tock.umanitoba.ca">Winnipeg - tock.umanitoba.ca (Stratum 1 - GPS)</option>
+     <option name="Halifax" value="tick.acorn-ns.ca">Halifax tick.acorn-ns.ca (Stratum 1 - GPS)</option>
+     
+      </select>
+
+<BR>
+LDAP Server Host(separate servers with a space):<input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="update()"><BR>
+LDAP Bind DN:<input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="" onchange="update()"><BR>
+LDAP Password:<input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="update()"><BR>
+
+LDAP Base DN:<input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="" onchange="update()"><BR>
+
+LDAP Subtree search?: <select id="subsearch"  onchange="update()">
+                                                <option name="subsearchTrue" value="true" selected>Yes</option>
+                                               <option name="subsearchFalse" value="false">No</option>
+                                             </select>
+                                             <br>
+
+
+</td></tr>
+
+<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">FedSSO Features</font><b></td></tr>
+                                            <tr><td colspan="1">
+These are some additional configurations that enhance the FedSSO operation<br> 
+                                          </td><td></tr>
+                                           <tr>
+<td colspan="2" align="right">
+Install support for ePTID <select id="eptid"  onchange="update()">
+                                                <option name="eptidY" value="y" selected>Yes(recommended)</option>
+                                               <option name="eptidN" value="n">No</option>
+                                             </select>
+                                             <br>
+Send anonymous usage stats to CAF <select id="fticks"  onchange="update()">
+                                                <option name="ftickY" value="y" selected>Yes(recommended)</option>
+                                               <option name="ftickN" value="n">No</option>
+                                             </select>
+                                             <br>
+
+<!-- google apps support -- not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
+
+<input type=hidden id="google" value="n">
+<!--
+Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
+                                                <option name="googleY" value="y" selected>Yes</option>
+                                               <option name="googleN" value="n">No</option>
+                                             </select>
+                                             <br>
+-->
+<!-- NorduNet NINC Support - not CAF, only SWAMID functionality, CAF uses hidden value-->
+
+<input type=hidden id="ninc" value="n">
+<!--
+Enable Support norEduPersonNIN  <select id="ninc"  onchange="update()">
+                                                <option name="nincY" value="y" selected>Yes</option>
+                                               <option name="nincN" value="n">No</option>
+                                             </select>
+                                             <br>
+-->
+
+</td></tr>
+<!-- <tr>
+<td colspan="2" align="right">
+Keystore password for FedSSO encryption keys <input  style="width: 250px;" id="pass" type="text" placeholder="" onchange="update()">
+                                             <br>
+Keystore password for HTTPS Server encryption keys <input  style="width: 250px;" id="httpspass" type="text" placeholder="" onchange="update()">
+                                             <br>
+</td></tr>
+-->
+<!-- <tr><td>installer_section2_title:</td><td><input id="installer_section2_title" type="text" placeholder="" onchange="update()"></td></tr>
+-->
+
+</table>
+                                        </fieldset>
+                                        <br>
+
+
+                                        <button type="submit" class="btn" onclick="return formSubmit();" >
+                                                Generate Configuration File
+                                            </button>
+                                    </form>
+                                </div>
+                                <div class="span6">
+       </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript" src="../js/jquery-1.10.0.js"></script>
+                        <script type="text/javascript" src="../js/bootstrap.js"></script>
+
+
+
+       
+<form>
+          <label>        <h4>Autogenerated Configuration File</h4>          </label>
+
+         <textarea id="outputArea" class="span7"  rows="49" cols="40"></textarea>
+
+       </form>
+
+
+<form>
+          <label>             <a name="use_existing_config"></a> <h4>Import Configuration File</h4>          </label>
+
+<table width="40%">
+  <tr><td align="right">
+
+<button type="submit" class="btn" onclick="return importPreviousSettings(); " >Import My Existing Config From Below </button>
+
+  </td><td align="right">
+ <a href="#top_of_page">back to top</a>
+</td></tr></table>
+
+         <textarea id="importPreviousConfigArea" class="span7"  rows="10" cols="40"></textarea>
+
+<hr color="red" size="10"><hr>
+ 
+
+                                     </form>
+                                    <!-- <p id="test">Content</p> -->
+
+
+
+<!-- 
+<a name="more_info"></a>
+<h2>Additional Notes</h2>
+
+<h3>Intended Audience</h3>
+                                        It is recommended that the person collecting the information and using this tool has working knowledge of:<br>
+                                        <ul><li>Operating wireless networks and related infrastructure
+                                        <li>An understanding of Microsoft Active Directory and is familiar with their local  installation of it
+                                        <li>how to prepare a basic CentOS 'minimal install' image to use the installer on. 
+                                        </ul>
+
+                                       <h3>How Much Time Should I Plan For?</h3>
+                                        <p id="planning_time">The actual installation and execution of the installer is a few minutes. That said, the preparation time of collecting and planning around some of the answers for the configuration may take longer. Note that the configuration can only be generated at this time and not reverse engineered from an existing configuration file. 
+                                       <h3>What Do I get When I'm done?</h3>
+                                        <p id="when_done">The installer will install FreeRADIUS and SAMBA to connect to Active Directory to do authentication. It will use self signed certificates and is sufficient to use as a testbed and be easily operated on it's own. <br>
+                                            Deploying a production instance is simply re-using the same configuration file as needed and choosing your commercial server certificate.  The install process does generate a CSR(Certificate Signing Request) that could be used.
+                                       <h3>What about Passwords and Shared Secrets etc?</h3>
+                                        <p id="what_about">This web page does not need to be run on a server and is entirely self contained. When you use it, you CAN use it from a webserver but also within a local browser. It generates a local copy of the configuration file which you then place on the appropriate server and location</p>
+
+  <h5>A Word About Security</h5>
+                  We recognize that collecting information to key systems with credentials and passwords should be treated carefully.  With this in mind, this HTML page uses local javascript and JQuery libraries to produce the configuration file used to do the installation. It intentionally does not store any passwords and/or configuration details and allows you to cut and paste the resulting configuration file where you need it.<br>
+                  With this in mind, we've also created a feature where you can take an existing configuration file and import it. <br> <a href="#use_existing_config">Click here to import your existing configuration</a>
+
+                
+                <h5>Intended Installer Uses</h5>
+
+                This installer is designed to provide a base configuration with self signed certificates for a streamlined installation. It is possible to have a test installation up and going in a few minutes once you have your configuration details.  To deploy a production configuration, the same configuration you used in test can be used to create the production installation with a few adjustments for production operations.
+
+                 <h5>Adjustments to a Base Install to be Production Ready</h5>
+
+                 Updates to the base install for production use are:
+                <ul>
+                  <li>Replacing the self signed certificate used on the web and RADIUS server with your commercial certificate.<sup>*</sup> 
+                  <li>Connect to the appropriate authoritative identity data source on the back end.
+                  <li>Any desired updates to the web sign on page
+                 </ul>   
+                <br>
+                 <sup>* a Certificate Signing Request(<a href="http://en.wikipedia.org/wiki/Certificate_signing_request" target="new">CSR</a>(new window) is generated in the base install 
+                  </sup>
+
+                <br>
+-->
+
+</div>
+ </div>
+ </div>
+        </div>
+    </body>
+</html>
