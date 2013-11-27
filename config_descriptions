@@ -1,0 +1,54 @@
+#
+# Companion information for variables 
+#
+# Uses an associative array to reference the descriptive terms. 
+#
+declare -A cfgDesc
+# variable					# substitution string in template
+
+cfgDesc[installer_section1_title]="\nSettings For" 		# 
+cfgDesc[krb5_libdef_default_realm]="Kerberos Default realm" 		# kRb5_LiBdEf_DeFaUlT_ReAlM  DOMAIN.LOCAL
+cfgDesc[krb5_realms_def_dom]="Kerberos WINS DNS Controller host" #kRb5_rEaLmS_dEf_DoM	domain.local
+cfgDesc[krb5_domain_realm]="Kerberos DNS domain"				#kRb5_DoMaIn_ReAlM	domain.ca
+cfgDesc[smb_workgroup]="SAMBA hortname for AD domain" #sMb_WoRkGrOuP		DOMAIN
+cfgDesc[smb_netbios_name]="SAMBA pre-registered host(this one)in AD"			#sMb_NeTbIoS_NaMe	APP1
+cfgDesc[smb_passwd_svr]="SAMBA IP of Primary Domain Controller"			#sMb_PaSsWd_SvR		IP of AD domain controller
+cfgDesc[smb_realm]="SAMBA Default realm"	#sMb_ReAlM		realm
+#
+#
+# RADIUS config variables & relevant file
+#
+# raddb/radius.conf   	- overall config 
+cfgDesc[installer_section2_title]="\nSettings For" 		# 
+cfgDesc[freeRADIUS_realm]="eduroam domain/realm" #fReErAdIuS_rEaLm
+
+# raddb/client.conf   	- clients that can talk to this radius server
+
+cfgDesc[freeRADIUS_cdn_prod_passphrase]="eduroam shared secret provided to you" # PrOd_EduRoAm_PhRaSe #used in clients.conf, proxy.conf
+cfgDesc[freeRADIUS_clcfg_ap1_ip]="IP of local access point #1"			# CLCFG_YaP1_iP 	1.2.3.4
+cfgDesc[freeRADIUS_clcfg_ap1_secret]="Shared secret for AP #1"			# CLCFG_YaP1_sEcReT
+cfgDesc[freeRADIUS_clcfg_ap2_ip]="IP of local access point #2"			# CLCFG_YaP2_iP 	4.3.2.1 null route in your ip space if not needed
+cfgDesc[freeRADIUS_clcfg_ap2_secret]="Shared secret for AP #2"			# CLCFG_YaP2_sEcReT
+
+# raddb/proxy.conf 	- Federation Level Radius (FLR) radius servers we talk to
+
+cfgDesc[freeRADIUS_pxycfg_realm]="eduroam domain in proxy.conf file"  # PXYCFG_rEaLm   #the proxying domain
+
+cfgDesc[installer_section3_title]="\nSettings For" 		# 
+# raddb/certs/ca.cnf	- Self Signed Certificate Authority settings for bootstrap process
+# note that the templates have 10 year validity for the CA and the server certificate
+
+cfgDesc[freeRADIUS_ca_State]="Your Province "				# CRT_Ca_StAtE  # Ontario 
+cfgDesc[freeRADIUS_ca_local]="Your City"				# CRT_Ca_LoCaL  # Ottawa
+cfgDesc[freeRADIUS_ca_org_name]="Your Legal Name"			# CRT_Ca_OrGnAmE # Domain Inc.
+cfgDesc[freeRADIUS_ca_email]="Your tech contact email"				# CRT_Ca_EmAiL   # itsupport@domain.ca
+cfgDesc[freeRADIUS_ca_commonName]="Your CA string e.g. SelfSigned domain.ca Authority"			# CRT_Ca_CoMmOnNaMe # "SelfSigned domain.ca CA Authority"
+
+#raddb/certs/server.cnf	- Server Certificate settings for bootstrap process
+
+cfgDesc[installer_section4_title]="\nSettings For" 		# 
+cfgDesc[freeRADIUS_svr_State]="Your Province"				# CRT_SvR_StAtE  # Ontario 
+cfgDesc[freeRADIUS_svr_local]="Your City"				# CRT_SvR_LoCaL  # Ottawa
+cfgDesc[freeRADIUS_svr_org_name]="Your Legal Name"			# CRT_SvR_OrGnAmE # Domain Inc.
+cfgDesc[freeRADIUS_svr_email]="Your tech contact email"				# CRT_SvR_EmAiL   # itsupport@domain.ca
+cfgDesc[freeRADIUS_svr_commonName]="Public DNS hostname for this server"			# CRT_SvR_CoMmOnNaMe # testidp.domain.ca
