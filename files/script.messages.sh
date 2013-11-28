@@ -89,3 +89,22 @@ tomcatSettingsFileC="/etc/sysconfig/tomcat6"
 redhatEpel5="rpm -Uvh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
 redhatEpel6="rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
 
+
+# info for validation of required fields for deployer options
+# one long list but broken apart into sections similar to the HTML installer page
+# excluded ones: my_eduroamDomain (used on HTML page but nowhere else)
+#				 installer_* are not needed either EXCEPT for: installer_section0_buildComponentList which is the list of features to activate
+#
+# SPECIAL NOTE: It would be prudent to keep these fields in sync with the required fields in the HTML page
+#
+# The variable names are specifically not Camel cased on the last element (eduroam, shibboleth)
+# to allow them to be assembled as needed so we can just have a list for the next 'element' that may be used
+# see the ValidateConfig() function where these will be processed
+
+requiredNonEmptyFieldseduroam=" krb5_libdef_default_realm krb5_realms_def_dom krb5_domain_realm smb_workgroup smb_netbios_name smb_passwd_svr smb_realm"
+requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_realm freeRADIUS_cdn_prod_passphrase freeRADIUS_pxycfg_realm"
+requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_clcfg_ap1_ip freeRADIUS_clcfg_ap1_secret freeRADIUS_clcfg_ap2_ip freeRADIUS_clcfg_ap2_secret"
+requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_ca_state freeRADIUS_ca_local freeRADIUS_ca_org_name freeRADIUS_ca_email freeRADIUS_ca_commonName" 
+requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_svr_state freeRADIUS_svr_local freeRADIUS_svr_org_name freeRADIUS_svr_email freeRADIUS_svr_commonName"
+
+requiredNonEmptyFieldsshibboleth=" appserv type idpurl ntpserver ldapserver ldapbinddn ldappass ldapbasedn subsearch fticks eptid google ninc"

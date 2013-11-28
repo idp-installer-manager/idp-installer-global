@@ -741,7 +741,12 @@ setDistCommands() {
 		fi
 
 		if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
-			continueF=$(askYesNo "Centos" "${Rmsg}")
+			
+			# Consider this base requirement for system, or maybe move it to the installation phase for Shibboleth??
+			#
+			#continueF=$(askYesNo "Centos" "${Rmsg}")
+			continueF="y"
+			
 
 			if [ "${continueF}" = "y" ]; then
 				installEPEL

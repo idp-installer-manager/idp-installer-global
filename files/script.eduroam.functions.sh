@@ -281,32 +281,46 @@ displayMainMenu() {
 		elif [ "${eduroamTask}" = "installEduroam" ]
 		then
 
-                        echo "install chosen, creating Restore Point" >> ${statusFile} 2>&1
-			createRestorePoint
-                        echo "Restore Point Completed" >> ${statusFile} 2>&1
-			invokeEduroamInstallProcess
-                                echo ""
-                                echo "Update Completed" >> ${statusFile} 2>&1
+		if echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
 
-			doInstall
+
+	                        echo "install chosen, creating Restore Point" >> ${statusFile} 2>&1
+				createRestorePoint
+	                        echo "Restore Point Completed" >> ${statusFile} 2>&1
+				invokeEduroamInstallProcess
+	                        echo "Update Completed" >> ${statusFile} 2>&1
+
+				doInstall
+		else
+				echo "Sorry, necessary configuration for eduroam is incomplete, please redo config file"
+				exit
+
+		fi
+
 
 		elif [ "${eduroamTask}" = "installFedSSO" ]
 		then
 
-                        echo "install of Federated SSO chosen, creating Restore Point" >> ${statusFile} 2>&1
-			
-			# FIXME: REDUNDANT? --> softwareInstallMaven
-			
-			invokeShibbolethInstallProcess
 
-			createRestorePoint
-                        echo "Restore Point Completed" >> ${statusFile} 2>&1
-		#	eval ${redhatCmdFedSSO}
-                                echo ""
-                                echo "Update Completed" >> ${statusFile} 2>&1
-                       # exit
+			if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
 
-#			doInstall
+
+		                        echo "install of Federated SSO chosen, creating Restore Point" >> ${statusFile} 2>&1
+					
+					# FIXME: REDUNDANT? --> softwareInstallMaven
+					
+					invokeShibbolethInstallProcess
+
+					createRestorePoint
+		                        echo "Restore Point Completed" >> ${statusFile} 2>&1
+				#	eval ${redhatCmdFedSSO}
+		                        echo "Update Completed" >> ${statusFile} 2>&1
+		    
+			else
+				echo "Sorry, necessary configuration for shibboleth is incomplete, please redo config file"
+				exit
+		fi
+
 		elif [ "${eduroamTask}" = "installAll" ]
 		then
 					
@@ -346,15 +360,66 @@ createRestorePoint() {
 
 
 validateConfig() {
-	# criteria for config are non empty configuration elements for all uncommented rows 
+	# criteria for a valid config is:
+	#  - populated attribute: installer_section0_buildComponentList and MUST contain one or both of 'eduroam' or 'shibboleth
+	#  - non empty attributes for each set
 	#
 	# this parses all attributes in the configuration file to ensure they are not zero length
 	#
+	#
+	#	Methodology: 
+	#				enumerate and iterate over the field installer_section0_buildComponentList
+	#				based on the features in there, assemble the required fields 
+	#					iterate over each variable name and enforce non empty state, bail entirely if failed
+
+	#  	the old check: - anything, but non empty: vc_attribute_list=`cat ${Spath}/config|egrep -v "^#"| awk -F= '{print $1}'|awk '/./'|tr '\n' ' '`
+	
+	vc_attribute_list=""
+
+	# build our required field list dynamically
+
+	eval set -- "${installer_section0_buildComponentList}"
+
+	while [ $# -gt 0 ]
+	do
+			# uncomment next 3 echo lines to diagnose variable substitution
+			# echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
+		if [ "XXXXXX" ==  "${1}XXXXXX" ]
+        	then
+			# echo "##### $1 is ${!1}"
+			# echo "########EMPTYEMPTY $1 is empty"
+			echo "NO COMPONENTS SELECTED FOR VALIDATION - EXITING IMMEDIATELY"
+			exit
+
+		else
+			echo "working on ${1}"
+			tmpFV="requiredNonEmptyFields${1}"
+			
+
+			echo "=============dynamic var: ${tmpFV}"
+
+
+			vc_attribute_list="${vc_attribute_list} `echo "${!tmpFV}"`";
+
+			#settingsHumanReadable=" ${settingsHumanReadable}  ${tmpString}:  ${!1}\n"
+			#settingsHumanReadable="${settingsHumanReadable} ${cfgDesc[$1]}:  ${!1}\n"
+		fi
+	
+		shift
+	done
+	
+	#=======
+
 	tmpBailIfHasAny=""
 
-	vc_attribute_list=`cat ${Spath}/config|egrep -v "^#"| awk -F= '{print $1}'|awk '/./'|tr '\n' ' '`
+	#old: vc_attribute_list=`cat ${Spath}/config|egrep -v "^#"| awk -F= '{print $1}'|awk '/./'|tr '\n' ' '`
 	
 	# uses indirect reference for variable names. 
+	
+	# echo "======working with ${vc_attribute_list}"
+
+
+
 	eval set -- "${vc_attribute_list}"
 	while [ $# -gt 0 ]
 	do
