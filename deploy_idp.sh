@@ -1,6 +1,12 @@
 #!/bin/sh -x
 # UTF-8
 HELP="
+
+# enforce some error checking on failed operations by commands.
+#
+#set -exo pipefail
+
+
 ##############################################################################
 # Shibboleth deployment script by Anders Lördal                              #
 # Högskolan i Gävle and SWAMID                                               #
@@ -70,14 +76,11 @@ fi
 
 
 Spath="$(cd "$(dirname "$0")" && pwd)"
-. ${Spath}/files/script.messages.sh
-. ${Spath}/files/script.functions.sh
-. ${Spath}/files/script.eduroam.functions.sh
 
-setEcho
-
-
-
+# load boostrap functions needed early on in this process
+# (validateConfig)
+. ${Spath}/files/script.bootstrap.functions.sh
+setEcho 
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
 
@@ -86,7 +89,42 @@ then
 	dos2unix ${Spath}/config
 	. ${Spath}/config		# dynamically (or by hand) editted config file
 	. ${Spath}/config_descriptions	# descriptive terms for each element - uses associative array cfgDesc[varname]
+
+	ValidateConfig
+
+else
+	echo -e "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"
+	exit
+
 fi
+
+
+
+
+. ${Spath}/files/script.messages.sh
+. ${Spath}/files/script.functions.sh
+. ${Spath}/files/script.eduroam.functions.sh
+
+
+# import the federation override file. It must exist even if it is empty.
+federationSpecificInstallerOverrides="${Spath}/files/${my_ctl_federation}/script.override.functions.sh"
+
+if [ -f "${federationSpecificInstallerOverrides}" ]
+then
+	echo -e "\n\nAdding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}"
+	. ${federationSpecificInstallerOverrides}
+else
+	echo -e "\n\nNo federation specific overrides detected for federation: ${my_ctl_federation} (if this was blank, the config file does not contain BASH variable my_ctl_federation)"
+	echo -e "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now"
+	exit	
+
+fi
+
+
+
+
+
+
 
 
 setBackTitle
@@ -123,10 +161,9 @@ setHostnames
 
 
 
-validateConfig
+
 setInstallStatus
 displayMainMenu
-createRestorePoint
 
 
 

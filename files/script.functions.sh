@@ -1,16 +1,7 @@
 #!/bin/sh
 # UTF-8
 
-setEcho() {
-	Echo=""
-	if [ -x "/bin/echo" ]; then
-		Echo="/bin/echo -e"
-	elif [ -x "`which printf`" ]; then
-		Echo="`which printf` %b\n"
-	else
-		Echo="echo"
-	fi
-}
+
 
 cleanBadInstall() {
 	if [ -d "/opt/shibboleth-identityprovider" ]; then
@@ -56,7 +47,6 @@ setBackTitle ()
 
 installDependanciesForInstallation ()
 {
-	install depends
 	${Echo} "Updating repositories and installing generic dependancies"
 	eval ${distCmdU} >> ${statusFile} 2>&1
 	eval ${distCmd1} >> ${statusFile} 2>&1
@@ -326,9 +316,9 @@ setHostnames() {
 
 fetchCas() {
 	${Echo} "Cas-client not found, fetching from web"
-	${fetchCmd} ${Spath}/files/cas-client-${casVer}-release.zip ${casClientURL}
+	${fetchCmd} ${downloadPath}/cas-client-${casVer}-release.zip ${casClientURL}
 
-	if [ ! -s ${Spath}/files/cas-client-${casVer}-release.zip ]; then
+	if [ ! -s ${downloadPath}/cas-client-${casVer}-release.zip ]; then
 		${Echo} "Error while downloading CAS client, aborting."
 		cleanBadInstall
 	fi
@@ -336,9 +326,9 @@ fetchCas() {
 
 fetchMysqlCon() {
 
-	${fetchCmd} ${Spath}/files/mysql-connector-java-${mysqlConVer}.tar.gz ${mysqlConnectorURL}
+	${fetchCmd} ${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz ${mysqlConnectorURL}
 	
-	if [ ! -s "${Spath}/files/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
+	if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
 		${Echo} "Error while downloading mysql-connector, aborting."
 		cleanBadInstall
 	fi
@@ -438,7 +428,7 @@ EOM
 
 		fetchMysqlCon
 		cd /opt
-		tar zxf ${Spath}/files/mysql-connector-java-${mysqlConVer}.tar.gz -C /opt >> ${statusFile} 2>&1
+		tar zxf ${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz -C /opt >> ${statusFile} 2>&1
 		cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
 
 	fi
@@ -451,12 +441,12 @@ installCasClientIfEnabled() {
 
 if [ "${type}" = "cas" ]; then
 
-	if [ ! -f "${Spath}/files/cas-client-${casVer}-release.zip" ]; then
+	if [ ! -f "${downloadPath}/cas-client-${casVer}-release.zip" ]; then
 		fetchCas
 	fi
-	unzip -q ${Spath}/files/cas-client-${casVer}-release.zip -d /opt
+	unzip -q ${downloadPath}/cas-client-${casVer}-release.zip -d /opt
 	if [ ! -s "/opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar" ]; then
-		${Echo} "Unzip of cas-client failed, check zip file: ${Spath}/files/cas-client-${casVer}-release.zip"
+		${Echo} "Unzip of cas-client failed, check zip file: ${downloadPath}/cas-client-${casVer}-release.zip"
 		cleanBadInstall
 	fi
 
@@ -518,11 +508,11 @@ fetchAndUnzipShibbolethIdP ()
 
 	cd /opt
 
-	if [ ! -f "${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
+	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
 		${Echo} "Shibboleth not found, fetching from web"
-		${fetchCmd} ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip ${shibbURL}
+		${fetchCmd} ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip ${shibbURL}
 
-		if [ ! -s ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip ]; then
+		if [ ! -s ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip ]; then
 		${Echo} "Error while downloading Shibboleth, aborting."
 		cleanBadInstall
 		fi
@@ -531,7 +521,7 @@ fetchAndUnzipShibbolethIdP ()
 # 	unzip all files
 	${Echo} "Unzipping dependancies"
 
-	unzip -q ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
+	unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
 	ln -s shibboleth-identityprovider-${shibVer} shibboleth-identityprovider
 }
@@ -549,7 +539,7 @@ mkdir -p ${certpath}
 
 
 
-installCertificatesSWAMID ()
+installCertificates()
 
 {
 
@@ -746,7 +736,7 @@ setDistCommands() {
 			#
 			#continueF=$(askYesNo "Centos" "${Rmsg}")
 			continueF="y"
-			
+
 
 			if [ "${continueF}" = "y" ]; then
 				installEPEL
@@ -761,7 +751,7 @@ setDistCommands() {
 }
 
 prepConfirmBox() {
-	cat > ${Spath}/files/confirm.tx << EOM
+	cat > ${downloadPath}/confirm.tx << EOM
 Options passed to the installer:
 
 
@@ -831,21 +821,21 @@ maven2Path=`basename ${maven2File}  -bin.tar.gz`
 	else
 		echo "Fetching Maven from ${maven2URL}"
 
-		${fetchCmd} ${Spath}/files/${maven2File} "{$maven2URL}"
+		${fetchCmd} ${downloadPath}/${maven2File} "{$maven2URL}"
 		cd /opt
-		tar zxf ${Spath}/files/${maven2File} >> ${statusFile} 2>&1
+		tar zxf ${downloadPath}/${maven2File} >> ${statusFile} 2>&1
 
 		
 	fi
 	export PATH=${PATH}:${maven2Path}/bin	
 
 
-#	if [ ! -s "${Spath}/files/apache-maven-3.1.0-bin.tar.gz" ]; then
-#		${fetchCmd} ${Spath}/files/apache-maven-3.1.0-bin.tar.gz http://mirrors.gigenet.com/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz >> ${statusFile} 2>&1
+#	if [ ! -s "${downloadPath}/apache-maven-3.1.0-bin.tar.gz" ]; then
+#		${fetchCmd} ${downloadPath}/apache-maven-3.1.0-bin.tar.gz http://mirrors.gigenet.com/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz >> ${statusFile} 2>&1
 #	fi
 
 #	if [ ! -d "/opt/apache-maven-3.1.1/bin/" ]; then
-#		tar -zxf ${Spath}/files/apache-maven-3.1.0-bin.tar.gz -C /opt
+#		tar -zxf ${downloadPath}/apache-maven-3.1.0-bin.tar.gz -C /opt
 #	fi
 	if [ ! -s "/etc/profile.d/maven-3.1.sh" ]; then
 		cat > /etc/profile.d/maven-3.1.sh << EOM
@@ -937,7 +927,7 @@ configShibbolethSSLForLDAPJavaKeystore()
 
 }
 
-configTomcatSSLServerKeySWAMID()
+configTomcatSSLServerKey()
 
 {
 
@@ -945,7 +935,7 @@ configTomcatSSLServerKeySWAMID()
 	if [ ! -s "${certpath}server.key" ]; then
 		${Echo} "Generating SSL key and certificate request"
 		openssl genrsa -out ${certpath}server.key 2048 2>/dev/null
-		openssl req -new -key ${certpath}server.key -out ${certREQ} -config ${Spath}/files/openssl.cnf -subj "/CN=${certCN}/O=${certOrg}/C=${certC}"
+		openssl req -new -key ${certpath}server.key -out ${certREQ} -config ${downloadPath}/openssl.cnf -subj "/CN=${certCN}/O=${certOrg}/C=${certC}"
 	fi
 	if [ "${selfsigned}" = "n" ]; then
 		${Echo} "Put the certificate from TCS in the file: ${certpath}server.crt" >> ${messages}
@@ -1052,7 +1042,7 @@ patchTomcatConfigs ()
 
 }
 
-configShibbolethFederationValidationKeySWAMID ()
+configShibbolethFederationValidationKey ()
 
 {
 
@@ -1224,20 +1214,20 @@ cAns=$(askYesNo "Save config" "Do you want to save theese config values?\n\nIf y
 	fi
 
 	if [ "${GUIen}" = "y" ]; then
-		${whiptailBin} --backtitle "SWAMID IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${Spath}/files/confirm.tx 20 75 3>&1 1>&2 2>&3
+		${whiptailBin} --backtitle "SWAMID IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
 	else
-		cat ${Spath}/files/confirm.tx
+		cat ${downloadPath}/confirm.tx
 	fi
 	cAns=$(askYesNo "Confirm" "Do you want to install this IDP with theese options?" "no")
 
-	rm ${Spath}/files/confirm.tx
+	rm ${downloadPath}/confirm.tx
 	if [ "${cAns}" = "n" ]; then
 		exit
 	fi
 
 }
 
-performStepsForShibbolethUpgradeIfRequiredSWAMID ()
+performStepsForShibbolethUpgradeIfRequired ()
 
 {
 
@@ -1253,10 +1243,10 @@ ${Echo} "Previous installation found, performing upgrade."
 		mv ${currentShib} ${currentShib}.${ts}
 	fi
 
-	if [ ! -f "${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
+	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
 		fetchShibboleth
 	fi
-	unzip -q ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
+	unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
 
 	unlink /opt/shibboleth-identityprovider
@@ -1308,10 +1298,11 @@ invokeShibbolethInstallProcess ()
 	### Begin of SAML IdP installation Process
 
 
-# check for installed IDP
+	# check for installed IDP
 	setVarUpgradeType
 
-	performStepsForShibbolethUpgradeIfRequiredSWAMID
+	# Override per federation
+	performStepsForShibbolethUpgradeIfRequired
 
 	askForConfigurationData
 	prepConfirmBox
@@ -1360,19 +1351,21 @@ invokeShibbolethInstallProcess ()
 
 	createCertificatePathAndHome
 
-	#FIXME pivot on the federation profile as to how to deal with certificates
 	
-	installCertificatesSWAMID
+	# Override per federation
+	installCertificates
 
 	configShibbolethSSLForLDAPJavaKeystore
 
-	configTomcatSSLServerKeySWAMID
+	# Override per federation
+	configTomcatSSLServerKey
 
 	patchShibbolethLDAPLoginConfigs
 
 	patchTomcatConfigs
 	
-	configShibbolethFederationValidationKeySWAMID
+	# Override per federation
+	configShibbolethFederationValidationKey
 
 	patchShibbolethConfigs
 

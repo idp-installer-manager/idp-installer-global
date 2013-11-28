@@ -22,6 +22,7 @@ fi
 #
 backupPath="${Spath}/backups/"
 templatePath="${Spath}/assets"
+downloadPath="${Spath}/downloads"
 backupList="${backupPath}/recoverypoints.txt"
 freeradiusfile="${Spath}/files/freeradius.tx"
 
