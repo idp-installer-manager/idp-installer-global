@@ -16,15 +16,16 @@
                                 <div class="span10">
 
       <table width=100%>
-    <tr><td><font size="+2" ><b>Help - Identity Appliance Interactive Configuration Builder</b></font></td>
-        <td align=right><img align="center" width="250" src="./img/CANARIE_h_250px.png" alt="CANARIE logo" /></td></tr></table>
+    <tr><td><font size="+2" ><b>Help <br>
+      Identity Appliance Interactive Configuration Builder</b></font></td>
+        <td align=right><img align="center" width="250" src="./img/logo.png" alt="CANARIE logo" /></td></tr></table>
 <br>                             
                 <h4>Introduction</h4>
                <p id="intro">Welcome! This interactive page will guide you through an interview process to craft a configuration used to build and support an IdP installation. This interview process aims to simplify and consolidate the questions needed to configure your environment as quickly and efficiently as possible. The default behaviour of this tool is to build a base instance that can be used for testing and serve as a base for production use.<br>
     
                 <h5>The Steps</h5>
                 <ul>
-                  <li>Fill in your answers in the form below or  <a href="#use_existing_config">import an existing configuration</a>
+                  <li>Fill in your answers in the form below or  import an existing configuration
                   <li>When complete,  click 'Generate Configuration File'. This ensures the latest edits have been captured.
                   <li>Cut and paste the results into a file named 'config' in the same directory as the installer on your server.
                   <li>run the installer command: <i>./deploy_idp.sh</i> and follow the instructions during the build process.
@@ -56,7 +57,7 @@
 
   <h5>A Word About Security</h5>
                   We recognize that collecting information to key systems with credentials and passwords should be treated carefully.  With this in mind, this HTML page uses local javascript and JQuery libraries to produce the configuration file used to do the installation. It intentionally does not store any passwords and/or configuration details and allows you to cut and paste the resulting configuration file where you need it.<br>
-                  With this in mind, we've also created a feature where you can take an existing configuration file and import it. <br> <a href="#use_existing_config">Click here to import your existing configuration</a>
+                  With this in mind, we've also created a feature where you can take an existing configuration file and import it. <br> Click here to import your existing configuration
 
                 
                 <h5>Intended Installer Uses</h5>
@@ -72,7 +73,8 @@
                   <li>Any desired updates to the web sign on page
                  </ul>   
                 <br>
-                 <sup>* a Certificate Signing Request(<a href="http://en.wikipedia.org/wiki/Certificate_signing_request" target="new">CSR</a>(new window) is generated in the base install 
+                <br>
+                 <sup>* a Certificate Signing Request(<a href="http://en.wikipedia.org/wiki/Certificate_signing_request" target="new">CSR</a>
                   </sup>
 
                 <br>
