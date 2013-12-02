@@ -128,7 +128,7 @@
         <!-- To use: fill in 'metadataURL' and 'backingFile' properties on MetadataResource element -->
 
         <metadata:MetadataProvider id="URLMD" xsi:type="metadata:FileBackedHTTPMetadataProvider"
-                          metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed.xml"
+                          metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
                           backingFile="/home/shib/live/shibboleth-idp/metadata/caf_metadata_signed.xml">
             <metadata:MetadataFilter xsi:type="metadata:ChainingFilter">
                 <metadata:MetadataFilter xsi:type="metadata:RequiredValidUntil" 

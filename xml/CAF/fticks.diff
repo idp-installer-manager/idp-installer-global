@@ -1,7 +1,7 @@
 55a56,63
 > 	<appender name="IDP_FTICKS" class="net.nordu.logback.FTicksAppender">
-> 		<syslogHost>syslog.swamid.se</syslogHost>
-> 		<federationIdentifier>swamid</federationIdentifier>
+> 		<syslogHost>logger.canarie.ca</syslogHost>
+> 		<federationIdentifier>caf</federationIdentifier>
 > 		<version>1.0</version>
 > 		<keyFile>/opt/shibboleth-idp/conf/fticks-key.txt</keyFile>
 > 	</appender>

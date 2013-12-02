@@ -4,10 +4,25 @@
 my_local_override_msg="Overriden by ${my_ctl_federation}"
 echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired"
 
+
+#
+#	GLOBAL overrides
+#
+#  Things you want to be available to any BASH function in the script should be overridden here.
+
+		echo -e "Overriding certOrg, CertCN, certC"
+		certOrg="${freeRADIUS_svr_org_name}"
+		certCN="${freeRADIUS_svr_commonName}"
+		certC="Canada"
+		certLongC="CA"
+
+
+
 configTomcatSSLServerKey()
 
 {
 		echo -e "${my_local_override_msg}"
+
 
 	#set up ssl store
 	if [ ! -s "${certpath}server.key" ]; then
@@ -132,7 +147,7 @@ echo -e "${my_local_override_msg}"
 	fi
 
 	if [ "${fticks}" != "n" ]; then
-		patch /opt/shibboleth-idp/conf/logging.xml -i ${Spath}/xml/fticks.diff >> ${statusFile} 2>&1
+		patch /opt/shibboleth-idp/conf/logging.xml -i ${Spath}/xml/CAF/fticks.diff >> ${statusFile} 2>&1
 		touch /opt/shibboleth-idp/conf/fticks-key.txt
 		chown ${tcatUser} /opt/shibboleth-idp/conf/fticks-key.txt
 	fi
