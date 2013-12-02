@@ -1063,7 +1063,7 @@ ${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signe
 patchShibbolethConfigs ()
 {
 
-patch shibboleth config files
+# patch shibboleth config files
 	${Echo} "Patching config files"
 	mv /opt/shibboleth-idp/conf/attribute-filter.xml /opt/shibboleth-idp/conf/attribute-filter.xml.dist
 	cp ${Spath}/files/attribute-filter.xml.swamid /opt/shibboleth-idp/conf/attribute-filter.xml
