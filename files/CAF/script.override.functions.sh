@@ -2,7 +2,9 @@
 
 # announce the override action since this is just a plain include
 my_local_override_msg="Overriden by ${my_ctl_federation}"
-echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired"
+my_ctl_functionOverrides="configTomcatSSLServerKey installCertificates configShibbolethFederationValidationKey performStepsForShibbolethUpgradeIfRequired askForSaveConfigToLocalDisk patchShibbolethLDAPLoginConfigs"
+
+echo -e "\n\nOverriding functions: ${my_ctl_functionOverrides}\n\n"
 
 
 #
@@ -13,9 +15,14 @@ echo "Overriding functions: configTomcatSSLServerKey, installCertificates, confi
 		echo -e "Overriding certOrg, CertCN, certC"
 		certOrg="${freeRADIUS_svr_org_name}"
 		certCN="${freeRADIUS_svr_commonName}"
-		certC="Canada"
-		certLongC="CA"
+		certC="CA"
+		certLongC="Canada"
+		certAcro="${certOrg}${certC}"
 
+# this command takes 4min 45sec to run on a core i7 8gb ram SSD disk. 
+# overriding as the other yum commands 
+centosCmdU="yum version"
+# -y update; yum clean all"
 
 
 configTomcatSSLServerKey()
@@ -100,12 +107,15 @@ configShibbolethFederationValidationKey ()
 			# SHA256 Fingerprint=
 			mdSignerFingerSHA256="36:CF:D8:09:0A:88:B8:D7:52:64:E7:90:FE:A1:B6:F7:EC:BE:CF:42:C8:81:AA:F6:F4:59:D3:AE:3B:45:93:04"
 
-	${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signer.crt
+			mdSignerFinger="${mdSignerFingerSHA256}"
+
+
+	${fetchCmd} ${idpPath}credentials/md-signer.crt ${metadataSigningKeyURL}
 	cFinger=`openssl x509 -noout -fingerprint -sha256 -in ${idpPath}/credentials/md-signer.crt | cut -d\= -f2`
 	cCnt=1
 	while [ "${cFinger}" != "${mdSignerFinger}" -a "${cCnt}" -le 10 ]; do
-		${fetchCmd} ${idpPath}/credentials/md-signer.crt ${metadataSigningKeyURL}
-		cFinger=`openssl x509 -noout -fingerprint -sha1 -in ${idpPath}/credentials/md-signer.crt | cut -d\= -f2`
+		${fetchCmd} ${idpPath}credentials/md-signer.crt ${metadataSigningKeyURL}
+		cFinger=`openssl x509 -noout -fingerprint -sha256 -in ${idpPath}/credentials/md-signer.crt | cut -d\= -f2`
 		cCnt=`expr ${cCnt} + 1`
 	done
 	if [ "${cFinger}" != "${mdSignerFinger}" ]; then
@@ -120,7 +130,7 @@ patchShibbolethConfigs ()
 echo -e "${my_local_override_msg}"
 
 # patch shibboleth config files
-	${Echo} "Patching config files"
+	${Echo} "Patching config files for ${my_ctl_federation}"
 	mv /opt/shibboleth-idp/conf/attribute-filter.xml /opt/shibboleth-idp/conf/attribute-filter.xml.dist
 
 	#cp ${Spath}/files/attribute-filter.xml.swamid /opt/shibboleth-idp/conf/attribute-filter.xml
@@ -128,14 +138,14 @@ echo -e "${my_local_override_msg}"
 	${Echo} "patchShibbolethConfigs:Overlaying attribute-filter.xml with CAF defaults"
 
 	cp ${Spath}/files/CAF/attribute-filter.xml.template /opt/shibboleth-idp/conf/attribute-filter.xml
-
+	chmod ugo+r /opt/shibboleth-idp/conf/attribute-filter.xml
 
 	patch /opt/shibboleth-idp/conf/handler.xml -i ${Spath}/${prep}/handler.xml.diff >> ${statusFile} 2>&1
 
 	${Echo} "patchShibbolethConfigs:Overlaying relying-filter.xml with CAF trusts"
-	patch /opt/shibboleth-idp/conf/relying-party.xml -i ${Spath}/xml/CAF/relying-party.xml.diff >> ${statusFile} 2>&1
+	patch /opt/shibboleth-idp/conf/relying-party.xml -i ${Spath}/xml/${my_ctl_federation}/relying-party.xml.diff >> ${statusFile} 2>&1
 
-	patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/attribute-resolver.xml.diff >> ${statusFile} 2>&1
+	patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff >> ${statusFile} 2>&1
 
 	if [ "${google}" != "n" ]; then
 		repStr='<!-- PLACEHOLDER DO NOT REMOVE -->'
@@ -175,6 +185,9 @@ echo -e "${my_local_override_msg}"
 		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
 		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
 	fi
+
+echo "applying chown "
+chmod o+r /opt/shibboleth-idp/conf/attribute-filter.xml
 
 
 }
@@ -252,4 +265,62 @@ fi
 
 
 }
+
+
+askForSaveConfigToLocalDisk ()
+{
+
+echo -e "${my_local_override_msg}"
+
+# Since everything goes through the config process on the webpage, we do not need this anymore
+
+# cAns=$(askYesNo "Save config" "Do you want to save theese config values?\n\nIf you save theese values the current config file will be ovverwritten.\n NOTE: No passwords will be saved.")
+
+# 	if [ "${cAns}" = "y" ]; then
+# 		writeConfigFile
+# 	fi
+
+# 	if [ "${GUIen}" = "y" ]; then
+# 		${whiptailBin} --backtitle "SWAMID IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
+# 	else
+# 		cat ${downloadPath}/confirm.tx
+# 	fi
+# 	cAns=$(askYesNo "Confirm" "Do you want to install this IDP with theese options?" "no")
+
+# 	rm ${downloadPath}/confirm.tx
+# 	if [ "${cAns}" = "n" ]; then
+# 		exit
+# 	fi
+
+}
+
+
+patchShibbolethLDAPLoginConfigs ()
+
+{
+
+echo -e "${my_local_override_msg}"
+
+#FIXME: alter override for federation aware setting rather than just the 'CAF' one
+
+
+	# 	application server specific
+	if [ "${type}" = "ldap" ]; then
+		ldapServerStr=""
+		for i in `${Echo} ${ldapserver}`; do
+			ldapServerStr="`${Echo} ${ldapServerStr}` ldap://${i}"
+		done
+		ldapServerStr="`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`"
+
+		cat ${Spath}/${prep}/CAF/login.conf.diff.template \
+			| sed -re "s#LdApUrI#${ldapServerStr}#;s/LdApBaSeDn/${ldapbasedn}/;s/SuBsEaRcH/${subsearch}/;s/LdApCrEdS/${ldapbinddn}/;s/LdApPaSsWoRd/${ldappass}/" \
+			> ${Spath}/${prep}/CAF/login.conf.diff
+		files="`${Echo} ${files}` ${Spath}/${prep}/CAF/login.conf.diff"
+		patch /opt/shibboleth-idp/conf/login.config -i ${Spath}/${prep}/CAF/login.conf.diff >> ${statusFile} 2>&1
+	fi
+
+}
+
+# s/LdApCrEdS/${ldapbinddn}/;s/LdApPaSsWoRd/${ldappass}/
+
 

@@ -132,7 +132,7 @@ setJavaCACerts ()
 generatePasswordsForSubsystems ()
 
 {
-	generate keystore pass
+	# generate keystore pass
 	if [ -z "${pass}" ]; then
 		pass=`${passGenCmd}`
 	fi
@@ -851,16 +851,18 @@ EOM
 
 configShibbolethXMLAttributeResolverForLDAP ()
 {
+	# using ${my_ctl_federation} as the federation tag to pivot on regarding what to do.
+	
 	ldapServerStr=""
 	for i in `${Echo} ${ldapserver}`; do
 		ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
 	done
 	ldapServerStr=`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`
-	cat ${Spath}/xml/attribute-resolver.xml.diff.template \
+	cat ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff.template \
 		| sed -re "s#LdApUrI#${ldapServerStr}#;s/LdApBaSeDn/${ldapbasedn}/;s/LdApCrEdS/${ldapbinddn}/;s/LdApPaSsWoRd/${ldappass}/" \
 		| sed -re "s/NiNcRePlAcE/${ninc}/;s/CeRtAcRoNyM/${certAcro}/;s/CeRtOrG/${certOrg}/;s/CeRtC/${certC}/;s/CeRtLoNgC/${certLongC}/" \
-		> ${Spath}/xml/attribute-resolver.xml.diff
-	files="`${Echo} ${files}` ${Spath}/xml/attribute-resolver.xml.diff"
+		> ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff
+	files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff"
 
 }
 
@@ -1292,6 +1294,24 @@ fi
 
 }
 
+
+enableTomcatOnRestart ()
+{
+
+# ensure proper start/stop at run level 3 for the machine are in place for tomcat and related services
+	ckCmd="/sbin/chkconfig"
+	ckArgs="--level 3"
+	ckState="on" 
+	ckServices="tomcat6"
+
+	for myService in $ckServices
+	do
+		${ckCmd} ${ckArgs} ${myService} ${ckState}
+	done
+
+
+}
+
 invokeShibbolethInstallProcess ()
 {
 
@@ -1375,6 +1395,8 @@ invokeShibbolethInstallProcess ()
 
 
 restartTomcatService
+
+enableTomcatOnRestart
 
 
 }

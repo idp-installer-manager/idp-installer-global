@@ -79,6 +79,7 @@ redhatCmdEduroam="yum -y install bind-utils ntp samba samba-winbind freeradius f
 centosCmdEduroam="yum -y install bind-utils ntp samba samba-winbind freeradius freeradius-krb5 freeradius-ldap freeradius-perl freeradius-python freeradius-utils freeradius-mysql make" 
 centosCmdFedSSO="yum -y install java-1.6.0-openjdk-devel tomcat6 mysql-server mysql"
 
+#
 centosCmdU="yum -y update; yum clean all"
 centosCmd1="yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1"
 centosCmd2="yum -y install git java-1.7.0-openjdk-devel >> ${statusFile} 2>&1"
