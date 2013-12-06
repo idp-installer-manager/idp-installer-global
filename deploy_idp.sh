@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 # UTF-8
 HELP="
 
@@ -8,8 +8,11 @@ HELP="
 
 
 ##############################################################################
-# Shibboleth deployment script by Anders Lördal                              #
-# Högskolan i Gävle and SWAMID                                               #
+# Shibboleth deployment script by:                                           #
+# Anders Lördal                                                              #
+# SWAMID                                                                     #
+# Chris Phillips                                                             #
+# CANARIE                                                                    #
 #                                                                            #
 # Version 2.5                                                                #
 #                                                                            #
@@ -35,7 +38,10 @@ HELP="
 ##############################################################################
 "
 
-# Copyright 2011, 2012, 2013 Anders Lördal, Högskolan i Gävle and SWAMID
+# Copyright 2011, 2012, 2013, 2014
+# Anders Lördal, SWAMID
+# Chris Phillips, CANARIE
+#
 #
 # This file is part of IDP-Deployer
 #
@@ -57,34 +63,34 @@ if [ "${USERNAME}" != "root" -a "${USER}" != "root" ]; then
 	exit
 fi
 
+Spath="$(cd "$(dirname "$0")" && pwd)"
+
+# load boostrap functions needed early on in this process
+. ${Spath}/files/script.bootstrap.functions.sh
+setEcho
+# (validateConfig)
+guessLinuxDist
+
 # bootstrapping step from minimal install
 #
 # bindutils to get the basic host info from machine
 # dos2unix to ensure we have a clean include of hand managed files
 #
 
-if [ -f "/usr/bin/host" -a -f "/usr/bin/dos2unix" ]
-then
-	# we do nothing, just making sure it's there
-	echo ""
-else
-	echo -e "\n\nAdding a few packages that we will use during the installation process..."
-	sleep 3;
-	yum -y install bind-utils dos2unix
-
+if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
+	${Echo} "\n\nAdding a few packages that we will use during the installation process..."
+	if [ "${dist}" = "ubuntu" ]; then
+		apt-get -y install bind-utils dos2unix
+	else
+		yum -y install bind-utils dos2unix
+	fi
 fi
 
 
-Spath="$(cd "$(dirname "$0")" && pwd)"
-
-# load boostrap functions needed early on in this process
-# (validateConfig)
-. ${Spath}/files/script.bootstrap.functions.sh
-setEcho 
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
 
-if [ -f "${Spath}/config" ]
+if [ -s "${Spath}/config" ]
 then
 	dos2unix ${Spath}/config
 	. ${Spath}/config		# dynamically (or by hand) editted config file
@@ -154,8 +160,6 @@ $Echo "" > ${statusFile}
 #################################
 #################################
 
-# guess linux dist
-guessLinuxDist
 setDistCommands
 setHostnames
 

@@ -228,7 +228,12 @@ var requiredFieldKeysShibboleth =
       "fticks": 0,
       "eptid": 0,
       "google": 0,
+      "googleDom": 0,
       "ninc": 0,
+      "casurl": 0,
+      "caslogurl": 0,
+      "certAcro": 0,
+      "certLongC": 0,
 
 "freeRADIUS_svr_state": 0,
 "freeRADIUS_svr_local": 0,
@@ -429,7 +434,16 @@ if (loggingEnabled) {console.log ('Update():mapping krb5_libdef_default_realm to
 
         }
  
-
+if ( ($("#type").val())!=="cas" ) {
+	$("#casurlRow").hide();
+} else {
+	$("#casurlRow").show();
+}
+if ( ($("#google").val())!=="y" ) {
+	$("#googleRow").hide();
+} else {
+	$("#googleRow").show();
+}
 
           if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }          
 
@@ -486,8 +500,13 @@ output += "ldapbasedn=\'"+ $("#ldapbasedn").val()+ "\'\n";
 output += "subsearch=\'"+ $("#subsearch").val()+ "\'\n";
 output += "fticks=\'"+ $("#fticks").val()+ "\'\n";
 output += "eptid=\'"+ $("#eptid").val()+ "\'\n";
+output += "casurl=\'"+ $("#casurl").val()+ "\'\n";
+output += "caslogurl=\'"+ $("#caslogurl").val()+ "\'\n";
 output += "google=\'"+ $("#google").val()+ "\'\n";
+output += "googleDom=\'"+ $("#googleDom").val()+ "\'\n";
 output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
+output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
+output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";
 
