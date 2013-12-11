@@ -146,37 +146,6 @@ generatePasswordsForSubsystems ()
 
 }
 
-guessLinuxDist() {
-	lsbBin=`which lsb_release 2>/dev/null`
-	if [ -x "${lsbBin}" ]
-	then
-		dist=`lsb_release -i 2>/dev/null | cut -d':' -f2 | sed -re 's/^\s+//g'`
-	fi
-
-	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]
-	then
-		dist="ubuntu"
-	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]
-	then
-		dist="redhat"
-	elif [ -s "/etc/centos-release" ]
-	then
-		dist="centos"
-	elif [ -s "/etc/redhat-release" ]
-	then
-		dist="redhat"
-	else
-		really=$(askYesNo "Distribution" "Can not guess linux distribution, procede assuming ubuntu(ish)?")
-
-		if [ "${really}" != "n" ]
-		then
-			dist="ubuntu"
-		else
-			cleanBadInstall
-		fi
-	fi
-}
-
 askList() {
 	title=$1
 	text=$2

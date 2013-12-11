@@ -1,5 +1,3 @@
-
-
 // Copyright 2011, 2012, 2013, 2014
 //  Anders Lördal, Högskolan i Gävle and SWAMID
 //  Chris Phillips, CANARIE Inc.
@@ -18,70 +16,78 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with IDP-Deployer. If not, see <http://www.gnu.org/licenses/>.
-
-
 // Set the value below to 1 to enable the logging which will include javascript console and alert popups.
+var loggingEnabled = 2;
 
-var loggingEnabled=2;
+var generatorVersion = 'v30';
+var builddate = new Date();
 
-var generatorVersion='v30';
-var builddate= new Date();
-
-if (loggingEnabled >1)  {  console.log('GeneratorVersion'+generatorVersion); }
-
+if (loggingEnabled > 1) {
+    console.log('GeneratorVersion' + generatorVersion);
+}
 
 
-function simpleCksum(e){for(var r=0,i=0;i<e.length;i++)r=(r<<5)-r+e.charCodeAt(i),r&=r;return r}
 
-function duplicateContactInfo()
-{
-if ($("#dupeData1").is(':checked')) {
-    // duplicate information to fields below
+function simpleCksum(e) {
+    for (var r = 0, i = 0; i < e.length; i++) r = (r << 5) - r + e.charCodeAt(i), r &= r;
+    return r
+}
 
-    $("#freeRADIUS_svr_state").val($("#freeRADIUS_ca_state").val());    
-    $("#freeRADIUS_svr_local").val($("#freeRADIUS_ca_local").val());    
-    $("#freeRADIUS_svr_org_name").val($("#freeRADIUS_ca_org_name").val());    
-    $("#freeRADIUS_svr_email").val($("#freeRADIUS_ca_email").val());    
+function duplicateContactInfo() {
+    if ($("#dupeData1").is(':checked')) {
+        // duplicate information to fields below
+
+        $("#freeRADIUS_svr_state").val($("#freeRADIUS_ca_state").val());
+        $("#freeRADIUS_svr_local").val($("#freeRADIUS_ca_local").val());
+        $("#freeRADIUS_svr_org_name").val($("#freeRADIUS_ca_org_name").val());
+        $("#freeRADIUS_svr_email").val($("#freeRADIUS_ca_email").val());
     }
     update(); // update to ensure the configuration is constructed properly.
 
 
 }
 
-var PoundSignError="Sorry, the # is a reserved character due\nto the template parser.\nPlease remove or choose another special character.";
-var my_ctl_previousSettings= [];  // an associative array of settings as they appear in the config file
+var PoundSignError = "Sorry, the # is a reserved character due\nto the template parser.\nPlease remove or choose another special character.";
+var my_ctl_previousSettings = []; // an associative array of settings as they appear in the config file
 
 
 
 
-function refreshComponentsList()
-{
-  // reconstructs the component list each time the checkbox is changed
-  // then calls update
-  var tmpFieldVal=""; // local field value is wiped to reconstruct it.
+function refreshComponentsList() {
+    // reconstructs the component list each time the checkbox is changed
+    // then calls update
+    var tmpFieldVal = ""; // local field value is wiped to reconstruct it.
 
-  var varComponentStringEduroam="eduroam"
-  var varComponentStringShibboleth="shibboleth"
-  var varDelimiter=" "; 
-   if (loggingEnabled) {console.log ('refreshComponentsList:Starting pass'); }    
-  
-if ($("#ida_component_eduroam").is(':checked')) {
-    // duplicate information to fields below
-    tmpFieldVal += varDelimiter+varComponentStringEduroam;
-   if (loggingEnabled) {console.log ('refreshComponentsList:eduroam selected, tmpFieldVal:'+tmpFieldVal); }    
+    var varComponentStringEduroam = "eduroam"
+    var varComponentStringShibboleth = "shibboleth"
+    var varDelimiter = " ";
+    if (loggingEnabled) {
+        console.log('refreshComponentsList:Starting pass');
+    }
 
-  }
+    if ($("#ida_component_eduroam").is(':checked')) {
+        // duplicate information to fields below
+        tmpFieldVal += varDelimiter + varComponentStringEduroam;
+        if (loggingEnabled) {
+            console.log('refreshComponentsList:eduroam selected, tmpFieldVal:' + tmpFieldVal);
+        }
 
-if ($("#ida_component_shibboleth").is(':checked')) {
-    // duplicate information to fields below
-    tmpFieldVal+=varDelimiter+varComponentStringShibboleth;
-   if (loggingEnabled) {console.log ('refreshComponentsList:shibboleth selected, tmpFieldVal:'+tmpFieldVal); }    
+    }
 
-  }
+    if ($("#ida_component_shibboleth").is(':checked')) {
+        // duplicate information to fields below
+        tmpFieldVal += varDelimiter + varComponentStringShibboleth;
+        if (loggingEnabled) {
+            console.log('refreshComponentsList:shibboleth selected, tmpFieldVal:' + tmpFieldVal);
+        }
+
+    }
 
     $("#installer_section0_buildComponentList").val(tmpFieldVal);
 
-   if (loggingEnabled) {console.log ('refreshComponentsList:processing complete, components selected in tmpFieldVal:|'+    $("#installer_section0_buildComponentList").val()+'|' ); }    
+    if (loggingEnabled) {
+        console.log('refreshComponentsList:processing complete, components selected in tmpFieldVal:|' + $("#installer_section0_buildComponentList").val() + '|');
+    }
 
     update(); // update to ensure the configuration is constructed properly.
 
@@ -90,131 +96,146 @@ if ($("#ida_component_shibboleth").is(':checked')) {
 
 
 
-function importPreviousSettings ()
-{
-      // To do this, we need to split on the lines, then split on the '=' sign and take the right hand side as the value to store
-    
-try{
-      var arrayOfLines = $('#importPreviousConfigArea').val().split(/\n/);
-      var confirmMSG="";
-      if (loggingEnabled) {console.log ('Number of lines:'+arrayOfLines.length); }
+function importPreviousSettings() {
+    // To do this, we need to split on the lines, then split on the '=' sign and take the right hand side as the value to store
 
-      for (var i=0; i < arrayOfLines.length; i++) {
+    try {
+        var arrayOfLines = $('#importPreviousConfigArea').val().split(/\n/);
+        var confirmMSG = "";
+        if (loggingEnabled) {
+            console.log('Number of lines:' + arrayOfLines.length);
+        }
+
+        for (var i = 0; i < arrayOfLines.length; i++) {
 
 
-            var myCurrentLine=arrayOfLines[i];
+            var myCurrentLine = arrayOfLines[i];
 
-            if (loggingEnabled){ console.log('importPreviousSettings():working on line |'+myCurrentLine+'| '); }
+            if (loggingEnabled) {
+                console.log('importPreviousSettings():working on line |' + myCurrentLine + '| ');
+            }
 
             // only begin interpretting a non empty line or  or zeroth location is not a comment sign
-            if  ( ( myCurrentLine.length > 0 ) && (myCurrentLine.indexOf('#') != 0) )
-            {
+            if ((myCurrentLine.length > 0) && (myCurrentLine.indexOf('#') != 0)) {
 
-              if ( myCurrentLine.indexOf('=') > -1 ) {  
-                    
+                if (myCurrentLine.indexOf('=') > -1) {
+
                     //var arrayOfNameValuePairs=arrayOfLines[i].split(/=/);
-//                    var lhs=arrayOfNameValuePairs[0];           // asscoiative array key
-      
-  //                var rhs=(arrayOfNameValuePairs[1]).trim();  // no trailing whitespace in value
-                    
-                    if (loggingEnabled){ console.log('importPreviousSettings():detected equals sign on line |'+myCurrentLine+'| '); }
-               
-                   var arrayOfNameValuePairs= /^(.*)\=\'(.*)\'$/.exec(myCurrentLine);
-                    
+                    //                    var lhs=arrayOfNameValuePairs[0];           // asscoiative array key
+
+                    //                var rhs=(arrayOfNameValuePairs[1]).trim();  // no trailing whitespace in value
+
+                    if (loggingEnabled) {
+                        console.log('importPreviousSettings():detected equals sign on line |' + myCurrentLine + '| ');
+                    }
+
+                    var arrayOfNameValuePairs = /^(.*)\=\'(.*)\'$/.exec(myCurrentLine);
 
 
-                    var lhs=arrayOfNameValuePairs[1];           // asscoiative array key
-      
-                  var rhs=arrayOfNameValuePairs[2];  // no trailing whitespace in value
 
-                    if (loggingEnabled){ console.log('importPreviousSettings():LHS:RHS:'+arrayOfNameValuePairs.length+'|'+lhs+'|=|'+rhs+'|'); }
-              if (loggingEnabled){ console.log('importPreviousSettings():detected equals sign on line |'+myCurrentLine+'| '); }
+                    var lhs = arrayOfNameValuePairs[1]; // asscoiative array key
+
+                    var rhs = arrayOfNameValuePairs[2]; // no trailing whitespace in value
+
+                    if (loggingEnabled) {
+                        console.log('importPreviousSettings():LHS:RHS:' + arrayOfNameValuePairs.length + '|' + lhs + '|=|' + rhs + '|');
+                    }
+                    if (loggingEnabled) {
+                        console.log('importPreviousSettings():detected equals sign on line |' + myCurrentLine + '| ');
+                    }
 
                     // trapping double quotes as a blank
-                      if (loggingEnabled){ console.log('checking for doublequote in: |'+rhs+'| '); }
-
-                    var testdoublequotes = new RegExp(/^\'\'$/);                     // SCRUB THE INPUT
-                    if (testdoublequotes.test(rhs)){ 
-                      if (loggingEnabled){ console.log('Detected doublequote and replacing with blank string'); }
-                      rhs='';
+                    if (loggingEnabled) {
+                        console.log('checking for doublequote in: |' + rhs + '| ');
                     }
-                    else{
-                        if (loggingEnabled){ console.log('skipping slice |'+rhs+'| '); }                         
-//                         rhs= rhs.slice(1,rhs.length-1);
+
+                    var testdoublequotes = new RegExp(/^\'\'$/); // SCRUB THE INPUT
+                    if (testdoublequotes.test(rhs)) {
+                        if (loggingEnabled) {
+                            console.log('Detected doublequote and replacing with blank string');
+                        }
+                        rhs = '';
+                    } else {
+                        if (loggingEnabled) {
+                            console.log('skipping slice |' + rhs + '| ');
+                        }
+                        //                         rhs= rhs.slice(1,rhs.length-1);
                     }
-                    my_ctl_previousSettings[lhs]=rhs;
+                    my_ctl_previousSettings[lhs] = rhs;
 
-                  if(loggingEnabled){
-                     confirmMSG += 'Variable:'+lhs+' is '+ rhs + ' with length:'+rhs.length+' \n';
-                     } 
+                    if (loggingEnabled) {
+                        confirmMSG += 'Variable:' + lhs + ' is ' + rhs + ' with length:' + rhs.length + ' \n';
+                    }
 
-                  }
-                  else {
-                    alert ('The line: '+myCurrentLine+'at row:'+i+'is missing an equals sign, please reload the page to start again');
-                      }
+                } else {
+                    alert('The line: ' + myCurrentLine + 'at row:' + i + 'is missing an equals sign, please reload the page to start again');
+                }
             }
-              // skip the blank lines
+            // skip the blank lines
 
-      }
-      if (loggingEnabled) { console.log (confirmMSG); }
+        }
+        if (loggingEnabled) {
+            console.log(confirmMSG);
+        }
 
-      applyImports();  // now load the imports into their respective fields.
+        applyImports(); // now load the imports into their respective fields.
 
+    } catch (e) {
+        alert(e);
     }
-    catch (e)
-      { alert(e);}
 
-return false;
+    return false;
 
 }
 
-var suppressedImportKeys= {"installer_section0_version": 0,
-                           "installer_section0_builddate": 0,
-                           "installer_section0_fingerprint":0 
-                         };
+var suppressedImportKeys = {
+    "installer_section0_version": 0,
+    "installer_section0_builddate": 0,
+    "installer_section0_fingerprint": 0
+};
 
 
-var requiredFieldKeysEduroam= {
+var requiredFieldKeysEduroam = {
 
-  "my_eduroamDomain" :0,
+    "my_eduroamDomain": 0,
 
-  "krb5_libdef_default_realm": 0,
-"krb5_realms_def_dom": 0,
-"krb5_domain_realm": 0,
-"smb_workgroup": 0,
-"smb_netbios_name": 0,
-"smb_passwd_svr": 0,
-"smb_realm": 0,
+    "krb5_libdef_default_realm": 0,
+    "krb5_realms_def_dom": 0,
+    "krb5_domain_realm": 0,
+    "smb_workgroup": 0,
+    "smb_netbios_name": 0,
+    "smb_passwd_svr": 0,
+    "smb_realm": 0,
 
-"installer_section2_title": 0,
-"freeRADIUS_realm": 0,
-"freeRADIUS_cdn_prod_passphrase": 0,
+    "installer_section2_title": 0,
+    "freeRADIUS_realm": 0,
+    "freeRADIUS_cdn_prod_passphrase": 0,
 
-"freeRADIUS_clcfg_ap1_ip": 0,
-"freeRADIUS_clcfg_ap1_secret": 0,
-"freeRADIUS_clcfg_ap2_ip": 0,
-"freeRADIUS_clcfg_ap2_secret": 0,
+    "freeRADIUS_clcfg_ap1_ip": 0,
+    "freeRADIUS_clcfg_ap1_secret": 0,
+    "freeRADIUS_clcfg_ap2_ip": 0,
+    "freeRADIUS_clcfg_ap2_secret": 0,
 
-"freeRADIUS_pxycfg_realm": 0,
+    "freeRADIUS_pxycfg_realm": 0,
 
-"installer_section3_title": 0,
-"freeRADIUS_ca_state": 0,
-"freeRADIUS_ca_local": 0,
-"freeRADIUS_ca_org_name": 0,
-"freeRADIUS_ca_email": 0,
-"freeRADIUS_ca_commonName": 0,
+    "installer_section3_title": 0,
+    "freeRADIUS_ca_state": 0,
+    "freeRADIUS_ca_local": 0,
+    "freeRADIUS_ca_org_name": 0,
+    "freeRADIUS_ca_email": 0,
+    "freeRADIUS_ca_commonName": 0,
 
-"installer_section4_title": 0,
-"freeRADIUS_svr_state": 0,
-"freeRADIUS_svr_local": 0,
-"freeRADIUS_svr_org_name": 0,
-"freeRADIUS_svr_email": 0,
-"freeRADIUS_svr_commonName": 0,
-                         };
+    "installer_section4_title": 0,
+    "freeRADIUS_svr_state": 0,
+    "freeRADIUS_svr_local": 0,
+    "freeRADIUS_svr_org_name": 0,
+    "freeRADIUS_svr_email": 0,
+    "freeRADIUS_svr_commonName": 0,
+};
 
 
-var requiredFieldKeysShibboleth =
-{
+var requiredFieldKeysShibboleth = {
+
 
         "appserv": 0,
       "type": 0,
@@ -228,13 +249,18 @@ var requiredFieldKeysShibboleth =
       "fticks": 0,
       "eptid": 0,
       "google": 0,
+      "googleDom": 0,
       "ninc": 0,
+      "casurl": 0,
+      "caslogurl": 0,
+      "certAcro": 0,
+      "certLongC": 0,
 
-"freeRADIUS_svr_state": 0,
-"freeRADIUS_svr_local": 0,
-"freeRADIUS_svr_org_name": 0,
-"freeRADIUS_svr_email": 0,
-"freeRADIUS_svr_commonName": 0,
+    "freeRADIUS_svr_state": 0,
+    "freeRADIUS_svr_local": 0,
+    "freeRADIUS_svr_org_name": 0,
+    "freeRADIUS_svr_email": 0,
+    "freeRADIUS_svr_commonName": 0,
 
 
 
@@ -243,193 +269,237 @@ var requiredFieldKeysShibboleth =
 
 //var cNeeded="#FFFF00"
 //var cNeeded="#FBE89C"
-var cNeeded="#FFDD20"
+var cNeeded = "#FFDD20"
 
-var cFilled="#4CC552"
-var cNeutral="#FFFFFF"
-
-
-function setDependantFieldColours (desiredHexColour,arrayOfFields)
-{
+var cFilled = "#4CC552"
+var cNeutral = "#FFFFFF"
 
 
-  // document.getElementById('installer_section0_buildDescription').style.backgroundColor='#4CC552'
-   if (loggingEnabled) {console.log ('colourFields:entering'); }
+    function setDependantFieldColours(desiredHexColour, arrayOfFields) {
 
 
-        for (var key in arrayOfFields)
-        {
-            var keyLength=(document.getElementById(key)).value.length;
-
-            if (loggingEnabled) {console.log ('colourFields:'+key+' is of length:'+keyLength); }
-
-          if (keyLength < 1 )
-          {
-          document.getElementById(key).style.backgroundColor= desiredHexColour
-          }else
-          {
-            if (loggingEnabled) {console.log ('colourFields:'+key+' is non empty, no colour change'); }
-
-          }
-          // yellow '#FFFF00'
+        // document.getElementById('installer_section0_buildDescription').style.backgroundColor='#4CC552'
+        if (loggingEnabled) {
+            console.log('colourFields:entering');
+        }
 
 
-         
-         
-          if (loggingEnabled) {console.log ('colourFields:exiting'); }
-        } 
-        
-}
+        for (var key in arrayOfFields) {
+            var keyLength = (document.getElementById(key)).value.length;
+
+            if (loggingEnabled) {
+                console.log('colourFields:' + key + ' is of length:' + keyLength);
+            }
+
+            if (keyLength < 1) {
+                document.getElementById(key).style.backgroundColor = desiredHexColour
+            } else {
+                if (loggingEnabled) {
+                    console.log('colourFields:' + key + ' is non empty, no colour change');
+                }
+
+            }
+            // yellow '#FFFF00'
 
 
-function applyImports ()
-{
 
-        for (var key in my_ctl_previousSettings)
-        {
-          keyValue=my_ctl_previousSettings[key]; 
-          if (loggingEnabled) {console.log ('About to set field '+key+' to:|'+keyValue+'|'); }
 
-                  if ( key in suppressedImportKeys )
-                  {
-                      if (loggingEnabled) {console.log ('**SUPPRESSED setting field |'+key+'| to:|'+keyValue+'|'); }
+            if (loggingEnabled) {
+                console.log('colourFields:exiting');
+            }
+        }
 
-                  }
-                  else
-                  {
-                        $('#'+key).val(keyValue);  // jquery to set the value. 
+    }
 
-                        $('#'+key).css('backgroundColor', cFilled);
 
-                        if (loggingEnabled) {console.log ('Setting field '+key+' to:|'+keyValue+'|'); }
-                  }
+    function applyImports() {
 
-          if (loggingEnabled) {console.log ('Completed setting field '+key+' to:|'+keyValue+'|'); }
-        } 
+        for (var key in my_ctl_previousSettings) {
+            keyValue = my_ctl_previousSettings[key];
+            if (loggingEnabled) {
+                console.log('About to set field ' + key + ' to:|' + keyValue + '|');
+            }
+
+            if (key in suppressedImportKeys) {
+                if (loggingEnabled) {
+                    console.log('**SUPPRESSED setting field |' + key + '| to:|' + keyValue + '|');
+                }
+
+            } else {
+                $('#' + key).val(keyValue); // jquery to set the value. 
+
+                $('#' + key).css('backgroundColor', cFilled);
+
+                if (loggingEnabled) {
+                    console.log('Setting field ' + key + ' to:|' + keyValue + '|');
+                }
+            }
+
+            if (loggingEnabled) {
+                console.log('Completed setting field ' + key + ' to:|' + keyValue + '|');
+            }
+        }
 
         applyComponentCheckboxes()
         update(); // refresh the updated section
 
-}
+    }
 
-function applyComponentCheckboxes ()
+    function applyComponentCheckboxes()
 
-{
-  // called to ensure checkboxes for the component list are checked
+    {
+        // called to ensure checkboxes for the component list are checked
 
-  var varComponentStringEduroam="eduroam"
-  var varComponentStringShibboleth="shibboleth"
-    
-   if (loggingEnabled) {console.log ('applyComponentCheckboxes:Starting pass'); }    
-  
-  if (  ($("#installer_section0_buildComponentList").val() ).indexOf(varComponentStringEduroam)>-1) 
-  {
-      // set thit to true 
-      $("#ida_component_eduroam").prop("checked", true);
-     if (loggingEnabled) {console.log ('applyComponentCheckboxes:Setting eduroam checkbox on'); }    
+        var varComponentStringEduroam = "eduroam"
+        var varComponentStringShibboleth = "shibboleth"
 
-  }
+        if (loggingEnabled) {
+            console.log('applyComponentCheckboxes:Starting pass');
+        }
 
+        if (($("#installer_section0_buildComponentList").val()).indexOf(varComponentStringEduroam) > -1) {
+            // set thit to true 
+            $("#ida_component_eduroam").prop("checked", true);
+            if (loggingEnabled) {
+                console.log('applyComponentCheckboxes:Setting eduroam checkbox on');
+            }
 
-  if (  ($("#installer_section0_buildComponentList").val() ).indexOf(varComponentStringShibboleth)>-1) 
-  {
-      // set thit to true 
-      $("#ida_component_shibboleth").prop("checked", true);
-     if (loggingEnabled) {console.log ('applyComponentCheckboxes:Setting Shibboleth checkbox on'); }    
-
-  }
-
-   if (loggingEnabled) {console.log ('applyComponentCheckboxes:processing complete'); }
-
-}
-
-function updateCtx(senderObj)
-
-{
-if (loggingEnabled) {console.log ('UpdateCtx():about to set the field to filled in'); }         
-  senderObj.style.backgroundColor=cFilled;
-
-  update();
-}
+        }
 
 
-function update()
-{
-    var numFields=24;
-    var progressIncrement=1/numFields*100;
-    var progress=0;
-    var output = "";
+        if (($("#installer_section0_buildComponentList").val()).indexOf(varComponentStringShibboleth) > -1) {
+            // set thit to true 
+            $("#ida_component_shibboleth").prop("checked", true);
+            if (loggingEnabled) {
+                console.log('applyComponentCheckboxes:Setting Shibboleth checkbox on');
+            }
 
-    // taking some exclusive variables on this page and plugging them in
-    // set the eduroam domain
-          if (loggingEnabled) {console.log ('Update():begin mapping'); }
+        }
 
-//////////////////////////// my_eduroamDomain
+        if (loggingEnabled) {
+            console.log('applyComponentCheckboxes:processing complete');
+        }
 
-if (loggingEnabled) {console.log ('Update():mapping my_eduroamDomain'); }          
-    if( ($("#my_eduroamDomain").val())==undefined )
-        {
-          if (loggingEnabled) {console.log ('my_eduroamDomain is undefined'); }          
+    }
 
-        }else{ 
+    function updateCtx(senderObj)
 
-          if (loggingEnabled) {console.log ('Update():presets: my_eduroamDomain is:'+$("#my_eduroamDomain").val() ); }          
+    {
+        if (loggingEnabled) {
+            console.log('UpdateCtx():about to set the field to filled in');
+        }
+        senderObj.style.backgroundColor = cFilled;
 
-            $("#freeRADIUS_realm").val($("#my_eduroamDomain").val());    
-            $("#freeRADIUS_pxycfg_realm").val($("#krb5_libdef_default_realm").val());  
-            $("#smb_realm").val($("#krb5_libdef_default_realm").val());  
+        update();
+    }
 
 
-        };
+    function update() {
+        var numFields = 24;
+        var progressIncrement = 1 / numFields * 100;
+        var progress = 0;
+        var output = "";
 
-//////////////////////////// krb5_libdef_default_realm (lowercasing)
+        // taking some exclusive variables on this page and plugging them in
+        // set the eduroam domain
+        if (loggingEnabled) {
+            console.log('Update():begin mapping');
+        }
 
-if (loggingEnabled) {console.log ('Update():mapping krb5_libdef_default_realm to krb5_realms_def_dom lowercased'); }          
-    if( ($("#krb5_libdef_default_realm").val())==undefined )
-        {
-          if (loggingEnabled) {console.log ('krb5_libdef_default_realm is undefined'); }          
+        //////////////////////////// my_eduroamDomain
 
-        }else{ 
+        if (loggingEnabled) {
+            console.log('Update():mapping my_eduroamDomain');
+        }
+        if (($("#my_eduroamDomain").val()) == undefined) {
+            if (loggingEnabled) {
+                console.log('my_eduroamDomain is undefined');
+            }
 
-          if (loggingEnabled) {console.log ('Update():presets: krb5_libdef_default_realm is:|'+$("#krb5_libdef_default_realm").val()+'|' ); }          
+        } else {
 
-            $("#krb5_realms_def_dom").val( ($("#krb5_libdef_default_realm").val()).toLowerCase() ) ;
+            if (loggingEnabled) {
+                console.log('Update():presets: my_eduroamDomain is:' + $("#my_eduroamDomain").val());
+            }
 
-              if (loggingEnabled) {console.log ('Update():presets: krb5_realms_def_dom is:|'+$("#krb5_realms_def_dom").val()+'|' ); }          
+            $("#freeRADIUS_realm").val($("#my_eduroamDomain").val());
+            $("#freeRADIUS_pxycfg_realm").val($("#krb5_libdef_default_realm").val());
+            $("#smb_realm").val($("#krb5_libdef_default_realm").val());
+
 
         };
 
-//////////////////////////// idpurl
+        //////////////////////////// krb5_libdef_default_realm (lowercasing)
 
-        if (loggingEnabled) {console.log ('Update():mapping idpurl'); }          
+        if (loggingEnabled) {
+            console.log('Update():mapping krb5_libdef_default_realm to krb5_realms_def_dom lowercased');
+        }
+        if (($("#krb5_libdef_default_realm").val()) == undefined) {
+            if (loggingEnabled) {
+                console.log('krb5_libdef_default_realm is undefined');
+            }
 
-//      if( ($("#idpurl").val())==undefined )
-      if( $("#idpurl").val()  )
-        { 
+        } else {
 
-          if (loggingEnabled) {console.log ('Update():presets: idpurl is:|'+$("#idpurl").val() +'|'); }          
+            if (loggingEnabled) {
+                console.log('Update():presets: krb5_libdef_default_realm is:|' + $("#krb5_libdef_default_realm").val() + '|');
+            }
 
-            $("#freeRADIUS_svr_commonName").val($("#idpurl").val());    
-       
-        try {
+            $("#krb5_realms_def_dom").val(($("#krb5_libdef_default_realm").val()).toLowerCase());
 
-                var idpurlArray= /^https:\/\/(.*)$/.exec($("#idpurl").val());
+            if (loggingEnabled) {
+                console.log('Update():presets: krb5_realms_def_dom is:|' + $("#krb5_realms_def_dom").val() + '|');
+            }
 
-                $("#freeRADIUS_svr_commonName").val( idpurlArray[1] );  // blunt, and expects the https in place    
+        };
 
-            }catch  (err)
-              {
-                  if (loggingEnabled) {console.log ('Update():fallback, presets: freeRADIUS_svr_commonName being calculated'); }          
+        //////////////////////////// idpurl
 
-                  $("#freeRADIUS_svr_commonName").val( $("#idpurl").val() );  // ok, failed the https trap 
-                  if (loggingEnabled) {console.log ('Update():presets: freeRADIUS_svr_commonName is:|'+$("#freeRADIUS_svr_commonName").val() +'|'); }          
-           
-              }
+        if (loggingEnabled) {
+            console.log('Update():mapping idpurl');
+        }
+
+        //      if( ($("#idpurl").val())==undefined )
+        if ($("#idpurl").val()) {
+
+            if (loggingEnabled) {
+                console.log('Update():presets: idpurl is:|' + $("#idpurl").val() + '|');
+            }
+
+            $("#freeRADIUS_svr_commonName").val($("#idpurl").val());
+
+            try {
+
+                var idpurlArray = /^https:\/\/(.*)$/.exec($("#idpurl").val());
+
+                $("#freeRADIUS_svr_commonName").val(idpurlArray[1]); // blunt, and expects the https in place    
+
+            } catch (err) {
+                if (loggingEnabled) {
+                    console.log('Update():fallback, presets: freeRADIUS_svr_commonName being calculated');
+                }
+
+                $("#freeRADIUS_svr_commonName").val($("#idpurl").val()); // ok, failed the https trap 
+                if (loggingEnabled) {
+                    console.log('Update():presets: freeRADIUS_svr_commonName is:|' + $("#freeRADIUS_svr_commonName").val() + '|');
+                }
+
+            }
 
 
         }
- 
 
+ 
+if ( ($("#type").val())!=="cas" ) {
+	$("#casurlRow").hide();
+} else {
+	$("#casurlRow").show();
+}
+if ( ($("#google").val())!=="y" ) {
+	$("#googleRow").hide();
+} else {
+	$("#googleRow").show();
+}
 
           if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }          
 
@@ -486,8 +556,13 @@ output += "ldapbasedn=\'"+ $("#ldapbasedn").val()+ "\'\n";
 output += "subsearch=\'"+ $("#subsearch").val()+ "\'\n";
 output += "fticks=\'"+ $("#fticks").val()+ "\'\n";
 output += "eptid=\'"+ $("#eptid").val()+ "\'\n";
+output += "casurl=\'"+ $("#casurl").val()+ "\'\n";
+output += "caslogurl=\'"+ $("#caslogurl").val()+ "\'\n";
 output += "google=\'"+ $("#google").val()+ "\'\n";
+output += "googleDom=\'"+ $("#googleDom").val()+ "\'\n";
 output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
+output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
+output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";
 
@@ -507,19 +582,18 @@ output += "installer_section0_fingerprint=\'"+mycksum+"\'\n";
     return true;
 }
 
-function formSubmit() {
-    update();
-    return false;
-}
+
+    function formSubmit() {
+        update();
+        return false;
+    }
 
 
-// help window controls
+    // help window controls
 
- var popupWidth = screen.width/3;
- var popupHeight= screen.height;
-  var leftPos = screen.width - popupWidth;
-   // window.open(this.href, "customWindow", "width=" + popupWidth + ", height=1040, top=0, left=" + leftPos);
+var popupWidth = screen.width / 3;
+var popupHeight = screen.height;
+var leftPos = screen.width - popupWidth;
+// window.open(this.href, "customWindow", "width=" + popupWidth + ", height=1040, top=0, left=" + leftPos);
 
-var popupWinSettings='width='+popupWidth+',height='+popupHeight+',left='+leftPos+',top=100,scrollbars=no,resizable=yes,status=no,location=yes,toolbar=no,menubar=no';
-
-
+var popupWinSettings = 'width=' + popupWidth + ',height=' + popupHeight + ',left=' + leftPos + ',top=100,scrollbars=no,resizable=yes,status=no,location=yes,toolbar=no,menubar=no';
