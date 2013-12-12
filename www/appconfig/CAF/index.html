@@ -463,57 +463,8 @@ installer_section3_title:
   <br>
   
   
-  <!-- installer_section4_title: -->
+  
 
-<input id="installer_section4_title" type="text" placeholder="" onchange="updateCtx(this)" >
-<BR>
-
-LDAP Server Host(separate servers with a space):<input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="update()"><BR>
-LDAP Bind DN:<input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="" onchange="update()"><BR>
-LDAP Password:<input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="update()"><BR>
-
-LDAP Base DN:<input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="" onchange="update()"><BR>
-
-LDAP Subtree search?: <select id="subsearch"  onchange="update()">
-                                                <option name="subsearchTrue" value="true" selected>Yes</option>
-                                               <option name="subsearchFalse" value="false">No</option>
-                                             </select>
-                                             <br>
-
-
-</td></tr>
-
-<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">FedSSO Features</font><b></td></tr>
-                                            <tr><td colspan="1">
-These are some additional configurations that enhance the FedSSO operation<br> 
-                                          </td><td></tr>
-                                           <tr>
-<td colspan="2" align="right">
-Install support for ePTID <select id="eptid"  onchange="update()">
-                                                <option name="eptidY" value="y" selected>Yes(recommended)</option>
-                                               <option name="eptidN" value="n">No</option>
-                                             </select>
-                                             <br>
-Send anonymous usage stats to CAF <select id="fticks"  onchange="update()">
-                                                <option name="ftickY" value="y" selected>Yes(recommended)</option>
-                                               <option name="ftickN" value="n">No</option>
-                                             </select>
-                                             <br>
-
-<!-- google apps support -- not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
-
-<input type=hidden id="google" value="n">
-<input type=hidden id="googleDom" value="n">
-<input type=hidden id="certAcro" value="">
-<input type=hidden id="certLongC" value="">
-<!--
-Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
-                                                <option name="googleY" value="y" selected>Yes</option>
-                                               <option name="googleN" value="n">No</option>
-                                             </select>
-                                             <br>
-
--->
   Copy info to fields below? 
   <input id="dupeData1" onclick="return duplicateContactInfo();" type="checkbox" name="dupeData1" value="yes" />
   
@@ -698,6 +649,22 @@ Enable Support to sign into Google Apps  <select id="google"  onchange="update()
                       
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
                       
+<input type=hidden id="googleDom" value="n">
+<input type=hidden id="certAcro" value="">
+<input type=hidden id="certLongC" value="Canada">
+<!--
+Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
+                                                <option name="googleY" value="y" selected>Yes</option>
+                                               <option name="googleN" value="n">No</option>
+                                             </select>
+                                             <br>
+
+-->
+
+
+
+
+
                       <input type=hidden id="google" value="n">
                       <!--
 Enable Support to sign into Google Apps  
@@ -812,8 +779,7 @@ installer_section2_title:
       </tr>
     </table>
     
-    <textarea id="importPreviousConfigArea" class="span7"  rows="10" cols="40">
-    </textarea>
+    <textarea id="importPreviousConfigArea" class="span7"  rows="10" cols="40"></textarea>
     
     <hr color="red" size="10">
     <hr>

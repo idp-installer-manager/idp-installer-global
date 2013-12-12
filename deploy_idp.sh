@@ -90,6 +90,7 @@ if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 fi
 
 
+<<<<<<< HEAD
 Spath="$(cd "$(dirname "$0")" && pwd)"
 
 # load boostrap functions needed early on in this process
@@ -97,6 +98,8 @@ Spath="$(cd "$(dirname "$0")" && pwd)"
 . ${Spath}/files/script.messages.sh
 . ${Spath}/files/script.bootstrap.functions.sh
 
+=======
+>>>>>>> 895a2e64488d9d1b38638f87894cbe9e935fbafe
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
 

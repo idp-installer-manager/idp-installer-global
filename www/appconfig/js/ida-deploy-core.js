@@ -130,11 +130,7 @@ function importPreviousSettings() {
                     }
 
                     var arrayOfNameValuePairs = /^(.*)\=\'(.*)\'$/.exec(myCurrentLine);
-
-
-
                     var lhs = arrayOfNameValuePairs[1]; // asscoiative array key
-
                     var rhs = arrayOfNameValuePairs[2]; // no trailing whitespace in value
 
                     if (loggingEnabled) {
@@ -176,7 +172,7 @@ function importPreviousSettings() {
         }
         if (loggingEnabled) {
             console.log(confirmMSG);
-        }
+            }
 
         applyImports(); // now load the imports into their respective fields.
 
@@ -317,26 +313,27 @@ var cNeutral = "#FFFFFF"
         for (var key in my_ctl_previousSettings) {
             keyValue = my_ctl_previousSettings[key];
             if (loggingEnabled) {
-                console.log('About to set field ' + key + ' to:|' + keyValue + '|');
+                console.log('applyImports():About to set field ' + key + ' to:|' + keyValue + '|');
             }
 
             if (key in suppressedImportKeys) {
                 if (loggingEnabled) {
-                    console.log('**SUPPRESSED setting field |' + key + '| to:|' + keyValue + '|');
+                    console.log('applyImports():**SUPPRESSED setting field |' + key + '| to:|' + keyValue + '|');
                 }
 
             } else {
+
                 $('#' + key).val(keyValue); // jquery to set the value. 
 
                 $('#' + key).css('backgroundColor', cFilled);
 
                 if (loggingEnabled) {
-                    console.log('Setting field ' + key + ' to:|' + keyValue + '|');
+                    console.log('applyImports():Setting field ' + key + ' to:|' + keyValue + '|');
                 }
             }
 
             if (loggingEnabled) {
-                console.log('Completed setting field ' + key + ' to:|' + keyValue + '|');
+                console.log('applyImports():Completed setting field ' + key + ' to jquery-value():|' + $('#' + key).val() + '|');
             }
         }
 
@@ -395,6 +392,7 @@ var cNeutral = "#FFFFFF"
 
 
     function update() {
+
         var numFields = 24;
         var progressIncrement = 1 / numFields * 100;
         var progress = 0;
