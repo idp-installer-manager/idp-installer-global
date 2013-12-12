@@ -2,7 +2,7 @@
 >    edu.vt.middleware.ldap.jaas.LdapLoginModule required
 >       ldapUrl="LdApUrI"
 >       base="LdApBaSeDn"
->       bindDN="LdApCrEdS"
+>       bindDn="LdApCrEdS"
 >       bindCredential="LdApPaSsWoRd"
 >	tls="true"
 >       userField="samaccountname"
