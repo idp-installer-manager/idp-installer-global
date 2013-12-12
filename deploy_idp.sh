@@ -69,6 +69,7 @@ fi
 Spath="$(cd "$(dirname "$0")" && pwd)"
 
 # load boostrap functions needed early on in this process
+. ${Spath}/files/script.messages.sh
 . ${Spath}/files/script.bootstrap.functions.sh
 setEcho
 # (validateConfig)
@@ -90,16 +91,7 @@ if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 fi
 
 
-<<<<<<< HEAD
-Spath="$(cd "$(dirname "$0")" && pwd)"
 
-# load boostrap functions needed early on in this process
-# (validateConfig)
-. ${Spath}/files/script.messages.sh
-. ${Spath}/files/script.bootstrap.functions.sh
-
-=======
->>>>>>> 895a2e64488d9d1b38638f87894cbe9e935fbafe
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
 
@@ -110,6 +102,10 @@ then
 	. ${Spath}/config_descriptions	# descriptive terms for each element - uses associative array cfgDesc[varname]
 
 	ValidateConfig
+
+	# experimental --> validateConnectivity
+
+	#exit
 
 else
 	echo -e "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"

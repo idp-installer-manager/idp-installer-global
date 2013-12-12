@@ -151,3 +151,140 @@ guessLinuxDist() {
 	fi
 }
 
+
+###
+### experimental
+###
+
+validateConnectivity()
+
+{
+	# based on feature chosen, enforce reachability of devices
+	
+	# must see Authentication store for each service, otherwise, we may as well bail right now.
+	#
+	# cloned from ValidateConfig and requires script.messages.sh enforceConnectivity fields
+
+	${Echo} "validateConnectivity(): Step1: Starting connectivity tests"
+
+	# Step 1 - determine, based on service, what exactly we must be able to reach
+	#
+
+
+	vc_connectivity_list=""
+	eval set -- "${installer_section0_buildComponentList}"
+
+	while [ $# -gt 0 ]
+	do
+			# uncomment next 3 echo lines to diagnose variable substitution
+			# echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
+		if [ "XXXXXX" ==  "${1}XXXXXX" ]
+        	then
+			# echo "##### $1 is ${!1}"
+			# echo "########EMPTYEMPTY $1 is empty"
+			echo "NO COMPONENTS SELECTED FOR VALIDATION - EXITING IMMEDIATELY"
+			exit
+
+		else
+			echo "working on ${1}"
+			tmpFV="requiredEnforceConnectivityFields${1}"
+			
+
+			echo "=============dynamic var: ${tmpFV}"
+
+
+			vc_connectivity_list="${vc_connectivity_list} `echo "${tmpFV}"`";
+
+			#settingsHumanReadable=" ${settingsHumanReadable}  ${tmpString}:  ${!1}\n"
+			#settingsHumanReadable="${settingsHumanReadable} ${cfgDesc[$1]}:  ${!1}\n"
+		fi
+	
+		shift
+	done
+	
+	#=======
+	#Step 2, based on the list of fields we will require to be forced connectivity, walk the list
+
+	tmpBailIfConnectivityHasAny=""
+		${Echo} "validateConnectivity():Step2: Enumerate Services needed from |${vc_connectivity_list}|"
+
+
+	eval set -- "${vc_connectivity_list}"
+${Echo} "validateConnectivity():Step2: $# services seen from |${vc_connectivity_list}|"
+
+	while [ $# -gt 0 ]
+	do
+			# uncomment next 3 echo lines to diagnose variable substitution
+			 #echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
+			${Echo} "validateConnectivity():Step2:Getting elements from $1, \$$1, ${!1}"
+
+		if [ "XXXXXX" ==  "${1}XXXXXX" ]
+        	then
+			# echo "##### $1 is ${!1}"
+			# echo "########EMPTYEMPTY $1 is empty"
+
+			# When we arrive here, we will then validate each string as a reachable host, if it fails, add to message below
+			# This will allow us to test arbitrary components for reachability right up front and bail.
+
+			echo "validateConnectivity(): empty validation attempt for field ${1} in field aggregate in ${vc_connectivity_list}"
+
+
+		else
+				# Step 3, now that we have the field to use as our 'host', we then try to ping the server.
+				tmpFieldBeingWalked="${!1}"
+				tmpHostForWalking=" `echo "${!tmpFieldBeingWalked}"`";
+
+				#tmpHostsToWalk==" `echo "${!tmpHostsForWalking}"`";
+
+				echo "validateConnectivity():Step 3: Walking:|${tmpFieldBeingWalked}| with these hosts:|${tmpHostForWalking}|"
+
+				
+				eval set -- "${tmpHostForWalking}"
+				
+				echo "validateConnectivity():Step 3.1: $# hosts seen from field:|${tmpFieldBeingWalked}| with these hosts:|${tmpHostForWalking}|"
+
+					for tmpHostVar in "$tmpHostForWalking"; do
+
+							theHOST="`echo ${tmpHostVar} | tr -d ' '`"
+
+							echo "validateConnectivity():Step 4: reading in:|${theHOST}|"
+
+								ping -c 1 -w 5 "${theHOST}" &>/dev/null
+
+							if [ $? -ne 0 ] ; then
+							   echo "${theHOST} is not reachable"
+								tmpBailIfConnectivityHasAny="${tmpBailIfConnectivityHasAny} $1 "
+
+							else
+								echo "${theHOST} is reachable, moving on to next one."
+
+							fi
+
+					done
+
+		fi
+	
+		shift
+	done
+
+# Step 4: if we encounter  a problem, we exit
+
+if [ "XXXXXX" ==  "${tmpBailIfConnectivityHasAny}XXXXXX" ]
+		then
+			echo ""
+		else
+			
+			echo -e "***ERROR***\n\n Runtime reachability check failed for hosts mentioned in ${vc_connectivity_list} from file: ${Spath}/config\n"
+			echo -e " RESULTS:\n\n ${tmpBailIfConnectivityHasAny}";
+			echo ""	
+			echo -e "Please verify that you can ping the servers and that DNS is properly resolving their names in /etc/hosts if necessary.\n\n"
+			exit 1;
+		fi
+
+
+
+
+
+
+}
+

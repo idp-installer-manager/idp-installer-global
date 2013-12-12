@@ -886,7 +886,12 @@ configShibbolethSSLForLDAPJavaKeystore()
 		done
 	done
 
+	numLDAPCertificateFiles=0
+	minRequiredLDAPCertificateFiles=1
+
 	for i in `ls ${certpath}${ldapCert}.*`; do
+
+		numLDAPCertificateFiles=$[$numLDAPCertificateFiles +1]
 		md5finger=`keytool -printcert -file ${i} | grep MD5 | cut -d: -f2- | sed -re 's/\s+//g'`
 		test=`keytool -list -keystore ${javaCAcerts} -storepass changeit | grep ${md5finger}`
 		subject=`openssl x509 -subject -noout -in ${i} | awk -F= '{print $NF}'`
@@ -895,6 +900,25 @@ configShibbolethSSLForLDAPJavaKeystore()
 		fi
 		files="`${Echo} ${files}` ${i}"
 	done
+
+	# note the numerical comparison of 
+	if [ "$numLDAPCertificateFiles" -ge "$minRequiredLDAPCertificateFiles" ]; then
+
+		${Echo} "Successfully fetched LDAP SSL certificate(s) fetch from LDAP directory. Number loaded: ${numLDAPCertificateFiles} into this keystore ${javaCAcerts}\n"
+		
+
+	else
+		${Echo} "***SEVERE ERROR*** \n\nAutomatic LDAP SSL certificate fetch from LDAP directory failed!"
+		${Echo} " As a result, the Shibboleth IdP will not connect properly.\nPlease ensure the provided FQDN (NOT IP ADDRESS) is resolvable and pingable before starting again"
+		${Echo} "\n\nCleaning up and exiting"
+		
+		cleanBadInstall
+		exit
+		# Note for dev: if this was called prior to MySQL installation, it may be possible to just run again without doing VM Image restore
+
+	fi
+
+
 
 }
 
@@ -1255,7 +1279,7 @@ ${Echo} "Previous installation found, performing upgrade."
 	${Echo} "\n\n\n\nRunning shiboleth installer"
 	sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 else
-	${Echo} "\nNot an Upgrade but a fresh Shibboleth Install"
+	${Echo} "\nThis is a fresh Shibboleth Install"
 
 
 fi
