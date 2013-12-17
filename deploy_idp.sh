@@ -1,9 +1,6 @@
 #!/bin/sh
 # UTF-8
 
-# enforce some error checking on failed operations by commands.
-#
-#set -exo pipefail
 
 HELP="
 
@@ -11,19 +8,22 @@ HELP="
 
 
 ##############################################################################
-# Shibboleth deployment script by:                                           #
-# Anders Lördal                                                              #
-# SWAMID                                                                     #
-# Chris Phillips                                                             #
-# CANARIE                                                                    #
+#  Federated Identity Deployer Tools script by:                              #
+# Anders Lördal,  SWAMID                                                     #
+# Chris Phillips, CANARIE                                                    #
 #                                                                            #
-# Version 2.5                                                                #
+#                                                                            #
+# Version 2.6                                                                #
 #                                                                            #
 # Deploys a working IDP for SWAMID on an Ubuntu, CentOS or Redhat system     #
-# Uses: tomcat6                                                              #
+# SAML2 Uses: tomcat6                                                        #
 #       shibboleth-identityprovider-2.4.0                                    #
 #       cas-client-3.2.1-release                                             #
-#       mysql-connector-java-5.1.26 (for EPTID)                              #
+#       mysql-connector-java-5.1.27 (for EPTID)                              #
+#       apache-maven-3.1.1 (for building FTICKS plugin)                      #
+# eduroam uses:																 #
+#       freeRADIUS-2.1.12                                                    #
+#       samba-3.6.9 (to connect to AD for MS-CHAPv2)                         #
 #                                                                            #
 # Templates are provided for CAS and LDAP authentication                     #
 #                                                                            #
