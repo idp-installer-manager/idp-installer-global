@@ -251,7 +251,9 @@ var requiredFieldKeysShibboleth = {
       "caslogurl": 0,
       "certAcro": 0,
       "certLongC": 0,
+      "selfsigned": 0,
 
+    "freeRADIUS_svr_country": 0,
     "freeRADIUS_svr_state": 0,
     "freeRADIUS_svr_local": 0,
     "freeRADIUS_svr_org_name": 0,
@@ -487,19 +489,31 @@ var cNeutral = "#FFFFFF"
 
         }
 
- 
-if ( ($("#type").val())!=="cas" ) {
-	$("#casurlRow").hide();
-} else {
-	$("#casurlRow").show();
-}
-if ( ($("#google").val())!=="y" ) {
-	$("#googleRow").hide();
-} else {
-	$("#googleRow").show();
-}
 
-          if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }          
+	if ( ($("#type").val())!=="cas" ) {
+		$("#casurlRow").hide();
+	} else {
+		$("#casurlRow").show();
+	}
+	if ( ($("#google").val())!=="y" ) {
+		$("#googleRow").hide();
+	} else {
+		$("#googleRow").show();
+	}
+	if ($("#freeRADIUS_svr_org_name").val() && ! $("#certAcro").val()) {
+		var words = $('#freeRADIUS_svr_org_name').val().split(' ');
+		var data = ''; 
+		$.each(words, function() {
+			data += this.substring(0,1);
+		});
+		$("#certAcro").val(data);
+		$("#certAcro").css({'backgroundColor': cFilled});
+	}
+	if ($("#casurl").val() && ! $("#caslogurl").val()) {
+		$("#caslogurl").val($("#casurl").val()+"/login");
+		$("#caslogurl").css({'backgroundColor': cFilled});
+	}
+          if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
 
 output += "installer_section0_version=\'"+generatorVersion+"\'\n";
 output += "installer_section0_builddate=\'"+builddate+"\'\n";
@@ -536,6 +550,7 @@ output += "freeRADIUS_ca_email=\'"+ $("#freeRADIUS_ca_email").val()+ "\'\n";
 output += "freeRADIUS_ca_commonName=\'"+ $("#freeRADIUS_ca_commonName").val()+ "\'\n";
 output += "\n";
 output += "installer_section4_title=\'FreeRADIUS TLS Server certificate settings\'\n";
+output += "freeRADIUS_svr_country=\'"+ $("#freeRADIUS_svr_country").val()+ "\'\n";
 output += "freeRADIUS_svr_state=\'"+ $("#freeRADIUS_svr_state").val()+ "\'\n";
 output += "freeRADIUS_svr_local=\'"+ $("#freeRADIUS_svr_local").val()+ "\'\n";
 output += "freeRADIUS_svr_org_name=\'"+ $("#freeRADIUS_svr_org_name").val()+ "\'\n";
@@ -561,6 +576,8 @@ output += "googleDom=\'"+ $("#googleDom").val()+ "\'\n";
 output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
 output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
 output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
+output += "selfsigned=\'"+ $("#selfsigned").val()+ "\'\n";
+
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";
 

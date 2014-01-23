@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv" lang="sv">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
 <link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css">
@@ -29,6 +30,7 @@
 <input id="installer_section0_fingerprint" name="installer_section0_title" type="hidden" value="" />
 <input id="installer_section0_version" name="installer_section0_version" type="hidden" value="" />
 <input id="installer_section0_builddate" name="installer_section0_builddate" type="hidden" value="" />
+<input id="installer_section0_buildComponentList" name="installer_section0_buildComponentList" type="hidden" value="shibboleth" />
 <input id="installer_section0_title" name="installer_section0_title" type="hidden" value="" />
 <input id="installer_section1_title" name="installer_section1_title" type="hidden" value="" />
 <input id="installer_section2_title" name="installer_section2_title" type="hidden" value="" />
@@ -43,7 +45,7 @@
 <table width="100%" border="1">
   <tr>
     <td align="right" colspan="2" valign="center">
-      <input type="hidden" id="my_ctl_federation" value="SWAMID" onchange="update()" />
+      <input type="hidden" id="my_ctl_federation" value="SWAMID" onchange="updateCtx(this)" />
       <a name="top_of_page"></a>
 
       <table width="100%" border="0">
@@ -83,7 +85,7 @@
 
 
    <tr id="my_installer_section0buildDescriptionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Document This Configuration</font><b></td></tr>
-    
+
 
    <tr><td colspan="2" align="right">
      Brief description for this configuration:
@@ -93,23 +95,23 @@
 <!--
                 onchange="update();this.style.backgroundColor=cFilled;" > <br />
                 c=cFilled;if (this.checked==true){c=cNeeded}
-   --> 
+   -->
   </td></tr>
 
 <!-- general header section -->
    <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">Federated Single Sign On Configuration  Information</font><b></td></tr>
-    
+
 
    <tr id="my_idpurlRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Name of Server Running This Configuration</font><b></td></tr>
-    
+
    <tr><td colspan="2" align="right">
 
-    Public URL of the Server:<input id="idpurl" type="text" placeholder="https://idpdev.mydomain.se" onchange="update()"><br />
+    Public URL of the Server:<input id="idpurl" type="text" placeholder="https://idpdev.mydomain.se" onchange="updateCtx(this)" /><br />
 
   </td></tr>
 
    <tr><td colspan="2" align="right">
-    
+
   </td></tr>
 <!-- end header -->
 
@@ -123,31 +125,37 @@
 <tr><td colspan="2" align="right">
 
 
-<!-- Server Certificate Prov/State:<input id="freeRADIUS_svr_state" type="text" placeholder="" onchange="update()"><br /> -->
-Server Certificate City:<input id="freeRADIUS_svr_local" type="text" placeholder="" onchange="update()"><br />
-Server Certificate Org Name:<input id="freeRADIUS_svr_org_name" type="text" placeholder="" onchange="update()"><br />
-Server Certificate Contact email:<input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="update()"><br />
-Server Certificate Common Name:<input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.se" onchange="update()"><br />
+<!-- Server Certificate Prov/State:<input id="freeRADIUS_svr_state" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
+Server Certificate Country Code:<input id="freeRADIUS_svr_country" type="text" value="SE" onchange="updateCtx(this)" /><br />
+<!-- Server Certificate City:<input id="freeRADIUS_svr_local" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
+Server Certificate Org Name:<input id="freeRADIUS_svr_org_name" type="text" placeholder="Högskolan i Gävle" onchange="updateCtx(this)" /><br />
+<!-- Server Certificate Contact email:<input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
+Server Certificate Common Name:<input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.se" onchange="updateCtx(this)" /><br />
+Create a self signed certificate:<select id="selfsigned"  onchange="updateCtx(this)">
+                                                <option name="selfsignedN" value="n" selected="selected">No</option>
+                                                <option name="selfsignedY" value="y">Yes(Only for testing)</option>
+                                             </select>
+                                             <br />
 
 </td></tr>
 
 
    <tr><td colspan="2" align="right">
-    
+
   </td></tr>
 <!-- end header -->
 
 <tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Base Configuration for FedSSO</font><b></td></tr>
                                             <tr><td colspan="2">
-Federated SSO needs credentials to connect to your Directory for 'find and bind' operations as well as to access data about a user.<br /> 
+Federated SSO needs credentials to connect to your Directory for 'find and bind' operations as well as to access data about a user.<br />
                                           </tr>
                                            <tr>
 <td colspan="2" align="right">
-Servlet Container:<input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="update()"><br />
-Authentication type:<select id="type" type="text" onchange="update()"><option value="ldap">LDAP</option><option value="cas">CAS</option></select><br />
-NTP server:<input style="width: 250px;" id="fedSSO_ntpserver" type="text" placeholder="" onchange="update()">
+Servlet Container:<input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" /><br />
+Authentication type:<select id="type" type="text" onchange="updateCtx(this)"><option value="ldap">LDAP</option><option value="cas">CAS</option></select><br />
+NTP server:<input style="width: 250px;" id="ntpserver" type="text" placeholder="ntp.hig.se" onchange="updateCtx(this)" />
 <!--
-<select id="ntpserver"  onchange="update()">
+<select id="ntpserver"  onchange="updateCtx(this)">
       <option name="Vancouver1" value="nt1-cdma.vncv1.bc.net" selected>Vancouver - nt1-cdma.vncv1.bc.net (Stratum 1 - CDMA)</option>
      <option name="Kelowna" value="t1-cdma.keltx1.bc.net">Kelowna - t1-cdma.keltx1.bc.net (Stratum 1 - CDMA)</option>
      <option name="Saskatoon1" value="tick.usask.ca">Saskatoon - tick.usask.ca (Stratum 1 - GPS)</option>
@@ -155,19 +163,19 @@ NTP server:<input style="width: 250px;" id="fedSSO_ntpserver" type="text" placeh
      <option name="Winnipeg1" value="tick.umanitoba.ca">Winnipeg - tick.umanitoba.ca (Stratum 1 - GPS)</option>
      <option name="Winnipeg2" value="tock.umanitoba.ca">Winnipeg - tock.umanitoba.ca (Stratum 1 - GPS)</option>
      <option name="Halifax" value="tick.acorn-ns.ca">Halifax tick.acorn-ns.ca (Stratum 1 - GPS)</option>
-     
+
       </select>
 -->
 
 <br />
-LDAP Server Host(separate servers with a space):<input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="update()"><br />
-LDAP Bind DN:<input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="" onchange="update()"><br />
-LDAP Password:<input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="update()"><br />
+LDAP Server Host(separate servers with a space):<input  style="width: 250px;" id="ldapserver" type="text" placeholder="ldap.hig.se ldap2.hig.se" onchange="updateCtx(this)" /><br />
+LDAP Bind DN:<input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="cn=readUser,dc=hig,dc=se" onchange="updateCtx(this)" /><br />
+LDAP Password:<input  style="width: 250px;" id="ldappass" type="text" placeholder="readUserPassword" onchange="updateCtx(this)" /><br />
 
-LDAP Base DN:<input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="" onchange="update()"><br />
+LDAP Base DN:<input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="dc=hig,dc=se" onchange="updateCtx(this)" /><br />
 
-LDAP Subtree search?: <select id="subsearch"  onchange="update()">
-                                                <option name="subsearchTrue" value="true" selected>Yes</option>
+LDAP Subtree search?: <select id="subsearch"  onchange="updateCtx(this)">
+                                                <option name="subsearchTrue" value="true" selected="selected">Yes</option>
                                                <option name="subsearchFalse" value="false">No</option>
                                              </select>
                                              <br />
@@ -181,15 +189,15 @@ These are some additional configurations that enhance the FedSSO operation<br />
                                           </tr>
                                            <tr>
 <td colspan="2" align="right">
-Attribute that contains norEduPersonNIN with 12 chars:<input style="width: 250px;" id="ninc" type="text" value="norEduPersonNIN" onchange="update()" /><br />
+Attribute that contains norEduPersonNIN with 12 chars:<input style="width: 250px;" id="ninc" type="text" value="norEduPersonNIN" onchange="updateCtx(this)" /><br />
 
-Install support for ePTID:<select id="eptid"  onchange="update()">
-                                                <option name="eptidY" value="y" selected>Yes(recommended)</option>
+Install support for ePTID:<select id="eptid"  onchange="updateCtx(this)">
+                                                <option name="eptidY" value="y" selected="selected">Yes(Recommended)</option>
                                                <option name="eptidN" value="n">No</option>
                                              </select>
                                              <br />
-Send anonymous usage stats to SWAMID:<select id="fticks"  onchange="update()">
-                                                <option name="ftickY" value="y" selected>Yes(recommended)</option>
+Send anonymous usage stats to SWAMID:<select id="fticks"  onchange="updateCtx(this)">
+                                                <option name="ftickY" value="y" selected="selected">Yes(Recommended)</option>
                                                <option name="ftickN" value="n">No</option>
                                              </select>
                                              <br />
@@ -197,17 +205,17 @@ Send anonymous usage stats to SWAMID:<select id="fticks"  onchange="update()">
 <!-- google apps support - not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
 
 <!-- <input type=hidden id="google" value="n"> -->
-Enable Support to sign into Google Apps:<select id="google"  onchange="update()">
+Enable Support to sign into Google Apps:<select id="google"  onchange="updateCtx(this)">
                                                <option name="googleN" value="n" selected="selected">No</option>
                                                <option name="googleY" value="y">Yes</option>
                                              </select>
                                              <br />
 <span id="googleRow">
-Google Apps domain:<input style="width: 250px;" id="googleDom" type="text" placeholder="apps.domain.se" onchange="update()" /><br />
+Google Apps domain:<input style="width: 250px;" id="googleDom" type="text" placeholder="apps.domain.se" onchange="updateCtx(this)" /><br />
 </span>
 <span id="casurlRow">
-CAS server URL:<input style="width: 250px;" id="casurl" type="text" placeholder="https://cas.domain.se/cas" onchange="update()" /><br />
-CAS Login URL:<input style="width: 250px;" id="caslogurl" type="text" placeholder="https://cas.domain.se/cas/login" onchange="update()" /><br />
+CAS server URL:<input style="width: 250px;" id="casurl" type="text" placeholder="https://cas.domain.se/cas" onchange="updateCtx(this)" /><br />
+CAS Login URL:<input style="width: 250px;" id="caslogurl" type="text" placeholder="https://cas.domain.se/cas/login" onchange="updateCtx(this)" /><br />
 </span>
 </td></tr>
 
@@ -217,20 +225,20 @@ Enter static data for organisation information<br />
                                           </tr>
                                            <tr>
 <td colspan="2" align="right">
-norEduOrgAcronym:<input style="width: 250px;" id="certAcro" type="text" placeholder="HiG" onchange="update()" /><br />
-Country descriptor:<input style="width: 250px;" id="certLongC" type="text" placeholder="Sweden" onchange="update()" /><br />
+norEduOrgAcronym:<input style="width: 250px;" id="certAcro" type="text" placeholder="HiG" onchange="updateCtx(this)" /><br />
+Country descriptor:<input style="width: 250px;" id="certLongC" type="text" value="Sweden" onchange="updateCtx(this)" /><br />
 </td></tr>
 
 </td></tr>
 <!-- <tr>
 <td colspan="2" align="right">
-Keystore password for FedSSO encryption keys <input  style="width: 250px;" id="pass" type="text" placeholder="" onchange="update()">
+Keystore password for FedSSO encryption keys <input  style="width: 250px;" id="pass" type="text" placeholder="" onchange="updateCtx(this)" />
                                              <br />
-Keystore password for HTTPS Server encryption keys <input  style="width: 250px;" id="httpspass" type="text" placeholder="" onchange="update()">
+Keystore password for HTTPS Server encryption keys <input  style="width: 250px;" id="httpspass" type="text" placeholder="" onchange="updateCtx(this)" />
                                              <br />
 </td></tr>
 -->
-<!-- <tr><td>installer_section2_title:</td><td><input id="installer_section2_title" type="text" placeholder="" onchange="update()"></td></tr>
+<!-- <tr><td>installer_section2_title:</td><td><input id="installer_section2_title" type="text" placeholder="" onchange="updateCtx(this)" /></td></tr>
 -->
 
 </table>
@@ -247,8 +255,7 @@ Keystore password for HTTPS Server encryption keys <input  style="width: 250px;"
        </div>
                             </div>
                         </div>
-                       
-       
+
 <form>
           <label>        <h4>Autogenerated Configuration File</h4>          </label>
 

@@ -41,20 +41,20 @@ ValidateConfig() {
 	while [ $# -gt 0 ]
 	do
 			# uncomment next 3 echo lines to diagnose variable substitution
-			# echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
+			# ${Echo} "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
 		if [ "XXXXXX" ==  "${1}XXXXXX" ]
         	then
-			# echo "##### $1 is ${!1}"
-			# echo "########EMPTYEMPTY $1 is empty"
-			echo "NO COMPONENTS SELECTED FOR VALIDATION - EXITING IMMEDIATELY"
+			# ${Echo} "##### $1 is ${!1}"
+			# ${Echo} "########EMPTYEMPTY $1 is empty"
+			${Echo} "NO COMPONENTS SELECTED FOR VALIDATION - EXITING IMMEDIATELY"
 			exit
 
 		else
-			echo "working on ${1}"
+			${Echo} "working on ${1}"
 			tmpFV="requiredNonEmptyFields${1}"
 			
 
-			echo "=============dynamic var: ${tmpFV}"
+			${Echo} "=============dynamic var: ${tmpFV}"
 
 
 			vc_attribute_list="${vc_attribute_list} `echo "${!tmpFV}"`";
@@ -74,22 +74,22 @@ ValidateConfig() {
 	
 	# uses indirect reference for variable names. 
 	
-	# echo "======working with ${vc_attribute_list}"
+	# ${Echo} "======working with ${vc_attribute_list}"
 
 
 
 	eval set -- "${vc_attribute_list}"
 	while [ $# -gt 0 ]
 	do
-			# uncomment next 3 echo lines to diagnose variable substitution
-			# echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
+			# uncomment next 3 ${Echo} lines to diagnose variable substitution
+			# ${Echo} "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
 		if [ "XXXXXX" ==  "${!1}XXXXXX" ]
         	then
-			# echo "##### $1 is ${!1}"
-			# echo "########EMPTYEMPTY $1 is empty"
+			# ${Echo} "##### $1 is ${!1}"
+			# ${Echo} "########EMPTYEMPTY $1 is empty"
 			tmpBailIfHasAny="${tmpBailIfHasAny} $1 "
 		else
-			#echo "ha"
+			${Echo} "ha"
 			tmpString=" `echo "${cfgDesc[$1]}"`";
 			tmpval=" `echo "${!1}"`";
 			#settingsHumanReadable=" ${settingsHumanReadable}  ${tmpString}:  ${!1}\n"
@@ -103,14 +103,14 @@ ValidateConfig() {
 	#
 		if [ "XXXXXX" ==  "${tmpBailIfHasAny}XXXXXX" ]
 		then
-			echo ""
+			${Echo} ""
 		else
-			echo -e "\n\nDoing pre-flight check..\n"
+			${Echo} "\n\nDoing pre-flight check..\n"
 			sleep 2;
-			echo -e "Discovered some required field as blank from file: ${Spath}/config\n"
-			echo -e " ${tmpBailIfHasAny}";
+			${Echo} "Discovered some required field as blank from file: ${Spath}/config\n"
+			${Echo} " ${tmpBailIfHasAny}";
 			echo ""	
-			echo -e "Please check out the file for the above empty attributes. If needed, regenerate from the config tool at ~/www/index.html\n\n"
+			${Echo} "Please check out the file for the above empty attributes. If needed, regenerate from the config tool at ~/www/index.html\n\n"
 			exit 1;
 		fi
 
@@ -118,6 +118,10 @@ cat > ${freeradiusfile} << EOM
 ${settingsHumanReadable}
 EOM
 
+	# Set certificate variables
+	certOrg="${freeRADIUS_svr_org_name}"
+	certC="${freeRADIUS_svr_country}"
+# 	certLongC="${freeRADIUS_svr_commonName}"
 }
 
 guessLinuxDist() {

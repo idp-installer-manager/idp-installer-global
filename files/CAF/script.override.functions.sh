@@ -145,7 +145,8 @@ echo -e "${my_local_override_msg}"
 	${Echo} "patchShibbolethConfigs:Overlaying relying-filter.xml with CAF trusts"
 	patch /opt/shibboleth-idp/conf/relying-party.xml -i ${Spath}/xml/${my_ctl_federation}/relying-party.xml.diff >> ${statusFile} 2>&1
 
-	patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff >> ${statusFile} 2>&1
+# 	patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff >> ${statusFile} 2>&1
+	cp ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml /opt/shibboleth-idp/conf/attribute-resolver.xml
 
 	if [ "${google}" != "n" ]; then
 		repStr='<!-- PLACEHOLDER DO NOT REMOVE -->'
@@ -182,8 +183,24 @@ echo -e "${my_local_override_msg}"
 			> ${Spath}/xml/eptid-AR.diff
 		files="`${Echo} ${files}` ${Spath}/xml/eptid-AR.diff"
 
-		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
-		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
+# 		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
+# 		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
+		cat ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon.template \
+			| sed -re "s#SqLpAsSwOrD#${epass}#;s#Large_Random_Salt_Value#${esalt}#" \
+			> ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon
+		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon"
+
+		repStr='<!-- EPTID RESOLVER PLACEHOLDER -->'
+		sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/eptid.add.resolver" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-resolver.xml
+
+		repStr='<!-- EPTID ATTRIBUTE CONNECTOR PLACEHOLDER -->'
+		sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-resolver.xml
+
+		repStr='<!-- EPTID PRINCIPAL CONNECTOR PLACEHOLDER -->'
+		sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/eptid.add.princCon" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-resolver.xml
+
+		repStr='<!-- EPTID FILTER PLACEHOLDER -->'
+		sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/eptid.add.filter" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-filter.xml
 	fi
 
 echo "applying chown "
@@ -237,7 +254,7 @@ ${Echo} "Previous installation found, performing upgrade."
 		fi
 		cp /opt/ndn-shib-fticks/target/*.jar /opt/shibboleth-identityprovider/lib
 	else
-		fticks=$(askYesNo "Send anonymous data" "Do you want to send anonymous usage data to SWAMID?\nThis is recommended")
+		fticks=$(askYesNo "Send anonymous data" "Do you want to send anonymous usage data to ${my_ctl_federation}?\nThis is recommended")
 
 		if [ "${fticks}" != "n" ]; then
 			installFticksIfEnabled
@@ -281,7 +298,7 @@ echo -e "${my_local_override_msg}"
 # 	fi
 
 # 	if [ "${GUIen}" = "y" ]; then
-# 		${whiptailBin} --backtitle "SWAMID IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
+# 		${whiptailBin} --backtitle "${my_ctl_federation} IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
 # 	else
 # 		cat ${downloadPath}/confirm.tx
 # 	fi

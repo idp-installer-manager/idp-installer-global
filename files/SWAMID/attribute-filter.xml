@@ -23,6 +23,7 @@ The configuration documented here require Shibboleth IdP v2.3.4 or later, which 
 
 </afp:AttributeFilterPolicy>
 
+<!-- EPTID FILTER PLACEHOLDER -->
 
 <!-- entity-category-sfs-1993-1153 -->
 <afp:AttributeFilterPolicy id="entity-category-sfs-1993-1153">

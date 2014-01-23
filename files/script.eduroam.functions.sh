@@ -181,15 +181,17 @@ deployEduroamCustomizations() {
 	fi
 
 # ensure proper start/stop at run level 3 for the machine are in place for winbind,smb, and of course, radiusd
-	ckCmd="/sbin/chkconfig"
-	ckArgs="--level 3"
-	ckState="on" 
-	ckServices="winbind smb radiusd"
+	if [ "${dist}" != "ubuntu" ]; then
+		ckCmd="/sbin/chkconfig"
+		ckArgs="--level 3"
+		ckState="on" 
+		ckServices="winbind smb radiusd"
 
-	for myService in $ckServices
-	do
-		${ckCmd} ${ckArgs} ${myService} ${ckState}
-	done
+		for myService in $ckServices
+		do
+			${ckCmd} ${ckArgs} ${myService} ${ckState}
+		done
+	fi
 
 # disable SELinux as it interferes with the winbind process.
 
@@ -263,7 +265,7 @@ displayMainMenu() {
 
                 else
                         echo "eduroam tasks[ install| uninstall ]"
-                        read eduroamTask 
+                        read eduroamTask
                         echo ""
                 fi
 
@@ -281,7 +283,7 @@ displayMainMenu() {
 		elif [ "${eduroamTask}" = "installEduroam" ]
 		then
 
-		if echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
+			if echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
 
 
 	                        echo "install chosen, creating Restore Point" >> ${statusFile} 2>&1
@@ -291,11 +293,11 @@ displayMainMenu() {
 	                        echo "Update Completed" >> ${statusFile} 2>&1
 
 				doInstall
-		else
+			else
 				echo "Sorry, necessary configuration for eduroam is incomplete, please redo config file"
 				exit
 
-		fi
+			fi
 
 
 		elif [ "${eduroamTask}" = "installFedSSO" ]

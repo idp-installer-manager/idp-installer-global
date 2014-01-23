@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # UTF-8
 
 
@@ -21,7 +21,7 @@ HELP="
 #       cas-client-3.2.1-release                                             #
 #       mysql-connector-java-5.1.27 (for EPTID)                              #
 #       apache-maven-3.1.1 (for building FTICKS plugin)                      #
-# eduroam uses:																 #
+# eduroam uses:                                                              #
 #       freeRADIUS-2.1.12                                                    #
 #       samba-3.6.9 (to connect to AD for MS-CHAPv2)                         #
 #                                                                            #
@@ -84,7 +84,7 @@ guessLinuxDist
 if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 	${Echo} "\n\nAdding a few packages that we will use during the installation process..."
 	if [ "${dist}" = "ubuntu" ]; then
-		apt-get -y install bind-utils dos2unix
+		apt-get -y install dos2unix
 	else
 		yum -y install bind-utils dos2unix
 	fi
@@ -108,7 +108,7 @@ then
 	#exit
 
 else
-	echo -e "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"
+	${Echo} "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"
 	exit
 
 fi
@@ -126,13 +126,12 @@ federationSpecificInstallerOverrides="${Spath}/files/${my_ctl_federation}/script
 
 if [ -f "${federationSpecificInstallerOverrides}" ]
 then
-	echo -e "\n\nAdding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}"
+	${Echo} "\n\nAdding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}"
 	. ${federationSpecificInstallerOverrides}
 else
-	echo -e "\n\nNo federation specific overrides detected for federation: ${my_ctl_federation} (if this was blank, the config file does not contain BASH variable my_ctl_federation)"
-	echo -e "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now"
-	exit	
-
+	${Echo} "\n\nNo federation specific overrides detected for federation: ${my_ctl_federation} (if this was blank, the config file does not contain BASH variable my_ctl_federation)"
+	${Echo} "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now"
+	exit
 fi
 
 
