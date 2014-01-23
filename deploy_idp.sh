@@ -175,7 +175,13 @@ setHostnames
 
 
 setInstallStatus
-displayMainMenu
+
+
+while [ "${mainMenuExitFlag}" -eq 0 ]; do
+
+	displayMainMenu
+
+done
 
 
 

@@ -60,7 +60,7 @@ review(){
 
 modifyIPTABLESForEduroam ()
 {
-	{Echo} "Updating IPTABLES configuration to permit eduroam UDP ports, 1812,1813,1814 to be accepted"
+	${Echo} "Updating IPTABLES configuration to permit eduroam UDP ports, 1812,1813,1814 to be accepted"
 
 iptables -A INPUT -m udp -p udp --dport 1812 -j ACCEPT
 iptables -A INPUT -m udp -p udp --dport 1813 -j ACCEPT
@@ -228,7 +228,7 @@ echo "Start Up processes completed" >> ${statusFile} 2>&1
 
 doInstall() {
 			
-			${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy eduroam customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with creating restore point and deploying Canadian Access Federation(CAF) eduroam settings?" ${whipSize} 3>&1 1>&2 2>&3
+			${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy eduroam customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Canadian Access Federation(CAF) eduroam settings?" ${whipSize} 3>&1 1>&2 2>&3
                 	continueFwipe=$?
                 	if [ "${continueFwipe}" -eq 0 ]
                 	then
@@ -249,7 +249,7 @@ doInstall() {
 
                 	fi
 			
-			displayMainMenu
+			# displayMainMenu
 
 }
 
@@ -332,7 +332,7 @@ displayMainMenu() {
                         echo "Restore Point Completed" >> ${statusFile} 2>&1
                         echo "Installing FreeRADIUS and eduroam configuration" >> ${statusFile} 2>&1
 			invokeEduroamInstallProcess
-
+			doInstall
 			             echo "Installing Shibboleth and Federated SSO configuration" >> ${statusFile} 2>&1
 			
 			invokeShibbolethInstallProcess
@@ -341,6 +341,9 @@ displayMainMenu() {
                                 echo "Update Completed" >> ${statusFile} 2>&1
 
 #			doInstall
+		else
+
+			mainMenuExitFlag=1
 			
 		fi
 

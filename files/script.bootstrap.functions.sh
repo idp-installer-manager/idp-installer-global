@@ -50,11 +50,11 @@ ValidateConfig() {
 			exit
 
 		else
-			${Echo} "working on ${1}"
+			#debug ${Echo} "working on ${1}"
 			tmpFV="requiredNonEmptyFields${1}"
 			
 
-			${Echo} "=============dynamic var: ${tmpFV}"
+			#debug ${Echo} "=============dynamic var: ${tmpFV}"
 
 
 			vc_attribute_list="${vc_attribute_list} `echo "${!tmpFV}"`";
@@ -89,7 +89,7 @@ ValidateConfig() {
 			# ${Echo} "########EMPTYEMPTY $1 is empty"
 			tmpBailIfHasAny="${tmpBailIfHasAny} $1 "
 		else
-			${Echo} "ha"
+			# ${Echo} "ha"
 			tmpString=" `echo "${cfgDesc[$1]}"`";
 			tmpval=" `echo "${!1}"`";
 			#settingsHumanReadable=" ${settingsHumanReadable}  ${tmpString}:  ${!1}\n"
@@ -190,11 +190,11 @@ validateConnectivity()
 			exit
 
 		else
-			echo "working on ${1}"
+			#debug: echo "working on ${1}"
 			tmpFV="requiredEnforceConnectivityFields${1}"
 			
 
-			echo "=============dynamic var: ${tmpFV}"
+			#debug: echo "=============dynamic var: ${tmpFV}"
 
 
 			vc_connectivity_list="${vc_connectivity_list} `echo "${tmpFV}"`";

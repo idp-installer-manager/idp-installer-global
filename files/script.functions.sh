@@ -1176,23 +1176,28 @@ fi
 notifyUserBeforeExit()
 {
 
-	${Echo} "\n\n\n"
+	${Echo} "======================================"
+	${Echo} "Install processing complete\n\n\n"
 
 	if [ "${selfsigned}" = "n" ]; then
 		cat ${certREQ}
-		${Echo} "Here is the certificate request, go get at cert!"
+		${Echo} "\n\nLooks like you have chosen to use use a commercial certificate for Shibboleth\n"
+		${Echo} "Here is the certificate request you need to request a certificate from a commercial provider"
 		${Echo} "Or replace the cert files in ${certpath}"
 		${Echo} "\n\nNOTE!!! the keystore for https is a PKCS12 store\n\n"
 	fi
 	${Echo} ""
-	${Echo} "Register at testshib.org and register idp, and run a logon test."
+	${Echo} "If you installed Shibboleth, the default installation for Shibboleth is done.\n"
+	${Echo} "To test it, register at testshib.org and register this idp and run a logon test."
 	${Echo} "Certificate for idp metadata is in the file: /opt/shibboleth-idp/credentials/idp.crt"
 
 if [ "${type}" = "ldap" ]; then
 	${Echo} "\n\n"
-	${Echo} "Read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
+	${Echo} "Looks like you have chosen to use ldap for Shibboleth single sign on.\n"
+	${Echo} "Please read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
 fi
 
+	${Echo} "\n\nProcessing complete, exiting.\n"
 
 
 }
@@ -1323,6 +1328,10 @@ invokeShibbolethInstallProcess ()
 
 	### Begin of SAML IdP installation Process
 
+${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
+                	continueFwipe=$?
+                	if [ "${continueFwipe}" -eq 0 ]
+                	then
 
 	# check for installed IDP
 	setVarUpgradeType
@@ -1403,6 +1412,12 @@ invokeShibbolethInstallProcess ()
 restartTomcatService
 
 enableTomcatOnRestart
+
+else
+
+				${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
+
+                	fi
 
 
 }

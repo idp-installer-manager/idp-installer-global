@@ -27,6 +27,7 @@ backupList="${backupPath}/recoverypoints.txt"
 freeradiusfile="${Spath}/files/freeradius.tx"
 
 
+mainMenuExitFlag=0
 whipSize="13 75"
 certpath="/opt/shibboleth-idp/ssl/"
 httpsP12="/opt/shibboleth-idp/credentials/https.p12"
