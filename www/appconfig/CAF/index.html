@@ -24,7 +24,10 @@
               <div class="row">
                 <div class="span10">
                   
-                  
+                  <!-- tooltips can be enabled with any HTML tag by adding rel='tooltip' and title='tooltiptext' 
+                        naming convention is field 'id'+'ToolTip' at teh end e.g. installer_section0ToolTip
+
+                -->
                   
                   <!--   begining  of the form-->
                   
@@ -68,11 +71,16 @@
                                       </b>
                                     </font>
                                     <br>
-                                    An interactive tool to help build your eduroam and Shibboleth configuration
+                                    An interactive tool to help build your eduroam and Shibboleth config
                                     
                                   </td>
                                   <td align=right colspan=2>
-                                    <img align="center" width="250" src="./img/logo.png" alt="Federation Operator logo" />
+
+                                   
+
+                                     <img align="center" width="250" height="80" src="./img/logo.png" alt="Federation Operator logo" />
+                                   
+
                                   </td>
                                 </tr>
                                 
@@ -93,10 +101,11 @@
                                     </a>
                                   </td>
                                   <td>
-                                    
+                                    <!--
                                     <button class="btn" onclick="window.open ('help.html','help window',popupWinSettings);" >
                                       Help
                                     </button>
+-->
                                   </td>
                                 </tr>
                               </table>
@@ -128,6 +137,7 @@
                                         <table border=0 cellpadding=4>
                                           <tr>
                                             <td>
+
                                               eduroam service using FreeRADIUS:
                                             </td>
                                             <td>
@@ -170,6 +180,13 @@
                                             ./deploy_idp.sh
                                           </i>
                                           on the target server to initiate the install
+                                          <br>
+                                          - Hover over the tooltip icon: 
+                                          <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is a tooltip"
+           /> for context sensitive help
+                                          <br>
+                                          - this tool best use in Firefox, Chrome, or Safari.  <b>IE is not supported.</b>
                                         </font>
                                         
                                       </td>
@@ -205,6 +222,8 @@
                                       <b>
                                         <font size="+1">
                                           Document This Configuration
+
+
                                         </font>
                                         <b>
                                         </td>
@@ -212,8 +231,19 @@
                                       
                                       
                                       <tr>
+                                       
                                         <td colspan="2" align="right">
-                                          Brief description for this configuration:
+                                          Brief description for this configuration
+                                         
+                                          <img  
+                                          id="installer_section0_buildDescriptionToolTip"
+                                          src="../img/icon_tooltip.gif" alt="ToolTip" 
+                                          rel="tooltip" 
+                                          title="This is a comment field to leave your future self a note about what configuration this is."
+                                          />
+
+                                          :
+                                          
                                           <input style="width: 300px;" id="installer_section0_buildDescription" type="text" placeholder="My Development configuration" 
                                           onchange="updateCtx(this)" >
                                           
@@ -243,7 +273,13 @@ c=cFilled;if (this.checked==true){c=cNeeded}
       <tr>
         <td colspan="2" align="right">
           
-          Public URL of the Server:
+          Public URL of the Server
+         <img id="idpurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The fully qualified URL (https://...) of your server. The HTTPS is not automatically put in so please include it"
+           />
+
+
+          :
           <input id="idpurl" type="text" placeholder="https://idpdev.mydomain.ca" onchange="updateCtx(this)" >
           <BR>
           
@@ -263,7 +299,13 @@ c=cFilled;if (this.checked==true){c=cNeeded}
           
           <tr>
             <td colspan="2" align="right">
-              What is your organization's domain?:
+              What is your organization's domain?
+        <img id="my_eduroamDomainToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the domain your users will use for eduroam (netid@domain.ca) and the scope used for your SAML assertions."
+           />
+
+
+              :
               <input id="my_eduroamDomain" type="text" placeholder="mydomain.ca" 
               onchange="updateCtx(this)" >
               <br>
@@ -301,6 +343,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
           <b>
             <font size="+1">
               Your Active Directory settings
+               
             </font>
             <b>
             </td>
@@ -322,15 +365,26 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                   </td>
                 </tr>
               </table>
-              Active Directory Default AD DOMAIN:
+              Active Directory Default AD DOMAIN
+
+               <img id="krb5_libdef_default_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is your default Active Directory Domain that the CentOS server will need for WinBIND operations. Some people use their domain name, some use a shortened name with .LOCAL at the end."
+           />
+            :
               <input id="krb5_libdef_default_realm" type="text" placeholder="DOMAIN.LOCAL" onchange="update();this.style.backgroundColor=cFilled;">
               <br>
               
               <!-- AD Default AD DOMAIN lowercased: -->
               
+
               <input id="krb5_realms_def_dom" type="hidden" placeholder="e.g. domain.local" onchange="updateCtx(this)" >
               
-              Active Directory Internet Domain:
+              Active Directory Internet Domain
+ <img id="krb5_domain_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is your internet domain name that Active Directory knows about and resides in. In most cases it is the same as your organization name, but if it is not, that is ok too"
+           />
+
+              :
               <input id="krb5_domain_realm" type="domain.ca" placeholder="e.g. domain.ca" onchange="updateCtx(this)" >
               <br>
               <hr>
@@ -343,16 +397,32 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                   </td>
                 </tr>
               </table>
-              Active Directory Domain Name - pre-windows2000/NETBIOS Name:
+              Active Directory Domain Name - pre-windows2000/NETBIOS Name 
+<img id="smb_workgroupToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="SAMBA is the Linux bridge to Windows and is required for the authentication tools. While appearing like duplication, it too needs the AD domain, but the pre-Windows2000/NETBIOS name which is the single string short form (no dots). Please contact your AD admin if you do not know what this is"
+           />
+              :
               <input id="smb_workgroup" type="text" placeholder="e.g. DOMAIN" onchange="updateCtx(this)" >
               <br>
-              Legacy NETBIOS host name in Active Directory:
+              Legacy NETBIOS host name in Active Directory
+<img id="smb_netbios_nameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the name of the host in Active Directory. Some systems may need it to pre-exist before the machine can join the domain properly. It is usually a single non dotted string."
+           />
+              :
               <input id="smb_netbios_name" type="text" placeholder="e.g. APP1" onchange="updateCtx(this)" >
               <br>
-              IP Address of your Primary AD DC:
+              IP Address of your Primary AD DC
+<img id="smbpasswd_svrToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The actual IP address of the domain controller that will process authentication requests."
+           />
+              :
               <input id="smb_passwd_svr" type="text" placeholder="e.g. 1.2.3.4" onchange="updateCtx(this)" >
               <br>
-              SAMBA Active Directory DOMAIN:
+              SAMBA Active Directory DOMAIN
+<img id="smb_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The WINDOWS Active Directory domain in which will be used on the requests for a password authentication"
+           />
+              :
               <input id="smb_realm" type="text" placeholder="e.g. DOMAIN.LOCAL" onchange="updateCtx(this)" >
               <br>
               
@@ -382,29 +452,62 @@ c=cFilled;if (this.checked==true){c=cNeeded}
               <tr>
                 <td colspan="2" align="right">
                   
-                  domain used for eduroam:
+                  domain used for eduroam
+<img id="freeRADIUS_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This may have been auto-populated from above. This is the domain your users will use for eduroam (netid@domain.ca). "
+           />
+
+                  :
                   <input id="freeRADIUS_realm" type="text" placeholder="" onchange="updateCtx(this)" >
                   <br>
-                  Active Directory realm used to authenticate users:
+                  Active Directory realm used to authenticate users
+<img id="freeRADIUS_pxycfg_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This may have been auto-populated from above. This is your WINDOWS AD domain that Active Directory knows about and resides in. "
+           />
+                  :
                   <input id="freeRADIUS_pxycfg_realm" type="text" placeholder="" onchange="updateCtx(this)" >
                   <br>
-                  Passphrase to your upstream eduroam servers:
+                  RADIUS Shared Key provided by CANARIE for upstream eduroam servers
+<img id="freeRADIUS_cdn_prod_passphraseToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is provided to you by CANARIE for production. For test, any string may be used. The pound sign(#) is not supported in this string at this time"
+           />
+
+                  :
                   <input id="freeRADIUS_cdn_prod_passphrase" type="text" placeholder="" 
                   onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
   <br>
   <hr>
-  Access Point #1 IP Address:
+  Access Point #1 IP Address
+<img id="freeRADIUS_clcfg_ap1_ipToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the IP address of your 1st wireless access point or controller that may be treated as a client by this server. "
+           />
+  :
   <input id="freeRADIUS_clcfg_ap1_ip" type="text" placeholder="" onchange="updateCtx(this)" >
   <br>
-  Access Point #1 Passphrase(min 8 char):
+  Access Point #1 RADIUS Shared Key(min 8 char)
+  <img id="freeRADIUS_clcfg_ap1_secretToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the 8 character or more passphrase of your 1st wireless access point or controller. Pound sign(#) in the passphrase is not supported at this time. "
+           />
+:
   <input id="freeRADIUS_clcfg_ap1_secret" type="text" placeholder="" 
   onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
   <br>
   <hr>
-  Access Point #2 IP Address:
+  Access Point #2 IP Address
+<img id="freeRADIUS_clcfg_ap2_ipToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the IP address of your 2nd wireless access point or controller that may be treated as a client by this server. If you have only one, enter an arbitrary IP address like the non routable 172.16.1.1. DO NOT use this host IP OR 127.0.0.1, doing so may cause issues. "
+           />
+
+
+  :
   <input id="freeRADIUS_clcfg_ap2_ip" type="text" placeholder="" onchange="updateCtx(this)" >
   <br>
-  Access Point #1 Passphrase(min 8 char):
+  Access Point #2 RADIUS Shared Key(min 8 char)
+  <img id="freeRADIUS_clcfg_ap2_secretToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the 8 character or more passphrase of your 1st wireless access point or controller. Pound sign(#) in the passphrase is not supported at this time. If you only have 1 AP/Controller, enter abcd1234 as a placeholder. "
+           />
+
+  :
   <input id="freeRADIUS_clcfg_ap2_secret" type="text" placeholder="" 
   onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
   <br>
@@ -445,19 +548,40 @@ installer_section3_title:
         </tr>
       <tr>
         <td colspan="2" align="right">
-          Certificate Authority Prov/State:
+          Certificate Authority Prov/State
+          <img id="freeRADIUS_ca_stateToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the province of your CERTIFICATE AUTHORITY (your institition) resides in "
+           />
+           :
           <input id="freeRADIUS_ca_state" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Certificate Authority City:
+          Certificate Authority City
+                    <img id="freeRADIUS_ca_localToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the city or town of your CERTIFICATE AUTHORITY (your institition) resides in "
+           />
+        :
           <input id="freeRADIUS_ca_local" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Certificate Authority Org Name:
+          Certificate Authority Org Name
+                    <img id="freeRADIUS_ca_org_nameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the business name of your institition on the CERTIFICATE AUTHORITY"
+           />
+:
           <input id="freeRADIUS_ca_org_name" type="text" placeholder="Institution X" onchange="updateCtx(this)" >
           <BR>
-          Certificate Authority Contact email:
+          Certificate Authority Contact email
+                    <img id="freeRADIUS_ca_emailToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the role based email address on the CERTIFICATE AUTHORITY for the technical contact for cryptography and security "
+           />
+:
           <input id="freeRADIUS_ca_email" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Certificate Authority Common Name:
+          Certificate Authority Common Name
+          <img id="freeRADIUS_ca_commonNameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the title on the CERTIFICATE AUTHORITY. It is a string and not a host name and describes it a Self Signed CA (non commercial)"
+           />
+
+          :
           <input id="freeRADIUS_ca_commonName" type="text" placeholder="Inst. X SelfSigned CA Authority" 
           onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
   <br>
@@ -484,19 +608,39 @@ installer_section3_title:
         <td colspan="2" align="right">
           
           
-          Server Certificate Prov/State:
+          Server Certificate Prov/State
+<img id="freeRADIUS_svr_stateToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the province of your institition resides in "
+           />
+          :
           <input id="freeRADIUS_svr_state" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Server Certificate City:
+          Server Certificate City
+ <img id="freeRADIUS_svr_localToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the city or town your institition resides in "
+           />
+          :
           <input id="freeRADIUS_svr_local" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Server Certificate Org Name:
+          Server Certificate Org Name
+              <img id="freeRADIUS_svr_org_nameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the business name of your institition"
+           />
+          :
           <input id="freeRADIUS_svr_org_name" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Server Certificate Contact email:
+          Server Certificate Contact email
+    <img id="freeRADIUS_svr_emailToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is the role based email address on the CERTIFICATE for the technical contact for cryptography and security. "
+           />
+          :
           <input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="updateCtx(this)" >
           <BR>
-          Server Certificate Common Name:
+          Server Certificate Common Name
+<img id="freeRADIUS_svr_commonNameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This is auto-populated from Public URL of the Server. It is the FQDN of the host and the key element that marries the SSL certificate to a host. IP addresess are NOT permitted. Hostnames do NOT need to be in DNS at this time so fabricated names for testing purposes and overriden in local hosts files will also work."
+           />
+          :
           <input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.ca" onchange="updateCtx(this)" >
           <BR>
           
@@ -541,13 +685,29 @@ installer_section3_title:
                 </tr>
               <tr>
                 <td colspan="2" align="right">
-                  Servlet Container:
+                  Servlet Container
+
+<img id="appservToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="Tomcat is installed by default on a non privileged port (7443) and uses IPTables to port-forward requests from 443 to this servlet container.  
+        &#10;&#10;
+          The self signed certificate for this host is installed into the Java Key Store (JKS) and you will be asked to set an password for this keystore during the installation process. If you do not choose one during install, a random one will be generated to be used in the startup of tomcat which is installed in /opt/tomcat."
+           />
+                  :
                   <input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" >
                   <BR>
-                  Authentication type (ldap):
+                  Authentication type (ldap) 
+<img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="LDAP is the default method for FedSSO.  The LDAP directory MUST be able to do SSL and be visible during installation as the LDAP SSL certificate is fetched realtime during the installation process."
+           />
+
+                  :
                   <input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="updateCtx(this)" >
                   <BR>
-                  ntpserver:
+                  ntpserver 
+                  <img id="ntpserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="NTP is required to be enabled in order to keep the host in sync with time."
+           />
+:
                   <!-- 
 <input id="fedSSO_ntpserver" type="text" placeholder="" onchange="updateCtx(this)" >
 -->
@@ -578,24 +738,42 @@ installer_section3_title:
                   </select>
                   
                   <BR>
-                  LDAP Server Host(separate servers with a space):
+                  LDAP Server Hostname
+<img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="This must be a hostname and not an IP address. Hostnames are required as SSL connections will compare the certificate offered against that of the configured host and will fail silently to the end user if not correctly configured."
+           />
+                  :
                   <input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="updateCtx(this)" >
                   <BR>
-                  LDAP Bind DN:
+                  LDAP Bind DN
+<img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The Bind DN format is the DN of the LDAP identity that FedSSO will sign in as. An example one is: CN=ShibBindUser,CN=Users, DC=somedomain,DC=ca.  Note the AD 'Users' container is a CN NOT OU unless you have customized your AD tree."
+           />
+                  :
                   <input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="" onchange="updateCtx(this)" >
                   <BR>
-                  LDAP Password:
+                  LDAP Password <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The password for the privilaged bind user."
+           />:
                   <input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="updateCtx(this)" >
                   <BR>
                   
-                  LDAP Base DN:
-                  <input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="" onchange="updateCtx(this)" >
+                  LDAP Base DN
+                  <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The Base DN is where the user search is commenced from."
+           />
+           :
+                  <input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="e.g. cn=Users,dc=somedomain,dc=ca" onchange="updateCtx(this)" >
                   <BR>
                   
-                  LDAP Subtree search?: 
+                  LDAP Subtree search?
+<img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="Subtree search describes whether or not the entire tree is searched for a user or just that node and no further.  Subtree is recommended unless your directory design requires otherwise."
+           />
+                  : 
                   <select id="subsearch"  onchange="updateCtx(this)" >
                     <option name="subsearchTrue" value="true" selected>
-                      Yes
+                      Yes (recommended)
                     </option>
                     <option name="subsearchFalse" value="false">
                       No
@@ -627,6 +805,11 @@ installer_section3_title:
                   <tr>
                     <td colspan="2" align="right">
                       Install support for ePTID 
+<img id="eptidToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="ePTID stands for eduPersonTargetedID. A pseudo-anonymous opaque privacy preserving identifier that is generated per user per service to mask their Personally Identifiable Information (PII). It is a single attribute and is default released to all CAF participants. A Mysql database is used to cache the calculated values to permit.  During the installation the passphrase for MySQL needs to be set if you want to offer one, otherwise a random one will be generated for this functionality."
+           />
+
+
                       <select id="eptid"  onchange="updateCtx(this)" >
                         <option name="eptidY" value="y" selected>
                           Yes(recommended)
@@ -637,6 +820,10 @@ installer_section3_title:
                       </select>
                       <br>
                       Send anonymous usage stats to CAF 
+
+                      <img id="fticksToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="FTICKS is a logging format that anonymizes and then logs an authentication event to CAF syslog servers. These are used to gather utilization stats to provide aggregate reports."
+           />
                       <select id="fticks"  onchange="updateCtx(this)" >
                         <option name="ftickY" value="y" selected>
                           Yes(recommended)

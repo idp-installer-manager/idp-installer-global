@@ -406,6 +406,15 @@ var cNeutral = "#FFFFFF"
             console.log('Update():begin mapping');
         }
 
+
+// enable tooltip support for all tags
+        if (loggingEnabled) {
+            console.log('Update():enabling tooltips');
+        }
+
+$(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
+
+
         //////////////////////////// my_eduroamDomain
 
         if (loggingEnabled) {
