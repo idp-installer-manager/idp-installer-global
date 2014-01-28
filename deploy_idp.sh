@@ -62,7 +62,7 @@ HELP="
 # along with IDP-Deployer. If not, see <http://www.gnu.org/licenses/>.
 
 if [ "${USERNAME}" != "root" -a "${USER}" != "root" ]; then
-	$Echo "Run as root!"
+	echo "Run as root!"
 	exit
 fi
 
@@ -75,6 +75,11 @@ setEcho
 # (validateConfig)
 guessLinuxDist
 
+${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
+${Echo} "\nLive logging can be seen by this command in another window:\n\ntail -f ${statusFile}"
+${Echo} "\n\nSleeping for 4 sec and then beginning processing..."
+sleep 4
+${Echo} "======================================"
 # bootstrapping step from minimal install
 #
 # bindutils to get the basic host info from machine

@@ -1256,7 +1256,7 @@ if [ "${type}" = "ldap" ]; then
 	${Echo} "Please read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
 fi
 
-	${Echo} "\n\nProcessing complete, exiting.\n"
+	${Echo} "\n\nProcessing complete. You may want to reboot to ensure all services start up as expected.\n\nExiting.\n"
 
 
 }
