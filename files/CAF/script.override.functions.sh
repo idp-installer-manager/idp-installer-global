@@ -21,7 +21,8 @@ echo -e "\n\nOverriding functions: ${my_ctl_functionOverrides}\n\n"
 
 # this command takes 4min 45sec to run on a core i7 8gb ram SSD disk. 
 # overriding as the other yum commands 
-centosCmdU="yum version"
+centosCmdU="yum -y update; yum clean all"
+#centosCmdU="yum version"
 # -y update; yum clean all"
 
 
@@ -167,24 +168,27 @@ echo -e "${my_local_override_msg}"
 		epass=`${passGenCmd}`
 # 		grant sql access for shibboleth
 		esalt=`openssl rand -base64 36 2>/dev/null`
-		cat ${Spath}/xml/eptid.sql.template | sed -re "s#SqLpAsSwOrD#${epass}#" > ${Spath}/xml/eptid.sql
-		files="`${Echo} ${files}` ${Spath}/xml/eptid.sql"
+		cat ${Spath}/xml/${my_ctl_federation}/eptid.sql.template | sed -re "s#SqLpAsSwOrD#${epass}#" > ${Spath}/xml/${my_ctl_federation}/eptid.sql
+		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid.sql"
 
-		${Echo} "Create MySQL database and shibboleth user."
-		mysql -uroot -p"${mysqlPass}" < ${Spath}/xml/eptid.sql
+		${Echo} "Create MySQL database for Shibboleth ePTiD and shibboleth user for database connection."
+		mysql -uroot -p"${mysqlPass}" < ${Spath}/xml/${my_ctl_federation}/eptid.sql
 		retval=$?
 		if [ "${retval}" -ne 0 ]; then
-			${Echo} "Failed to create EPTID database, take a look in the file '${Spath}/xml/eptid.sql.template' and corect the issue." >> ${messages}
+			${Echo} "Failed to create EPTID database, take a look in the file '${Spath}/xml/${my_ctl_federation}/eptid.sql.template' and corect the issue." >> ${messages}
 			${Echo} "Password for the database user can be found in: /opt/shibboleth-idp/conf/attribute-resolver.xml" >> ${messages}
 		fi
 			
-		cat ${Spath}/xml/eptid-AR.diff.template \
+		cat ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff.template \
 			| sed -re "s#SqLpAsSwOrD#${epass}#;s#Large_Random_Salt_Value#${esalt}#" \
-			> ${Spath}/xml/eptid-AR.diff
-		files="`${Echo} ${files}` ${Spath}/xml/eptid-AR.diff"
+			> ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff
+		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff"
 
-# 		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
-# 		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
+# following 2 lines were commented out jan 28th, 2014, but no longer
+
+ 		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
+ 		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
+
 		cat ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon.template \
 			| sed -re "s#SqLpAsSwOrD#${epass}#;s#Large_Random_Salt_Value#${esalt}#" \
 			> ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon

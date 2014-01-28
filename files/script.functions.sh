@@ -104,6 +104,9 @@ setJavaHome () {
 	if [ -z "${JAVA_HOME}" ]; then
 		# check java
 		if [ -L "${javaBin}" ]; then
+			# the '/bin' is used to ensure the tail end of the JAVA_HOME string is not terminated in a /
+			# if it is, the rest of the paths used downstream will be .....//jre/bin which mean the paths are not found
+
 			export JAVA_HOME=`readlink -f ${javaBin} | awk -F'bin' '{print $1}'`
 		else
 			if [ -s "${javaBin}" ]; then
@@ -112,11 +115,57 @@ setJavaHome () {
 				${Echo} "No java found, please install JRE"
 				cleanBadInstall
 			fi
-		fi
-		if [ -z "`grep 'JAVA_HOME' /root/.bashrc`" ]; then
-			${Echo} "export JAVA_HOME=${JAVA_HOME}" >> /root/.bashrc
-		fi
+		fi		
 	fi
+
+	#insulate against invalid javahome with trailing slash
+	JAVA_HOME="${JAVA_HOME%/}"
+	echo "***javahome is: ${JAVA_HOME}"
+
+
+	# validate java_home and ensure it runs as expected before going any further
+
+	${JAVA_HOME}/bin/java -version >> ${statusFile} 2>&1
+
+
+
+
+	retval=$?
+	if [ "${retval}" -ne 0 ]; then
+		${Echo} "\n\n\nAn error has occurred in the configuration of the JAVA_HOME variable."
+		${Echo} "Please review the java installation and status.log to see what went wrong."
+		${Echo} "Install is aborted until this is resolved."
+		cleanBadInstall
+		exit
+	else
+
+		${Echo} "\n\n\n JAVA_HOME version verified as good."
+		jEnvString="export JAVA_HOME=${JAVA_HOME}"
+		
+		 if [ -z "`grep 'JAVA_HOME' /root/.bashrc`" ]; then
+		 	
+		 	${Echo} "${jEnvString}" >> /root/.bashrc
+			 ${Echo} "\n\n\n JAVA_HOME added to end of /root/.bashrc"
+
+		fi
+		 #else
+
+			# askToRevJava=$(askYesNo "Java Version Updating" "This installer will update the system java.\n${jEnvString}\n\nWill be appended to /root/.bashrc  Choose Yes to continue, no to exit completely" "")
+
+			# if [ "${askToRevJava}" -eq "y" ]; then
+	 	# 		${Echo} "${jEnvString}" >> /root/.bashrc
+			#  	${Echo} "\n\n\n JAVA_HOME added to end of /root/.bashrc"
+			
+			# else
+			# 	${Echo} "\n\n\n ***User exit chosen. Please verify java version you want to have on this machine."
+			# 	exit
+			# fi
+
+		 #fi
+
+	fi
+
+
 }
 
 setJavaCACerts ()
@@ -175,6 +224,8 @@ askYesNo() {
 		if [ ! -z "${value}" ]; then
 			value="--defaultno "
 		fi
+
+		
 
 		${whiptailBin} --backtitle "${BackTitle}" --title "${title}" ${value}--yesno --clear -- "${text}" ${whipSize} 3>&1 1>&2 2>&3
 		stringNum=$?
@@ -382,13 +433,18 @@ EOM
 
 			mysql --no-defaults -u root -h localhost <$tfile
 			retval=$?
-			rm -f $tfile
+			# moved removal of MySQL command file to be in the if-then-else statement set below
+
 			if [ "${retval}" -ne 0 ]; then
 				${Echo} "\n\n\nAn error has occurred in the configuration of the MySQL installation."
 				${Echo} "Please correct the MySQL installation and make sure a root password is set and it is possible to log in using the 'mysql' command."
 				${Echo} "When MySQL is working, re-run this script."
+				${Echo} "The file being run in MySQL is ${tfile} and has not been deleted, please review and delete as necessary."
 				cleanBadInstall
+			else
+				rm -f $tfile
 			fi
+
 
 			if [ "${dist}" != "ubuntu" ]; then
 				/sbin/chkconfig mysqld on
@@ -653,15 +709,15 @@ askForConfigurationData() {
 	fi
 
 	if [ "${eptid}" != "n" ]; then
-		mysqlPass=$(askString "MySQL password" "Please input the root password for MySQL\n\nEmpty string generates new password" "" 1)
+		mysqlPass=$(askString "MySQL password" "MySQL is used for supporting the eduPersonTargetedId attribute.\n\n Please set the root password for MySQL.\nAn empty string generates a randomized new password" "" 1)
 	fi
 
 	if [ -z "${selfsigned}" ]; then
-		selfsigned=$(askYesNo "Self signed certificate" "Create a self signed certificate for HTTPS?\n\nThis is NOT recommended! Only for testing purposes" "no")
+		selfsigned=$(askYesNo "Self signed certificate" "Create a self signed certificate for HTTPS?\n\nThis is NOT recommended! Only for testing purposes" "y")
 	fi
 
-	pass=$(askString "IDP keystore password" "Please input your IDP keystore password\n\nEmpty string generates new password" "" 1)
-	httpspass=$(askString "HTTPS Keystore password" "Please input your Keystore password for HTTPS\n\nEmpty string generates new password" "" 1)
+	pass=$(askString "IDP keystore password" "The IDP keystore is for the Shibboleth software itself and not the webserver. Please set your IDP keystore password.\nAn empty string generates a randomized new password" "" 1)
+	httpspass=$(askString "HTTPS Keystore password" "The webserver uses a separate keystore for itself. Please input your Keystore password for the end user facing HTTPS.\n\nAn empty string generates a randomized new password" "" 1)
 }
 
 setDistCommands() {
@@ -1256,9 +1312,9 @@ ${Echo} "Previous installation found, performing upgrade."
 	fi
 
 	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
-		fetchShibboleth
+		fetchAndUnzipShibbolethIdP
 	fi
-	unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
+	#unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
 
 	unlink /opt/shibboleth-identityprovider
@@ -1372,6 +1428,8 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 
 	installFticksIfEnabled
 
+	
+	
 	installEPTIDSupport
 
 
