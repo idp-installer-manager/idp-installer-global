@@ -1083,6 +1083,9 @@ patchTomcatConfigs ()
 	chown ${tcatUser} /opt/shibboleth-idp/metadata
 	chown -R ${tcatUser} /opt/shibboleth-idp/logs/
 
+	# need to set bash as the shell for the user to permit tomcat to restart after reboot
+	chsh -s /bin/bash ${tcatUser}
+
 
 	if [ -d "/var/lib/tomcat6/webapps/ROOT" ]; then
 		mv /var/lib/tomcat6/webapps/ROOT /opt/disabled.tomcat6.webapps.ROOT
