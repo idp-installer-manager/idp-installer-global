@@ -24,7 +24,7 @@
     <!-- ========================================== -->
 
     <!-- Schema: Core schema attributes-->
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="uid" sourceAttributeID="uid">
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="uid" sourceAttributeID="samAccountName">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:uid" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:0.9.2342.19200300.100.1.1" friendlyName="uid" />
@@ -224,13 +224,13 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.8" friendlyName="eduPersonPrimaryOrgUnitDN" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonPrincipalName" scope="hig.se" sourceAttributeID="uid">
+    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonPrincipalName" scope="SCHAC_HOME_ORG" sourceAttributeID="uid">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonPrincipalName" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonScopedAffiliation" scope="hig.se" sourceAttributeID="eduPersonAffiliation">
+    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonScopedAffiliation" scope="SCHAC_HOME_ORG" sourceAttributeID="eduPersonAffiliation">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="eduPersonScopedAffiliation" />
@@ -262,119 +262,6 @@
 
 	<!-- Schema: norEdu* attributes -->
 
-	<resolver:AttributeDefinition id="norEduPersonLegalName" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduPersonLegalName">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String"
-			xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduPersonLegalName" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String"
-			xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.10" friendlyName="norEduPersonLegalName" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduPersonNIN" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="higNINC">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String"
-			xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduPersonNIN" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String"
-			xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.5" friendlyName="norEduPersonNIN" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduPersonLIN" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduPersonLIN">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduPersonLIN" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.4" friendlyName="norEduPersonLIN" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgAcronym" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgAcronym">
-		<resolver:Dependency ref="staticAttributes" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgAcronym" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.6" friendlyName="norEduOrgAcronym" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduPersonBirthDate" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduPersonBirthDate">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduPersonBirthDate" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.3" friendlyName="norEduPersonBirthDate" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgUniqueIdentifier" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgUniqueIdentifier">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgUniqueIdentifier" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.7" friendlyName="norEduOrgUniqueIdentifier" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgUnitUniqueIdentifier" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgUnitUniqueIdentifier">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgUnitUniqueIdentifier" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.8" friendlyName="norEduOrgUnitUniqueIdentifier" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgNIN" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgNIN">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgNIN" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.12" friendlyName="norEduOrgNIN" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgUniqueNumber" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgUniqueNumber">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgUniqueNumber" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.1" friendlyName="norEduOrgUniqueNumber" />
-	</resolver:AttributeDefinition>
-
-	<resolver:AttributeDefinition id="norEduOrgUnitUniqueNumber" xsi:type="ad:Simple"
-		xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="norEduOrgUnitUniqueNumber">
-		<resolver:Dependency ref="myLDAP" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:mace:dir:attribute-def:norEduOrgUnitUniqueNumber" />
-
-		<resolver:AttributeEncoder xsi:type="enc:SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
-			name="urn:oid:1.3.6.1.4.1.2428.90.1.2" friendlyName="norEduOrgUnitUniqueNumber" />
-	</resolver:AttributeDefinition>
 
 <!-- Country name -->
 <resolver:AttributeDefinition id="friendlyCountryName" xsi:type="Simple"
@@ -461,7 +348,7 @@
         principalCredential="myServicePassword">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=$requestContext.principalName)
+                (samaccountname=$requestContext.principalName)
             ]]>
         </dc:FilterTemplate>
     </resolver:DataConnector>

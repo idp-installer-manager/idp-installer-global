@@ -15,16 +15,16 @@
 > 			</metadata:MetadataFilter -->
 > 		</metadata:MetadataFilter>
 > 	</metadata:MetadataProvider>
->  
-> 	<!-- <metadata:MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-> 			metadataURL="http://md.swamid.se/md/swamid-testing-1.0.xml"
-> 			backingFile="/opt/shibboleth-idp/metadata/swamid-testing-1.0.xml">
+> 	<!-- CAF eduGAIN downstream feed --> 
+> 	 <metadata:MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 			metadataURL="https://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
+> 			backingFile="/opt/shibboleth-idp/metadata/caf_interfed_signed.xml">
 > 		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
 > 		<metadata:MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
-> 				trustEngineRef="swamid-metadata-signer"
+> 				trustEngineRef="federation-metadata-signer"
 > 				requireSignedMetadata="true" />
 > 		</metadata:MetadataFilter>
-> 	</metadata:MetadataProvider> -->
+> 	</metadata:MetadataProvider> 
 >  
 >  
 > 	<metadata:MetadataProvider id="URLMD3" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
