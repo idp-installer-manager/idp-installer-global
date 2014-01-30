@@ -184,10 +184,12 @@ echo -e "${my_local_override_msg}"
 			> ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff
 		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff"
 
-# following 2 lines were commented out jan 28th, 2014, but no longer
+	# following 2 patch lines were commented out jan 28th, 2014, but no longer
+		cp /opt/shibboleth-idp/conf/attribute-resolver.xml /opt/shibboleth-idp/conf/attribute-resolver.xml.pre-patching
 
- 		patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/eptid-AR.diff >> ${statusFile} 2>&1
- 		patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/eptid-AF.diff >> ${statusFile} 2>&1
+ 		#patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff >> ${statusFile} 2>&1
+ 		# commented out below as our default model *IS* to do this release policy
+ 		# patch /opt/shibboleth-idp/conf/attribute-filter.xml -i ${Spath}/xml/${my_ctl_federation}/eptid-AF.diff >> ${statusFile} 2>&1
 
 		cat ${Spath}/xml/${my_ctl_federation}/eptid.add.attrCon.template \
 			| sed -re "s#SqLpAsSwOrD#${epass}#;s#Large_Random_Salt_Value#${esalt}#" \
