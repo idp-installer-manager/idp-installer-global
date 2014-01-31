@@ -48,6 +48,7 @@ function duplicateContactInfo() {
 }
 
 var PoundSignError = "Sorry, the # is a reserved character due\nto the template parser.\nPlease remove or choose another special character.";
+var errorNotValidHostname = "There were improper characters for the hostname.\nThis is just a hostname with NO http:// or ldap://.\n\nPlease correct before proceeding"
 var my_ctl_previousSettings = []; // an associative array of settings as they appear in the config file
 
 

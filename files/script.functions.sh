@@ -59,11 +59,14 @@ fetchJavaIfNeeded ()
 	# install java if needed
 	javaBin=`which java 2>/dev/null`
 	if [ ! -s "${javaBin}" ]; then
+		eval ${distCmd2}
 		eval ${distCmd3}
+		
 		javaBin=`which java 2>/dev/null`
 	fi
 	if [ ! -s "${javaBin}" ]; then
 		${Echo} "No java could be found! Install a working JRE and re-run this script."
+		${Echo} "Try: ${distCmd2} and ${distCmd3}"
 		cleanBadInstall
 	fi
 

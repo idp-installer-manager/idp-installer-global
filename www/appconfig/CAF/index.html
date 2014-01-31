@@ -474,7 +474,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
 
                   :
                   <input id="freeRADIUS_cdn_prod_passphrase" type="text" placeholder="" 
-                  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
+                  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{updateCtx(this);}">
   <br>
   <hr>
   Access Point #1 IP Address
@@ -490,7 +490,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
            />
 :
   <input id="freeRADIUS_clcfg_ap1_secret" type="text" placeholder="" 
-  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
+  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{updateCtx(this);}">
   <br>
   <hr>
   Access Point #2 IP Address
@@ -509,7 +509,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
 
   :
   <input id="freeRADIUS_clcfg_ap2_secret" type="text" placeholder="" 
-  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
+  onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{updateCtx();}">
   <br>
   
   <!-- 
@@ -583,7 +583,7 @@ installer_section3_title:
 
           :
           <input id="freeRADIUS_ca_commonName" type="text" placeholder="Inst. X SelfSigned CA Authority" 
-          onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{update();}">
+          onchange="if(this.value.indexOf('#')>-1){alert(PoundSignError);}else{updateCtx(this);}">
   <br>
   
   
@@ -743,7 +743,7 @@ installer_section3_title:
           rel="tooltip" title="This must be a hostname and not an IP address. Hostnames are required as SSL connections will compare the certificate offered against that of the configured host and will fail silently to the end user if not correctly configured."
            />
                   :
-                  <input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="if(this.value.indexOf(':')>-1){alert(errorNotValidHostname);}else{update();}updateCtx(this)" >
                   <BR>
                   LDAP Bind DN
 <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
@@ -970,7 +970,7 @@ installer_section2_title:
     
     <hr color="red" size="10">
     <hr>
-    
+    IDP Installer Version 2.6_CAF &copy; 2011-13 
     
   </form>
  
