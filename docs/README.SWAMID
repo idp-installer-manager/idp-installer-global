@@ -1,8 +1,8 @@
 Disclamer
 -------------------------------------------------------------------------------
 
-Intended to be used on a clean install of Ubuntu Server 12.04 (or newer).
-Upgrade mode is only to be used on a previous deployment of this script.
+Intended to be used on a clean install of Ubuntu Server 12.04 (or newer) or
+CentOS 6.4 'minimal' or newer.
 
 
 Introduction
@@ -32,6 +32,9 @@ Anonymous usage reporting to SWAMID is optional but recommended.
 
 
 Upgrading
+-------------------------------------------------------------------------------
+To upgrade, back up the old IDP and deploy a new IDP then replace the
+certificates, metadata and optional login page.
 
 
 Configuration
