@@ -413,7 +413,7 @@ var cNeutral = "#FFFFFF"
             console.log('Update():enabling tooltips');
         }
 
-$(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
+        $(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
 
 
         //////////////////////////// my_eduroamDomain
@@ -500,6 +500,12 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
         }
 
 
+        if (! $("#samlScope").val() && $("#freeRADIUS_svr_commonName").val()) {
+		var scopeArray = $("#freeRADIUS_svr_commonName").val().split(".");
+		scopeArray.shift();
+		$("#samlScope").val(scopeArray.join("."));
+        }
+
 	if ( ($("#type").val())!=="cas" ) {
 		$("#casurlRow").hide();
 	} else {
@@ -523,7 +529,7 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
 		$("#caslogurl").val($("#casurl").val()+"/login");
 		$("#caslogurl").css({'backgroundColor': cFilled});
 	}
-          if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
+        if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
 
 output += "installer_section0_version=\'"+generatorVersion+"\'\n";
 output += "installer_section0_builddate=\'"+builddate+"\'\n";
@@ -587,6 +593,7 @@ output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
 output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
 output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 output += "selfsigned=\'"+ $("#selfsigned").val()+ "\'\n";
+output += "samlScope=\'"+ $("#samlScope").val()+ "\'\n";
 
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";

@@ -886,11 +886,13 @@ configShibbolethXMLAttributeResolverForLDAP ()
 		ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
 	done
 	ldapServerStr=`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`
-	orgTopDomain=`${Echo} ${certCN} | cut -d. -f2-`
+	if [ -z "${samlScope}" ]; then
+		samlScope=`${Echo} ${certCN} | cut -d. -f2-`
+	fi
 	cat ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.template \
 		| sed -re "s#LdApUrI#${ldapServerStr}#;s/LdApBaSeDn/${ldapbasedn}/;s/LdApCrEdS/${ldapbinddn}/;s/LdApPaSsWoRd/${ldappass}/" \
 		| sed -re "s/NiNcRePlAcE/${ninc}/;s/CeRtAcRoNyM/${certAcro}/;s/CeRtOrG/${certOrg}/;s/CeRtC/${certC}/;s/CeRtLoNgC/${certLongC}/" \
-		| sed -re "s/SCHAC_HOME_ORG/${orgTopDomain}/" \
+		| sed -re "s/SCHAC_HOME_ORG/${samlScope}/" \
 		> ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml
 	files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml"
 
