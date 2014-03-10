@@ -500,11 +500,11 @@ var cNeutral = "#FFFFFF"
         }
 
 
-        if (! $("#samlScope").val() && $("#freeRADIUS_svr_commonName").val()) {
+	if (! $("#my_eduroamDomain").val() && $("#freeRADIUS_svr_commonName").val()) {
 		var scopeArray = $("#freeRADIUS_svr_commonName").val().split(".");
 		scopeArray.shift();
-		$("#samlScope").val(scopeArray.join("."));
-        }
+		$("#my_eduroamDomain").val(scopeArray.join("."));
+	}
 
 	if ( ($("#type").val())!=="cas" ) {
 		$("#casurlRow").hide();
@@ -518,7 +518,7 @@ var cNeutral = "#FFFFFF"
 	}
 	if ($("#freeRADIUS_svr_org_name").val() && ! $("#certAcro").val()) {
 		var words = $('#freeRADIUS_svr_org_name').val().split(' ');
-		var data = ''; 
+		var data = '';
 		$.each(words, function() {
 			data += this.substring(0,1);
 		});
@@ -593,7 +593,6 @@ output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
 output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
 output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 output += "selfsigned=\'"+ $("#selfsigned").val()+ "\'\n";
-output += "samlScope=\'"+ $("#samlScope").val()+ "\'\n";
 
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";

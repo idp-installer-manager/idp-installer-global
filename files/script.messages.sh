@@ -7,7 +7,7 @@ cleanUp=1
 upgrade=0
 shibVer="2.4.0"
 casVer="3.2.1"
-mysqlConVer="5.1.27"
+mysqlConVer="5.1.29"
 
 files=""
 ts=`date "+%s"`
