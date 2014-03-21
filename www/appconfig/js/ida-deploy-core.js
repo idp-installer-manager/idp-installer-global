@@ -476,6 +476,10 @@ var cNeutral = "#FFFFFF"
                 console.log('Update():presets: idpurl is:|' + $("#idpurl").val() + '|');
             }
 
+	    if ($("#idpurl").val().slice(-1) == "/") {
+		$("#idpurl").val($("#idpurl").val().slice(0, -1));
+	    }
+
             $("#freeRADIUS_svr_commonName").val($("#idpurl").val());
 
             try {
