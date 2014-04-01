@@ -91,15 +91,16 @@ setVarUpgradeType ()
 setVarPrepType ()
 
 {
-prep="prep/${type}"
-
+	prep="prep/${type}"
 }
 
 setVarCertCN ()
 
 {
-certCN=`${Echo} ${idpurl} | cut -d/ -f3`
-
+	if [ "`echo "${idpurl: -1}"`" = "/" ]; then
+		idpurl=`echo ${idpurl%?}`
+	fi
+	certCN=`${Echo} ${idpurl} | cut -d/ -f3`
 }
 
 setJavaHome () {
@@ -1213,7 +1214,7 @@ updateTomcatAddingIDPWar ()
 	else
 		cp ${Spath}/xml/${my_ctl_federation}/tomcat.idp.xml /etc/tomcat6/Catalina/localhost/idp.xml
 		# make sure tomcat can see the file
-		chown tomcat /etc/tomcat6/Catalina/localhost/idp.xml
+		chown ${tcatUser} /etc/tomcat6/Catalina/localhost/idp.xml
 
 	fi
 }
