@@ -1,296 +1,356 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv" lang="sv">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
-<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css">
-
- <script type="text/javascript" src="../js/jquery-1.10.0.js"></script>
-  <script type="text/javascript" src="../js/bootstrap.js"></script>
-
-<script type="text/javascript" src="../js/ida-deploy-core.js"></script>
-
-
-</head>
-<body onload="update();">
-
-     <div class="container" style="margin-top: 5px;">
-            <div class="row">
-                <div class="span12">
-                    <div class="hero-unit">
-                        <div class="container">
-                            <div class="row">
-                                <div class="span10">
-
-<!--   begining  of the form-->
-
-
-<form>
-<input id="installer_section0_fingerprint" name="installer_section0_title" type="hidden" value="" />
-<input id="installer_section0_version" name="installer_section0_version" type="hidden" value="" />
-<input id="installer_section0_builddate" name="installer_section0_builddate" type="hidden" value="" />
-<input id="installer_section0_buildComponentList" name="installer_section0_buildComponentList" type="hidden" value="shibboleth" />
-<input id="installer_section0_title" name="installer_section0_title" type="hidden" value="" />
-<input id="installer_section1_title" name="installer_section1_title" type="hidden" value="" />
-<input id="installer_section2_title" name="installer_section2_title" type="hidden" value="" />
-<input id="installer_section3_title" name="installer_section3_title" type="hidden" value="" />
-<input id="installer_section4_title" name="installer_section4_title" type="hidden" value="" />
-<input id="installer_section5_title" name="installer_section5_title" type="hidden" value="" />
-
-
-
-              <h4>
-              <fieldset>
-<table width="100%" border="1">
-  <tr>
-    <td align="right" colspan="2" valign="center">
-      <input type="hidden" id="my_ctl_federation" value="SWAMID" onchange="updateCtx(this)" />
-      <a name="top_of_page"></a>
-
-      <table width="100%" border="0">
-        <tr>
-          <td>
-            <font size="+2" ><b>Interactive Configuration Builder</b></font><br />
-            An interactive tool to help build your Shibboleth configuration
-          </td>
-          <td align="right" width="400">
-            <img align="center" src="./img/logo.png" alt="Federation Operator logo" /><br /><br />
-            <a href="#use_existing_config">import an existing configuration</a>
-            <button class="btn" onclick="window.open ('help.html','help window',popupWinSettings);">Help</button>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-
-<!-- end tool header -->
-
-
-<!-- general header section -->
-  <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC">
-    <td colspan="2">
-      <b>
-        <font size="+2">General Information</font>
-      <b>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="right">
-      <!-- empty line -->
-    </td>
-  </tr>
-<!-- end header -->
-
-
-   <tr id="my_installer_section0buildDescriptionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Document This Configuration</font><b></td></tr>
-
-
-   <tr><td colspan="2" align="right">
-     Brief description for this configuration:
-          <input style="width: 300px;" id="installer_section0_buildDescription" type="text" placeholder="My Development configuration" 
-                onchange="updateCtx(this)" > <br />
-
-<!--
-                onchange="update();this.style.backgroundColor=cFilled;" > <br />
-                c=cFilled;if (this.checked==true){c=cNeeded}
-   -->
-  </td></tr>
-
-<!-- general header section -->
-   <tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">Federated Single Sign On Configuration  Information</font><b></td></tr>
-
-
-   <tr id="my_idpurlRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Name of Server Running This Configuration</font><b></td></tr>
-
-   <tr><td colspan="2" align="right">
-
-    Public URL of the Server:<input id="idpurl" type="text" placeholder="https://idpdev.mydomain.se" onchange="updateCtx(this)" /><br />
-
-  </td></tr>
-
-   <tr><td colspan="2" align="right">
-
-  </td></tr>
-<!-- end header -->
-
-
-</td></tr>
-
-
-</tr>
-
-   <tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Information for the Server Certificate TLS Generation</font><b></td></tr>
-<tr><td colspan="2" align="right">
-
-
-<!-- Server Certificate Prov/State:<input id="freeRADIUS_svr_state" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
-Server Certificate Country Code:<input id="freeRADIUS_svr_country" type="text" value="SE" onchange="updateCtx(this)" /><br />
-<!-- Server Certificate City:<input id="freeRADIUS_svr_local" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
-Server Certificate Org Name:<input id="freeRADIUS_svr_org_name" type="text" placeholder="Högskolan i Gävle" onchange="updateCtx(this)" /><br />
-<!-- Server Certificate Contact email:<input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
-Server Certificate Common Name:<input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.se" onchange="updateCtx(this)" /><br />
-Create a self signed certificate:<select id="selfsigned"  onchange="updateCtx(this)">
-                                                <option name="selfsignedN" value="n" selected="selected">No</option>
-                                                <option name="selfsignedY" value="y">Yes(Only for testing)</option>
-                                             </select>
-                                             <br />
-
-</td></tr>
-
-
-   <tr><td colspan="2" align="right">
-
-  </td></tr>
-<!-- end header -->
-
-<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Base Configuration for FedSSO</font><b></td></tr>
-                                            <tr><td colspan="2">
-Federated SSO needs credentials to connect to your Directory for 'find and bind' operations as well as to access data about a user.<br />
-                                          </tr>
-                                           <tr>
-<td colspan="2" align="right">
-Servlet Container:<input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" /><br />
-Authentication type:<select id="type" type="text" onchange="updateCtx(this)"><option value="ldap">LDAP</option><option value="cas">CAS</option></select><br />
-NTP server:<input style="width: 250px;" id="ntpserver" type="text" placeholder="ntp.hig.se" onchange="updateCtx(this)" />
-<!--
-<select id="ntpserver"  onchange="updateCtx(this)">
-      <option name="Vancouver1" value="nt1-cdma.vncv1.bc.net" selected>Vancouver - nt1-cdma.vncv1.bc.net (Stratum 1 - CDMA)</option>
-     <option name="Kelowna" value="t1-cdma.keltx1.bc.net">Kelowna - t1-cdma.keltx1.bc.net (Stratum 1 - CDMA)</option>
-     <option name="Saskatoon1" value="tick.usask.ca">Saskatoon - tick.usask.ca (Stratum 1 - GPS)</option>
-     <option name="Saskatoon2" value="tock.usask.ca">Saskatoon - tock.usask.ca (Stratum 1 - GPS)</option>
-     <option name="Winnipeg1" value="tick.umanitoba.ca">Winnipeg - tick.umanitoba.ca (Stratum 1 - GPS)</option>
-     <option name="Winnipeg2" value="tock.umanitoba.ca">Winnipeg - tock.umanitoba.ca (Stratum 1 - GPS)</option>
-     <option name="Halifax" value="tick.acorn-ns.ca">Halifax tick.acorn-ns.ca (Stratum 1 - GPS)</option>
-
-      </select>
--->
-
-<br />
-LDAP Server Host(separate servers with a space):<input  style="width: 250px;" id="ldapserver" type="text" placeholder="ldap.hig.se ldap2.hig.se" onchange="updateCtx(this)" /><br />
-LDAP Bind DN:<input  style="width: 250px;" id="ldapbinddn" type="text" placeholder="cn=readUser,dc=hig,dc=se" onchange="updateCtx(this)" /><br />
-LDAP Password:<input  style="width: 250px;" id="ldappass" type="text" placeholder="readUserPassword" onchange="updateCtx(this)" /><br />
-
-LDAP Base DN:<input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="dc=hig,dc=se" onchange="updateCtx(this)" /><br />
-
-LDAP Subtree search?: <select id="subsearch"  onchange="updateCtx(this)">
-                                                <option name="subsearchTrue" value="true" selected="selected">Yes</option>
-                                               <option name="subsearchFalse" value="false">No</option>
-                                             </select>
-                                             <br />
-
-
-</td></tr>
-
-<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">FedSSO Features</font><b></td></tr>
-                                            <tr><td colspan="2">
-These are some additional configurations that enhance the FedSSO operation<br />
-                                          </tr>
-                                           <tr>
-<td colspan="2" align="right">
-Attribute that contains norEduPersonNIN with 12 chars:<input style="width: 250px;" id="ninc" type="text" value="norEduPersonNIN" onchange="updateCtx(this)" /><br />
-
-Install support for ePTID:<select id="eptid"  onchange="updateCtx(this)">
-                                                <option name="eptidY" value="y" selected="selected">Yes(Recommended)</option>
-                                               <option name="eptidN" value="n">No</option>
-                                             </select>
-                                             <br />
-Send anonymous usage stats to SWAMID:<select id="fticks"  onchange="updateCtx(this)">
-                                                <option name="ftickY" value="y" selected="selected">Yes(Recommended)</option>
-                                               <option name="ftickN" value="n">No</option>
-                                             </select>
-                                             <br />
-
-<!-- google apps support - not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
-
-<!-- <input type=hidden id="google" value="n"> -->
-Enable Support to sign into Google Apps:<select id="google"  onchange="updateCtx(this)">
-                                               <option name="googleN" value="n" selected="selected">No</option>
-                                               <option name="googleY" value="y">Yes</option>
-                                             </select>
-                                             <br />
-<span id="googleRow">
-Google Apps domain:<input style="width: 250px;" id="googleDom" type="text" placeholder="apps.domain.se" onchange="updateCtx(this)" /><br />
-</span>
-<span id="casurlRow">
-CAS server URL:<input style="width: 250px;" id="casurl" type="text" placeholder="https://cas.domain.se/cas" onchange="updateCtx(this)" /><br />
-CAS Login URL:<input style="width: 250px;" id="caslogurl" type="text" placeholder="https://cas.domain.se/cas/login" onchange="updateCtx(this)" /><br />
-</span>
-</td></tr>
-
-<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Static data</font><b></td></tr>
-                                            <tr><td colspan="2">
-Enter static data for organisation information<br />
-                                          </tr>
-                                           <tr>
-<td colspan="2" align="right">
-norEduOrgAcronym:<input style="width: 250px;" id="certAcro" type="text" placeholder="HiG" onchange="updateCtx(this)" /><br />
-Country descriptor:<input style="width: 250px;" id="certLongC" type="text" value="Sweden" onchange="updateCtx(this)" /><br />
-</td></tr>
-
-</td></tr>
-<!-- <tr>
-<td colspan="2" align="right">
-Keystore password for FedSSO encryption keys <input  style="width: 250px;" id="pass" type="text" placeholder="" onchange="updateCtx(this)" />
-                                             <br />
-Keystore password for HTTPS Server encryption keys <input  style="width: 250px;" id="httpspass" type="text" placeholder="" onchange="updateCtx(this)" />
-                                             <br />
-</td></tr>
--->
-<!-- <tr><td>installer_section2_title:</td><td><input id="installer_section2_title" type="text" placeholder="" onchange="updateCtx(this)" /></td></tr>
--->
-
-</table>
-                                        </fieldset>
-                                        <br />
-
-
-                                        <button type="submit" class="btn" onclick="return formSubmit();" >
-                                                Generate Configuration File
-                                            </button>
-                                    </form>
-                                </div>
-                                <div class="span6">
-       </div>
-                            </div>
-                        </div>
-
-<form>
-          <label>        <h4>Autogenerated Configuration File</h4>          </label>
-
-         <textarea id="outputArea" class="span7"  rows="49" cols="40"></textarea>
-
-       </form>
-
-
-<form>
-          <label>             <a name="use_existing_config"></a> <h4>Import Configuration File</h4>          </label>
-
-<table width="40%">
-  <tr><td align="right">
-
-<button type="submit" class="btn" onclick="return importPreviousSettings(); " >Import My Existing Config From Below </button>
-
-  </td><td align="right">
- <a href="#top_of_page">back to top</a>
-</td></tr></table>
-
-         <textarea id="importPreviousConfigArea" class="span7"  rows="10" cols="40"></textarea>
-
-<hr color="red" size="10"><hr>
- 
-
-                                     </form>
-                                    <!-- <p id="test">Content</p> -->
-
-
-
-<!--            -->
-
-</div>
- </div>
- </div>
-        </div>
-    </body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css">
+
+    <script type="text/javascript" src="../js/jquery-1.10.0.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.js"></script>
+
+    <script type="text/javascript" src="../js/ida-deploy-core.js"></script>
+
+  </head>
+  <body onload="update();">
+    <div class="container" style="margin-top: 5px;">
+      <div class="row">
+	<div class="span12">
+	  <div class="hero-unit">
+	    <div class="container">
+	      <div class="row">
+		<div class="span10">
+		  <!-- begining  of the form-->
+
+		  <form>
+		    <input id="installer_section0_fingerprint" name="installer_section0_title" type="hidden" value="" />
+		    <input id="installer_section0_version" name="installer_section0_version" type="hidden" value="" />
+		    <input id="installer_section0_builddate" name="installer_section0_builddate" type="hidden" value="" />
+		    <input id="installer_section0_buildComponentList" name="installer_section0_buildComponentList" type="hidden" value="shibboleth" />
+		    <input id="installer_section0_title" name="installer_section0_title" type="hidden" value="" />
+		    <input id="installer_section1_title" name="installer_section1_title" type="hidden" value="" />
+		    <input id="installer_section2_title" name="installer_section2_title" type="hidden" value="" />
+		    <input id="installer_section3_title" name="installer_section3_title" type="hidden" value="" />
+		    <input id="installer_section4_title" name="installer_section4_title" type="hidden" value="" />
+		    <input id="installer_section5_title" name="installer_section5_title" type="hidden" value="" />
+
+		    <h4>
+		      <fieldset>
+		      <table width="100%" border="1">
+			<tr>
+			  <td align="right" colspan="2" valign="center">
+			    <input type="hidden" id="my_ctl_federation" value="SWAMID" onchange="updateCtx(this)" />
+			    <a name="top_of_page"></a>
+
+			    <table width="100%" border="0">
+			      <tr>
+				<td>
+				  <font size="+2" ><b>Interaktivt konfigurationsverktyg</b></font><br />
+				  Ett interaktivt verktyg f&ouml;r att generera en installationskonfiguration
+				</td>
+				<td align="right" width="350">
+				  <img align="center" src="./img/logo.png" alt="Federation Operator logo" /><br /><br />
+				  <a href="#use_existing_config">Importera en existerande konfiguration</a>
+				  <!-- <button class="btn" onclick="window.open ('help.html','help window',popupWinSettings);">Help</button> -->
+				</td>
+			      </tr>
+			    </table>
+			  </td>
+			</tr>
+
+			<!-- end tool header -->
+
+			<!-- general header section -->
+			<tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC">
+			  <td colspan="2">
+			    <b>
+			      <font size="+2">Generell information</font>
+			    </b>
+			  </td>
+			</tr>
+
+			<tr>
+			  <td align="right">
+			    <!-- empty line -->
+			  </td>
+			</tr>
+			<!-- end header -->
+
+			<tr id="my_installer_section0buildDescriptionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Dokumentera den h&auml;r konfigurationen</font></b></td>
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    Kort beskrivning av denna konfiguration
+			    <img id="installer_section0_buildDescriptionToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Detta &auml;r ett kommentarsf&auml;lt f&ouml;r att l&auml;mna en v&auml;gledning till ditt framtida jag."
+			    />
+			    :
+			    <input style="width: 300px;" id="installer_section0_buildDescription" type="text" placeholder="Min testkonfiguration" 
+			    onchange="updateCtx(this)" />
+			  </td>
+			</tr>
+			
+			<!-- general header section -->
+			<tr id="my_generalHeaderSectionRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+2">Federerad Single Sign On konfiguration</font></b></td>
+			</tr>
+			
+			<tr id="my_idpurlRow" class="status" bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Namn p&aring; servern som kommer att k&ouml;ra denna konfiguration</font></b></td>
+			</tr>
+
+			<tr>
+			  <td colspan="2" align="right">
+			    Publik URL f&ouml;r Servern
+			    <img id="idpurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Fullst&auml;ndig URL (https://...) till din server. HTTPS l&auml;gg inte till automatiskt, v&auml;nligen inkludera det."
+			    />
+			    :<input id="idpurl" type="text" placeholder="https://idpdev.domain.se" onchange="updateCtx(this)" /><br />
+			  </td>
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    <!-- empty line -->
+			  </td>
+			</tr>
+			<!-- end header -->
+
+			<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Information f&ouml;r servercertifikat</font></b></td>
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    Servercertifikat landskod
+			    <img id="freeRADIUS_svr_country_nameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"  rel="tooltip"
+			    title="Landskoden f&ouml;r ditt l&auml;ros&auml;te."
+			    />
+			    :<input id="freeRADIUS_svr_country" type="text" value="SE" onchange="updateCtx(this)" /><br />
+			    Servercertifikat organisationsnamn
+			    <img id="freeRADIUS_svr_org_nameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"  rel="tooltip"
+			    title="Det officiella namnet f&ouml;r din organisation"
+			    />
+			    :<input id="freeRADIUS_svr_org_name" type="text" placeholder="H&ouml;gskolan i G&auml;vle" onchange="updateCtx(this)" /><br />
+			    <!-- Server Certificate Contact email:<input id="freeRADIUS_svr_email" type="text" placeholder="" onchange="updateCtx(this)" /><br /> -->
+			    Servercertifikat Common Name
+			    <img id="freeRADIUS_svr_commonNameToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Detta f&auml;lt &auml;r autopopulerat fr&aring;n 'Publik URL f&ouml;r servern'. Det &auml;r FQDN f&ouml;r servern som skall anges. IP adresesser &auml;r INTE till&aring;tna."
+			    />
+			    :<input id="freeRADIUS_svr_commonName" type="text" placeholder="idp.domain.se" onchange="updateCtx(this)" /><br />
+			    Skapa ett sj&auml;lvsignerat certifikat
+			    <img id="selfsignedToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Skapar ett sj&auml;lvsignerat SSL certifikat f&ouml;r testter."
+			    />
+			    :<select id="selfsigned"  onchange="updateCtx(this)">
+			      <option name="selfsignedN" value="n" selected="selected">Nej(Rekommenderat)</option>
+			      <option name="selfsignedY" value="y">Ja(Endast f&ouml;r tester)</option>
+			    </select>
+			    <br />
+			  </td>
+			</tr>
+
+			<tr>
+			  <td colspan="2" align="right">
+			    <!-- empty line -->
+			  </td>
+			</tr>
+			<!-- end header -->
+
+			<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Grundkonfiguration f&ouml;r FedSSO</font></b></td>
+			</tr>
+			<tr>
+			  <td colspan="2">
+			    Federerad SSO beh&ouml;ver en anv&auml;ndare f&ouml;r 'find and bind' operationer samt att komma &aring;t data om anv&auml;ndaren.<br />
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    Servlet-beh&aring;llare
+			    <img id="appservToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Tomcat installeras som standard, p&aring; Redhat lyssnar den p&aring; en icke priviligerad port (7443) och anv&auml;nder IPTables med port-forward fr&aring;m 443 till servlet-beh&aring;llaren, Ubuntu anv&auml;nder authbind f&ouml;r binda till port 443.  
+			    &#10;&#10;
+			    Certifikatet f&ouml;r hosten installeras in i en PKCS #12 och du kommer att blir fr&aring;gad om ett l&ouml;senord f&ouml;r denna under installationen. Om du l&auml;mnar detta tomt kommer ett att genereras."
+			    />
+			    :<input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" /><br />
+
+			    Autentiseringstyp
+			    <img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Om LDAP v&auml;ljs kommer denna host hantera b&aring;de autentisering och attributuppslag. Om CAS v&auml;ljs kommer CAS-servern hantera autentisering och denna host kommer att hantera attributuppslag. LDAP-servern M&Aring;STE kunna anv&auml;nda SSL och vara n&aring;bar under installationen d&aring; LDAP-serverns SSL certifikat h&auml;mtas under installationsprocessen."
+			    />
+			    :<select id="type" type="text" onchange="updateCtx(this)"><option value="ldap">LDAP</option><option value="cas">CAS</option></select><br />
+
+			    NTP server
+			    <img id="ntpserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="NTP kr&auml;vs f&ouml;r att h&aring;lla hostens klock i sync."
+			    />
+			    :<input style="width: 250px;" id="ntpserver" type="text" placeholder="ntp.domain.se" onchange="updateCtx(this)" /><br />
+
+			    LDAP Server (separera servrar med mellanslag)
+			    <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Det m&aring;ste anges servernamn och INTE IP address. Namn kr&auml;vs f&ouml;r att kunna anv&auml;nda SSL."
+			    />
+			    :<input style="width: 250px;" id="ldapserver" type="text" placeholder="ldap.domain.se ldap2.domain.se" onchange="updateCtx(this)" /><br />
+
+			    LDAP Bind DN
+			    <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Bind DN &auml;r anv&auml;ndaren som kommer att anv&auml;ndas f&ouml;r att ansluta till LDAP-servern. Ett exempel &auml;r: CN=ShibBindUser,CN=Users, DC=domain,DC=se."
+			    />
+			    :<input style="width: 250px;" id="ldapbinddn" type="text" placeholder="cn=readUser,dc=domain,dc=se" onchange="updateCtx(this)" /><br />
+
+			    LDAP Password
+			    <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="L&ouml;senordet f&ouml;r den priviligerade anv&auml;ndaren."
+			    />
+			    :<input style="width: 250px;" id="ldappass" type="text" placeholder="readUserPassword" onchange="updateCtx(this)" /><br />
+
+			    LDAP Base DN
+			    <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Base DN &auml;r noden i LDAP tr&auml;det d&auml;r s&ouml;kningen kommer att starta."
+			    />
+			    :<input style="width: 250px;" id="ldapbasedn" type="text" placeholder="dc=domain,dc=se" onchange="updateCtx(this)" /><br />
+
+			    LDAP Subtree-s&ouml;kning?
+			    <img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Subtree-s&ouml;kning &auml;r om man ska s&ouml;ka i hela tr&auml;det efter en anv&auml;ndare eller endast i den angivna noden. Subtree &auml;r rekommenderat om inte din LDAP design kr&auml;ver annat."
+			    />
+			    : <select id="subsearch"  onchange="updateCtx(this)">
+			      <option name="subsearchTrue" value="true" selected="selected">Ja</option>
+			      <option name="subsearchFalse" value="false">Nej</option>
+			    </select>
+			    <br />
+
+			    Attribut som inneh&aring;ller personnummer med 12 tecken
+			    <img id="eptidToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Namnet p&aring; det attribut som inneh&aring;ller personnummer inklusive sekel."
+			    />
+			    :<input style="width: 250px;" id="ninc" type="text" value="norEduPersonNIN" onchange="updateCtx(this)" /><br />
+			    SAML Scope f&ouml;r IDPn
+			    <img id="idpurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="SAML scope &auml;r ett suffix f&ouml;r vissa attribut, normalt sett &auml;r det din dom&auml;n."
+			    />
+			    :<input id="my_eduroamDomain" type="text" placeholder="domain.se" onchange="updateCtx(this)" />
+			  </td>
+			</tr>
+			
+			<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">FedSSO Funktioner</font></b></td>
+			</tr>
+			<tr>
+			  <td colspan="2">
+			    Dessa &auml;r val f&ouml;r att ut&ouml;ka funktionaliteten f&ouml;r FedSSO<br />
+			  </td>
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    Aktivera st&ouml;d f&ouml;r ePTID
+			    <img id="eptidToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="ePTID st&aring;r f&ouml;r eduPersonTargetedID. Detta &auml;r en pseudo-anonym identifierarare som &auml;r unik mellan en specifik SP och IDP.
+			    &#10;&#10;
+			    En MySQL databas anv&auml;nds f&ouml;r att cacha genererade identifierare. Du kommer att blir fr&aring;gad om ett l&ouml;senord f&ouml;r MySQL root anv&auml;ndaren under installationen. Om du l&auml;mnar detta tomt kommer ett att genereras."
+			    />
+			    :<select id="eptid"  onchange="updateCtx(this)">
+			      <option name="eptidY" value="y" selected="selected">Ja(Rekommenderat)</option>
+			      <option name="eptidN" value="n">Nej</option>
+			    </select>
+			    <br />
+
+			    Skicka anonymiserad anv&auml;ndningsstatistik till SWAMID
+			    <img id="fticksToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="FTICKS &auml;r ett loggningsformat som anonymiserar och loggar en autentiseringsh&auml;ndelse till SWAMIDs syslogservervrar. Datat presenteras p&aring; http://flog.sunet.se."
+			    />
+			    :<select id="fticks"  onchange="updateCtx(this)">
+			      <option name="ftickY" value="y" selected="selected">Ja(Rekommenderat)</option>
+			      <option name="ftickN" value="n">Nej</option>
+			    </select>
+			    <br />
+
+			    Aktivera st&ouml;d f&ouml;r Google Apps
+			    <img id="googleToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Aktivera st&ouml;d f&ouml;r f&ouml;r Google Apps. L&auml;gger till relaying party och n&ouml;dv&auml;ndiga filter."
+			    />
+			    :<select id="google"  onchange="updateCtx(this)">
+			      <option name="googleN" value="n" selected="selected">Nej</option>
+			      <option name="googleY" value="y">Ja</option>
+			    </select>
+			    <br />
+
+			    <span id="googleRow">
+			    Google Apps dom&auml;n
+			    <img id="googleDomToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Dom&auml;nen f&ouml;r Google Apps."
+			    />
+			    :<input style="width: 250px;" id="googleDom" type="text" placeholder="apps.domain.se" onchange="updateCtx(this)" /><br />
+			    </span>
+
+			    <span id="casurlRow">
+			    CAS-server URL
+			    <img id="casurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="URL till CAS-server."
+			    />
+			    :<input style="width: 250px;" id="casurl" type="text" placeholder="https://cas.domain.se/cas" onchange="updateCtx(this)" /><br />
+			    CAS Login URL
+			    <img id="caslogurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Login URL till CAS-server."
+			    />
+			    :<input style="width: 250px;" id="caslogurl" type="text" placeholder="https://cas.domain.se/cas/login" onchange="updateCtx(this)" /><br />
+			    </span>
+			  </td>
+			</tr>
+
+			<tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Statisk data</font></b></td>
+			</tr>
+			<tr>
+			  <td colspan="2">
+			    Fyll i statisk data f&ouml;r organisationen<br />
+			</tr>
+			<tr>
+			  <td colspan="2" align="right">
+			    L&auml;ros&auml;tets akronym (norEduOrgAcronym)
+			    <img id="certAcroToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="L&auml;ros&auml;tets akronym."
+			    />
+			    :<input style="width: 250px;" id="certAcro" type="text" placeholder="HiG" onchange="updateCtx(this)" /><br />
+
+			    Landsnamn
+			    <img id="certLongClToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip"
+			    title="Fullst&auml;ndigt landsnamn p&aring; engelska."
+			    />
+			    :<input style="width: 250px;" id="certLongC" type="text" value="Sweden" onchange="updateCtx(this)" /><br />
+			  </td>
+			</tr>
+			
+		      </table>
+		      </fieldset>
+		      <br />
+
+		      <button type="submit" class="btn" onclick="return formSubmit();" >
+		      Generera konfiguration
+		      </button>
+		  </form>
+		</div>
+		<div class="span6">
+		</div>
+	      </div>
+	    </div>
+
+	    <form>
+	      <label>        <h4>Genererad konfiguration</h4>          </label>
+	      Kopiera all konfiguration fr&aring;n denna ruta och l&auml;gg in i filen &quot;config&quot; tillsamans med deployer-scriptet p&aring; servern d&auml;r IDPn ska k&ouml;ras.<br />
+	      <textarea id="outputArea" class="span7"  rows="49" cols="40"></textarea>
+	    </form>
+
+	    <form>
+	      <label>             <a name="use_existing_config"></a> <h4>Importera konfiguration</h4>          </label>
+	      Klistra in en befintlig konfiguration f&ouml;r att populera formul&auml;ret ovan.<br />
+	      <table width="40%">
+		<tr>
+		  <td align="right">
+		    <button type="submit" class="btn" onclick="return importPreviousSettings(); " >Importera existerande konfiguration</button>
+		  </td>
+		  <td align="right">
+		    <a href="#top_of_page">till formul&auml;ret</a>
+		  </td>
+	      </tr></table>
+	      <textarea id="importPreviousConfigArea" class="span7"  rows="10" cols="40"></textarea>
+	      <hr color="red" size="10"><hr>
+	    </form>
+	  </div>
+	</div>
+      </div>
+    </div>
+  </body>
 </html>

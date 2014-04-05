@@ -138,9 +138,7 @@ performStepsForShibbolethUpgradeIfRequired () {
 		${Echo} "\n\n\n\nRunning shiboleth installer"
 		sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 	else
-		${Echo} "\nNot an Upgrade but a fresh Shibboleth Install"
-
-
+		${Echo} "\nThis is a fresh Shibboleth Install"
 	fi
 
 
