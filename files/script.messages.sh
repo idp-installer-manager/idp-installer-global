@@ -7,7 +7,7 @@ cleanUp=1
 upgrade=0
 shibVer="2.4.0"
 casVer="3.2.1"
-mysqlConVer="5.1.29"
+mysqlConVer="5.1.32"
 
 files=""
 ts=`date "+%s"`
@@ -65,6 +65,7 @@ ubuntuCmd3="apt-get -y install default-jre >> ${statusFile} 2>&1"
 ubuntuCmd4="apt-get -y install tomcat6 >> ${statusFile} 2>&1"
 ubuntuCmd5="apt-get -y install mysql-server >> ${statusFile} 2>&1"
 tomcatSettingsFileU="/etc/default/tomcat6"
+
 
 redhatCmdU="yum -y update"
 redhatCmd1="yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1"

@@ -1,2 +1,15 @@
 The download directory for packages and other tidbits to support the deployment
 
+Aug 18, 2014 -  added  mysql-connector-java-5.1.32.tar.gz to distribution to prevent breakage
+
+and has MD5 checksum of: 8a92d6dd0cd1a5b017684767800c0025
+
+and a GPG signature of:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (SunOS)
+
+iD8DBQBTzzOejHGNO1By4fURAn1OAJ9xeumyQ2VUFzehpJKolGAQlj+0rgCgjUMH
+CBakCVofs75rlPC6NTNUArc=
+=RqBX
+-----END PGP SIGNATURE-----
+

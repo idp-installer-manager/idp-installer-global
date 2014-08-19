@@ -2,7 +2,7 @@
 > 
 > 
 > 	<metadata:MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-> 			metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed.xml"
+> 			metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
 > 			backingFile="/opt/shibboleth-idp/metadata/caf_metadata_signed.xml">
 > 		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
 > 			<!-- <metadata:MetadataFilter xsi:type="RequiredValidUntil" xmlns="urn:mace:shibboleth:2.0:metadata"
@@ -15,8 +15,8 @@
 > 			</metadata:MetadataFilter -->
 > 		</metadata:MetadataFilter>
 > 	</metadata:MetadataProvider>
-> 	<!-- CAF eduGAIN downstream feed, as of Jan 30,2014 commented out due to signature validation not working, but if disabled, would work but thats a bad thing vis-a-vis trust. --> 
-> <!--	 <metadata:MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 	<!-- CAF eduGAIN downstream feed to write policies against.You need to opt-in this IdP by emailing tickets@canarie.ca--> 
+> 	 <metadata:MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
 > 			metadataURL="https://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
 > 			backingFile="/opt/shibboleth-idp/metadata/caf_interfed_signed.xml">
 > 		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
@@ -25,7 +25,7 @@
 > 				requireSignedMetadata="true" />
 > 		</metadata:MetadataFilter>
 > 	</metadata:MetadataProvider> 
-> --> 
+>  
 >  
 > 	<metadata:MetadataProvider id="URLMD3" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
 > 			metadataURL="http://testshib.org/metadata/testshib-providers.xml"

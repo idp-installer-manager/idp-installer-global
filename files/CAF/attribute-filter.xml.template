@@ -54,7 +54,7 @@
     <!-- 
         Release the given name of the user to our portal service provider
     -->
-    <afp:AttributeFilterPolicy>
+    <afp:AttributeFilterPolicy id="releaseToSPtestshib">
         <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
 
         <afp:AttributeRule attributeID="eduPersonAffiliation">
@@ -70,7 +70,7 @@
     </afp:AttributeFilterPolicy>
 
 
-<afp:AttributeFilterPolicy>
+<afp:AttributeFilterPolicy id="releaseToCateduroamorg">
     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://monitor.eduroam.org/sp/module.php/saml/sp/metadata.php/default-sp" />
     <afp:AttributeRule attributeID="eduPersonPrincipalName">
     <afp:PermitValueRule xsi:type="basic:ANY" />
@@ -78,10 +78,10 @@
     <afp:AttributeRule attributeID="eduPersonTargetedID">
     <afp:PermitValueRule xsi:type="basic:ANY" />
     </afp:AttributeRule>
-    <afp:AttributeRule attributeID="cn">
+    <afp:AttributeRule attributeID="commonName">
     <afp:PermitValueRule xsi:type="basic:ANY" />
     </afp:AttributeRule>
-    <afp:AttributeRule attributeID="mail">
+    <afp:AttributeRule attributeID="email">
     <afp:PermitValueRule xsi:type="basic:ANY" />
     </afp:AttributeRule>
 </afp:AttributeFilterPolicy>
