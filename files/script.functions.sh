@@ -299,7 +299,12 @@ askString() {
 }
 
 installEPEL() {
-	${Echo} "Installing jpackage & EPEL..."
+	
+	if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
+			
+		${Echo} "Detected no EPEL and Jpackage, adding repos into /etc/yum.repos.d/ and updating them"	
+
+
 	cat > /etc/yum.repos.d/jpackage-generic-free.repo << EOF
 [jpackage-generic-free]
 name=JPackage generic free
@@ -321,6 +326,13 @@ gpgkey=http://www.jpackage.org/jpackage.asc
 EOF
 
 	eval $redhatEpel >> ${statusFile} 2>&1
+
+else
+
+	${Echo} "Dected EPEL and JPackage EXIST on this system. Skipping this step as system already updated"
+fi
+
+
 }
 
 setHostnames() {
@@ -365,8 +377,11 @@ installFticksIfEnabled() {
 
 if [ "${fticks}" != "n" ]; then
 
+	${Echo} "Installing ndn-shib-fticks"
+
 		eval ${distCmd2} >> ${statusFile} 2>&1
 		Cres=$?
+
 		if [ $Cres -gt 0 ]; then
 			${Echo} "Command failed: ${distCmd2}"
 			cleanBadInstall
@@ -379,17 +394,6 @@ if [ "${fticks}" != "n" ]; then
 			${Echo} "Maven2 not found! Install Maven2 and re-run this script."
 			cleanBadInstall
 		fi
-
-
-	${Echo} "Installing ndn-shib-fticks"
-	eval ${distCmd2} >> ${statusFile} 2>&1
-	if [ ! -x "`which mvn 2>/dev/null`" ]; then
-		continueF=$(askYesNo "Maven2" "Make sure Maven2 is installed?\nContinue?" "no")
-
-		if [ "${continueF}" = "n" ]; then
-			cleanBadInstall
-		fi
-	fi
 
 	cd /opt
 	git clone git://github.com/leifj/ndn-shib-fticks.git >> ${statusFile} 2>&1
@@ -760,18 +764,17 @@ setDistCommands() {
 			redhatEpel=${redhatEpel5}
 		fi
 
-		if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
-			
-			# Consider this base requirement for system, or maybe move it to the installation phase for Shibboleth??
-			#
-			#continueF=$(askYesNo "Centos" "${Rmsg}")
-			continueF="y"
-
-
-			if [ "${continueF}" = "y" ]; then
-				installEPEL
-			fi
-		fi
+		#if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
+		#	
+		#	# Consider this base requirement for system, or maybe move it to the installation phase for Shibboleth??
+		#	#
+		##	continueF="y"
+#
+#
+#			if [ "${continueF}" = "y" ]; then
+#				installEPEL
+#			fi
+#		fi
 
 		if [ "`which host 2>/dev/null`" == "" ]; then
 			${Echo} "Installing bind-utils..."
@@ -1426,7 +1429,9 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 
 	installTomcat
 	
-	
+	# moved from above tomcat, to here just after.
+
+	installEPEL
 
 	fetchAndUnzipShibbolethIdP
 
@@ -1437,9 +1442,7 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 	installFticksIfEnabled
 
 	
-	
 	installEPTIDSupport
-
 
 
 	configTomcatServerXMLForPasswd
