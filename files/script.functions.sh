@@ -1431,7 +1431,7 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 	
 	# moved from above tomcat, to here just after.
 
-	installEPEL
+	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
 	fetchAndUnzipShibbolethIdP
 
