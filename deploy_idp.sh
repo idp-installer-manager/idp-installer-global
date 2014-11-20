@@ -78,6 +78,7 @@ guessLinuxDist
 ${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
 ${Echo} "\nLive logging can be seen by this command in another window:\n\ntail -f ${statusFile}"
 ${Echo} "\n\nSleeping for 4 sec and then beginning processing..."
+touch ${statusFile}
 sleep 4
 ${Echo} "======================================"
 # bootstrapping step from minimal install
@@ -108,7 +109,8 @@ then
 
 	ValidateConfig
 
-	# experimental --> validateConnectivity
+	# experimental --> 
+	validateConnectivity
 
 	#exit
 
