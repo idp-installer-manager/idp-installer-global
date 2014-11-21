@@ -179,40 +179,40 @@ myecho=${Echo}
 ##############################
 # functions definition
 ##############################
-function lao () {
-        # log, execute and output
+function elo () {
+        # execute log and output
         $1 | tee -a ${statusFile}
 }
 
-function loy () {
-        # log and execute only
-        echo "$1" >> ${statusFile}
+function el () {
+        # execute and log
+        ${Echo} "$1" >> ${statusFile}
         $1 &>> ${statusFile}
 }
 
 ##############################
 # install additional packages
 ##############################
-lao "$myecho ---------------------------------------------"
-lao "$myecho Installing additional software..."
-loy "$distr_install_nc"
-loy "$distr_install_ldaptools"
-lao "$myecho Validating ${test_ldapserver} reachability..."
+elo "${Echo} ---------------------------------------------"
+elo "${Echo} Installing additional software..."
+el "$distr_install_nc"
+el "$distr_install_ldaptools"
+elo "${Echo} Validating ${test_ldapserver} reachability..."
 
 ##############################
 # PING test
 ##############################
-lao "$myecho PING testing..."
+elo "${Echo} PING testing..."
 
-echo "ping -c 4 ${test_ldapserver}" >> ${statusFile}
+${Echo} "ping -c 4 ${test_ldapserver}" >> ${statusFile}
 # create pipe to avoid 'while read' limitations
 mkfifo mypipe
 ping -c 4 ${test_ldapserver} > mypipe &
 
 while read pong 
 do
-  echo $pong | tee -a ${statusFile}
-  FF=$(echo $pong | grep "packet" | awk '{print $6}')
+  ${Echo} $pong | tee -a ${statusFile}
+  FF=$(${Echo} $pong | grep "packet" | awk '{print $6}')
   if [ ! -z $FF ]
         then DD=$FF
   fi
@@ -222,47 +222,47 @@ if [ ! -z $DD ]
 then
   if [ $DD == "0%" ]
     then
-        lao "$myecho ping - - - - ok"
+        elo "${Echo} ping - - - - ok"
         PING="ok"
   elif [ $DD == "100%" ]
     then
-        lao "$myecho Ping - - - - failed"
+        elo "${Echo} Ping - - - - failed"
         PING="failed"
   elif [ $DD == "25%" -o $DD == "50%" -o $DD == "75%" ]
     then
-        lao "$myecho Ping - - - - intermitten"
+        elo "${Echo} Ping - - - - intermitten"
         PING="warning"
     else
-        lao "$myecho Ping - - - - failed"
+        elo "${Echo} Ping - - - - failed"
         PING="failed"
   fi
 else
-        lao "$myecho Ping - - - - failed"
+        elo "${Echo} Ping - - - - failed"
         PING="failed"
 fi
 
 ##############################
 # port availabilty check
 ##############################
-lao "$myecho Port availability checking..."
+elo "${Echo} Port availability checking..."
 
-loy "nc -z -w5 ${test_ldapserver} 636 "
+el "nc -z -w5 ${test_ldapserver} 636 "
   if [ $? == "0" ]
     then
-        lao "$myecho port 636 - - - - ok"
+        elo "${Echo} port 636 - - - - ok"
         PORT636="ok"
     else
-        lao "$myecho port 636 - - - - failed"
+        elo "${Echo} port 636 - - - - failed"
         PORT636="failed"
   fi
 
-loy "nc -z -w5 ${test_ldapserver} 389"
+el "nc -z -w5 ${test_ldapserver} 389"
   if [ $? == "0" ]
     then
-        lao "$myecho port 389 - - - - ok"
+        elo "${Echo} port 389 - - - - ok"
         PORT389="ok"
     else
-        lao "$myecho port 389 - - - - failed"
+        elo "${Echo} port 389 - - - - failed"
         PORT389="failed"
   fi
 
@@ -271,14 +271,14 @@ loy "nc -z -w5 ${test_ldapserver} 389"
 #############################
   if [ $PORT636 == "ok" ]
     then
-        lao "$myecho Trying retrieve certificate..."
-        echo "echo | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
-        echo | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
+        elo "${Echo} Trying retrieve certificate..."
+        ${Echo} "${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
+        ${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
         if [ $? == "0" ]
           then
-                lao "$myecho certificate check - - - - ok"
+                elo "${Echo} certificate check - - - - ok"
                 CERTIFICATE="ok"
-                enddate=$(echo | openssl s_client -connect dc2.ad.cybera.ca:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
+                enddate=$(${Echo} | openssl s_client -connect dc2.ad.cybera.ca:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
 
                 cert=$(date --date="$enddate" +%s)
                 now=$(date +%s)
@@ -286,68 +286,68 @@ loy "nc -z -w5 ${test_ldapserver} 389"
 
                 if [ $cert -lt $now ]
                   then
-                    lao "$myecho ERROR: Certificate expired!"
+                    elo "${Echo} ERROR: Certificate expired!"
                     CERTIFICATE="failed"
                   else
-                    lao "$myecho Certificate still valid"
+                    elo "${Echo} Certificate still valid"
                 fi
 
                 if [ $cert -lt $nowexp ]
                   then
-                    laa "$myecho WARNING: certificate will expire soon"
+                    elo "${Echo} WARNING: certificate will expire soon"
                     CERTIFICATE="warning"
                 fi
           else
-                lao "$myecho certificate check - - - - failed"
+                elo "${Echo} certificate check - - - - failed"
                 CERTIFICATE="failed"
         fi
     else
-        lao "$myecho Port 636 is closed. Cancel certificate check"
+        elo "${Echo} Port 636 is closed. Cancel certificate check"
         CERTIFICATE="failed"
 fi
 
 ##############################
 # bind LDAP user
 ##############################
-lao "$myecho LDAP bind checking...(might take few minutes)"
-echo "ldapwhoami -vvv -h ${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
+elo "${Echo} LDAP bind checking...(might take few minutes)"
+${Echo} "ldapwhoami -vvv -h ${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
 ldapwhoami -vvv -h ${test_ldapserver} -D "${ldap_user}" -x -w "${ldap_password}" &>> ${statusFile}
   if [ $? == "0" ]
     then
-        lao "$myecho ldap bind - - - - ok"
+        elo "${Echo} ldap bind - - - - ok"
         LDAP="ok"
     else
-        lao "$myecho ldap bind - - - - failed"
+        elo "${Echo} ldap bind - - - - failed"
         LDAP="failed"
   fi
 
 ##############################
 # ntp server check
 ##############################
-lao "$myecho Validating ntpserver (${ntpserver}) reachability..."
-$myecho "ntpdate ${ntpserver}" >> ${statusFile}
+elo "${Echo} Validating ntpserver (${ntpserver}) reachability..."
+${Echo} "ntpdate ${ntpserver}" >> ${statusFile}
 ntpcheck=$(ntpdate ${ntpserver} 2>&1 | tee -a ${statusFile} | awk -F":" '{print $4}' | awk '{print $1 $2}')
 
 if [ $ntpcheck == "noserver"  ]
         then
-                lao "$myecho ntpserver - - - - failed"
+                elo "${Echo} ntpserver - - - - failed"
                 NTPSERVER="failed"
         else
-                lao "$myecho ntpserver - - - - ok"
+                elo "${Echo} ntpserver - - - - ok"
                 NTPSERVER="ok"
 fi
 ###############################
 # summary results
 ###############################
-lao "$myecho ---------------------------------------------"
-echo "Summary:"
-echo "PING        - $PING"
-echo "PORT636     - $PORT636"
-echo "PORT389     - $PORT389"
-echo "CERTIFICATE - $CERTIFICATE"
-echo "LDAP        - $LDAP"
-echo "NTPSERVER   - $NTPSERVER"
-lao "$myecho ---------------------------------------------"
+elo "${Echo} ---------------------------------------------"
+${Echo} "Summary:"
+${Echo} "PING        - $PING"
+${Echo} "PORT636     - $PORT636"
+${Echo} "PORT389     - $PORT389"
+${Echo} "CERTIFICATE - $CERTIFICATE"
+${Echo} "LDAP        - $LDAP"
+${Echo} "NTPSERVER   - $NTPSERVER"
+elo "${Echo} ---------------------------------------------"
 
 ###############################
 # pause and warning message
@@ -355,44 +355,44 @@ lao "$myecho ---------------------------------------------"
 if [ $CERTIFICATE == "failed" -o $LDAP == "failed" ]
         then
                 MESSAGE="[ERROR] Reachability test has been failed. Installation will exit [press Enter key]: "
-                echo -n $MESSAGE
-                read choise
-                if [ ! -z $choise ]
+                ${Echo} -n $MESSAGE
+                read choice
+                if [ ! -z $choice ]
                 then
-                        if [ $choise != "continue" ]
+                        if [ $choice != "continue" ]
                                 then
-                                        echo "Installation has been canceled."
+                                        ${Echo} "Installation has been canceled."
                                         exit
                         fi
                 else
-                        echo "Installation has been canceled."
+                        ${Echo} "Installation has been canceled."
                         exit
                 fi
 elif [ $PING == "failed" -o $PING == "intermitten" -o $PORT389 == "failed" -o $CERTIFICATE == "warning" -o $NTPSERVER == "failed" ];
         then
                 MESSAGE="[WARNING] Reachability test completed with some uncritical exceptions. Do you want to continue? [y/n] "
-                echo -n $MESSAGE
-                read choise
-                if [ ! -z $choise ]
+                ${Echo} -n $MESSAGE
+                read choice
+                if [ ! -z $choice ]
                 then
-                        if [ $choise == "y" -o $choise == "yes" ]
+                        if [ $choice == "y" -o $choice == "yes" ]
                                 then
-                                        echo "Continue..."
+                                        ${Echo} "Continue..."
                                 else
-                                        echo "Installation has been canceled."
+                                        ${Echo} "Installation has been canceled."
                                         exit
                         fi
                 else
-                        echo "Installation has been canceled."
+                        ${Echo} "Installation has been canceled."
                         exit
                 fi
         else
                 MESSAGE="[SUCCESS] Reachability test has been completed successfully. [press Enter to continue] "
-                echo -n $MESSAGE
-                read choise
+                ${Echo} -n $MESSAGE
+                read choice
 fi
 
-echo "Starting installation script..."
+${Echo} "Starting installation script..."
 
 
 }
