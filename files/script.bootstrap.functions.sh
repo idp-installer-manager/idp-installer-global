@@ -163,131 +163,236 @@ guessLinuxDist() {
 validateConnectivity()
 
 {
-	# based on feature chosen, enforce reachability of devices
-	
-	# must see Authentication store for each service, otherwise, we may as well bail right now.
-	#
-	# cloned from ValidateConfig and requires script.messages.sh enforceConnectivity fields
 
-	${Echo} "validateConnectivity(): Step1: Starting connectivity tests"
+##############################
+# variables definition
+##############################
+config_dir='/root/idp-installer-CAF'
+test_ldapserver=$(cat ${config_dir}/config | grep ldapserver | awk -F"'" '{print $2}')
+ldap_password=$(cat config | grep ldappass | awk -F"'" '{print $2}')
+ldap_user=$(cat config | grep ldapbinddn | awk -F"'" '{print $2}')
+distr_install_nc='yum install -y nc'
+distr_install_ldaptools='yum install -y openldap-clients'
+ntpserver=$(cat config | grep ntpserver | awk -F"'" '{print $2}')
+myecho=${Echo}
 
-	# Step 1 - determine, based on service, what exactly we must be able to reach
-	#
+##############################
+# functions definition
+##############################
+function elo () {
+        # execute log and output
+        $1 | tee -a ${statusFile}
+}
 
+function el () {
+        # execute and log
+        ${Echo} "$1" >> ${statusFile}
+        $1 &>> ${statusFile}
+}
 
-	vc_connectivity_list=""
-	eval set -- "${installer_section0_buildComponentList}"
+##############################
+# install additional packages
+##############################
+elo "${Echo} ---------------------------------------------"
+elo "${Echo} Installing additional software..."
+el "$distr_install_nc"
+el "$distr_install_ldaptools"
+elo "${Echo} Validating ${test_ldapserver} reachability..."
 
-	while [ $# -gt 0 ]
-	do
-			# uncomment next 3 echo lines to diagnose variable substitution
-			# echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
-		if [ "XXXXXX" ==  "${1}XXXXXX" ]
-        	then
-			# echo "##### $1 is ${!1}"
-			# echo "########EMPTYEMPTY $1 is empty"
-			echo "NO COMPONENTS SELECTED FOR VALIDATION - EXITING IMMEDIATELY"
-			exit
+##############################
+# PING test
+##############################
+elo "${Echo} PING testing..."
 
-		else
-			#debug: echo "working on ${1}"
-			tmpFV="requiredEnforceConnectivityFields${1}"
-			
+${Echo} "ping -c 4 ${test_ldapserver}" >> ${statusFile}
+# create pipe to avoid 'while read' limitations
+mkfifo mypipe
+ping -c 4 ${test_ldapserver} > mypipe &
 
-			#debug: echo "=============dynamic var: ${tmpFV}"
+while read pong 
+do
+  ${Echo} $pong | tee -a ${statusFile}
+  FF=$(${Echo} $pong | grep "packet" | awk '{print $6}')
+  if [ ! -z $FF ]
+        then DD=$FF
+  fi
+done < mypipe
+rm -f mypipe
+if [ ! -z $DD ]
+then
+  if [ $DD == "0%" ]
+    then
+        elo "${Echo} ping - - - - ok"
+        PING="ok"
+  elif [ $DD == "100%" ]
+    then
+        elo "${Echo} Ping - - - - failed"
+        PING="failed"
+  elif [ $DD == "25%" -o $DD == "50%" -o $DD == "75%" ]
+    then
+        elo "${Echo} Ping - - - - intermitten"
+        PING="warning"
+    else
+        elo "${Echo} Ping - - - - failed"
+        PING="failed"
+  fi
+else
+        elo "${Echo} Ping - - - - failed"
+        PING="failed"
+fi
 
+##############################
+# port availabilty check
+##############################
+elo "${Echo} Port availability checking..."
 
-			vc_connectivity_list="${vc_connectivity_list} `echo "${tmpFV}"`";
+el "nc -z -w5 ${test_ldapserver} 636 "
+  if [ $? == "0" ]
+    then
+        elo "${Echo} port 636 - - - - ok"
+        PORT636="ok"
+    else
+        elo "${Echo} port 636 - - - - failed"
+        PORT636="failed"
+  fi
 
-			#settingsHumanReadable=" ${settingsHumanReadable}  ${tmpString}:  ${!1}\n"
-			#settingsHumanReadable="${settingsHumanReadable} ${cfgDesc[$1]}:  ${!1}\n"
-		fi
-	
-		shift
-	done
-	
-	#=======
-	#Step 2, based on the list of fields we will require to be forced connectivity, walk the list
+el "nc -z -w5 ${test_ldapserver} 389"
+  if [ $? == "0" ]
+    then
+        elo "${Echo} port 389 - - - - ok"
+        PORT389="ok"
+    else
+        elo "${Echo} port 389 - - - - failed"
+        PORT389="failed"
+  fi
 
-	tmpBailIfConnectivityHasAny=""
-		${Echo} "validateConnectivity():Step2: Enumerate Services needed from |${vc_connectivity_list}|"
+#############################
+# retrive certificate
+#############################
+  if [ $PORT636 == "ok" ]
+    then
+        elo "${Echo} Trying retrieve certificate..."
+        ${Echo} "${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
+        ${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
+        if [ $? == "0" ]
+          then
+                elo "${Echo} certificate check - - - - ok"
+                CERTIFICATE="ok"
+                enddate=$(${Echo} | openssl s_client -connect dc2.ad.cybera.ca:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
 
+                cert=$(date --date="$enddate" +%s)
+                now=$(date +%s)
+                nowexp=$(date -d "+30 days" +%s)
 
-	eval set -- "${vc_connectivity_list}"
-${Echo} "validateConnectivity():Step2: $# services seen from |${vc_connectivity_list}|"
+                if [ $cert -lt $now ]
+                  then
+                    elo "${Echo} ERROR: Certificate expired!"
+                    CERTIFICATE="failed"
+                  else
+                    elo "${Echo} Certificate still valid"
+                fi
 
-	while [ $# -gt 0 ]
-	do
-			# uncomment next 3 echo lines to diagnose variable substitution
-			 #echo "DO======${tmpVal}===== ---- $1, \$$1, ${!1}"
-			${Echo} "validateConnectivity():Step2:Getting elements from $1, \$$1, ${!1}"
+                if [ $cert -lt $nowexp ]
+                  then
+                    elo "${Echo} WARNING: certificate will expire soon"
+                    CERTIFICATE="warning"
+                fi
+          else
+                elo "${Echo} certificate check - - - - failed"
+                CERTIFICATE="failed"
+        fi
+    else
+        elo "${Echo} Port 636 is closed. Cancel certificate check"
+        CERTIFICATE="failed"
+fi
 
-		if [ "XXXXXX" ==  "${1}XXXXXX" ]
-        	then
-			# echo "##### $1 is ${!1}"
-			# echo "########EMPTYEMPTY $1 is empty"
+##############################
+# bind LDAP user
+##############################
+elo "${Echo} LDAP bind checking...(might take few minutes)"
+${Echo} "ldapwhoami -vvv -h ${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
+ldapwhoami -vvv -h ${test_ldapserver} -D "${ldap_user}" -x -w "${ldap_password}" &>> ${statusFile}
+  if [ $? == "0" ]
+    then
+        elo "${Echo} ldap bind - - - - ok"
+        LDAP="ok"
+    else
+        elo "${Echo} ldap bind - - - - failed"
+        LDAP="failed"
+  fi
 
-			# When we arrive here, we will then validate each string as a reachable host, if it fails, add to message below
-			# This will allow us to test arbitrary components for reachability right up front and bail.
+##############################
+# ntp server check
+##############################
+elo "${Echo} Validating ntpserver (${ntpserver}) reachability..."
+${Echo} "ntpdate ${ntpserver}" >> ${statusFile}
+ntpcheck=$(ntpdate ${ntpserver} 2>&1 | tee -a ${statusFile} | awk -F":" '{print $4}' | awk '{print $1 $2}')
 
-			echo "validateConnectivity(): empty validation attempt for field ${1} in field aggregate in ${vc_connectivity_list}"
+if [ $ntpcheck == "noserver"  ]
+        then
+                elo "${Echo} ntpserver - - - - failed"
+                NTPSERVER="failed"
+        else
+                elo "${Echo} ntpserver - - - - ok"
+                NTPSERVER="ok"
+fi
+###############################
+# summary results
+###############################
+elo "${Echo} ---------------------------------------------"
+${Echo} "Summary:"
+${Echo} "PING        - $PING"
+${Echo} "PORT636     - $PORT636"
+${Echo} "PORT389     - $PORT389"
+${Echo} "CERTIFICATE - $CERTIFICATE"
+${Echo} "LDAP        - $LDAP"
+${Echo} "NTPSERVER   - $NTPSERVER"
+elo "${Echo} ---------------------------------------------"
 
+###############################
+# pause and warning message
+###############################
+if [ $CERTIFICATE == "failed" -o $LDAP == "failed" ]
+        then
+                MESSAGE="[ERROR] Reachability test has been failed. Installation will exit [press Enter key]: "
+                ${Echo} -n $MESSAGE
+                read choice
+                if [ ! -z $choice ]
+                then
+                        if [ $choice != "continue" ]
+                                then
+                                        ${Echo} "Installation has been canceled."
+                                        exit
+                        fi
+                else
+                        ${Echo} "Installation has been canceled."
+                        exit
+                fi
+elif [ $PING == "failed" -o $PING == "intermitten" -o $PORT389 == "failed" -o $CERTIFICATE == "warning" -o $NTPSERVER == "failed" ];
+        then
+                MESSAGE="[WARNING] Reachability test completed with some uncritical exceptions. Do you want to continue? [y/n] "
+                ${Echo} -n $MESSAGE
+                read choice
+                if [ ! -z $choice ]
+                then
+                        if [ $choice == "y" -o $choice == "yes" ]
+                                then
+                                        ${Echo} "Continue..."
+                                else
+                                        ${Echo} "Installation has been canceled."
+                                        exit
+                        fi
+                else
+                        ${Echo} "Installation has been canceled."
+                        exit
+                fi
+        else
+                MESSAGE="[SUCCESS] Reachability test has been completed successfully. [press Enter to continue] "
+                ${Echo} -n $MESSAGE
+                read choice
+fi
 
-		else
-				# Step 3, now that we have the field to use as our 'host', we then try to ping the server.
-				tmpFieldBeingWalked="${!1}"
-				tmpHostForWalking=" `echo "${!tmpFieldBeingWalked}"`";
-
-				#tmpHostsToWalk==" `echo "${!tmpHostsForWalking}"`";
-
-				echo "validateConnectivity():Step 3: Walking:|${tmpFieldBeingWalked}| with these hosts:|${tmpHostForWalking}|"
-
-				
-				eval set -- "${tmpHostForWalking}"
-				
-				echo "validateConnectivity():Step 3.1: $# hosts seen from field:|${tmpFieldBeingWalked}| with these hosts:|${tmpHostForWalking}|"
-
-					for tmpHostVar in "$tmpHostForWalking"; do
-
-							theHOST="`echo ${tmpHostVar} | tr -d ' '`"
-
-							echo "validateConnectivity():Step 4: reading in:|${theHOST}|"
-
-								ping -c 1 -w 5 "${theHOST}" &>/dev/null
-
-							if [ $? -ne 0 ] ; then
-							   echo "${theHOST} is not reachable"
-								tmpBailIfConnectivityHasAny="${tmpBailIfConnectivityHasAny} $1 "
-
-							else
-								echo "${theHOST} is reachable, moving on to next one."
-
-							fi
-
-					done
-
-		fi
-	
-		shift
-	done
-
-# Step 4: if we encounter  a problem, we exit
-
-if [ "XXXXXX" ==  "${tmpBailIfConnectivityHasAny}XXXXXX" ]
-		then
-			echo ""
-		else
-			
-			echo -e "***ERROR***\n\n Runtime reachability check failed for hosts mentioned in ${vc_connectivity_list} from file: ${Spath}/config\n"
-			echo -e " RESULTS:\n\n ${tmpBailIfConnectivityHasAny}";
-			echo ""	
-			echo -e "Please verify that you can ping the servers and that DNS is properly resolving their names in /etc/hosts if necessary.\n\n"
-			exit 1;
-		fi
-
-
-
-
+${Echo} "Starting installation script..."
 
 
 }
