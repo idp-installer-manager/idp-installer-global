@@ -240,11 +240,14 @@ ${Echo} "Previous installation found, performing upgrade."
 		mv ${currentShib} ${currentShib}.${ts}
 	fi
 
-	if [ ! -f "${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
-		fetchShibboleth
+	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
+		fetchAndUnzipShibbolethIdP
 	fi
-	unzip -q ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
+	#unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
+
+	cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
+	tar zcfP ${bupFile} --remove-files /opt/shibboleth-idp
 
 	unlink /opt/shibboleth-identityprovider
 	ln -s /opt/shibboleth-identityprovider-${shibVer} /opt/shibboleth-identityprovider
@@ -271,15 +274,7 @@ ${Echo} "Previous installation found, performing upgrade."
 		cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
 	fi
 
-	cd /opt
-	tar zcf ${bupFile} shibboleth-idp
-
-	cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
-
 	setJavaHome
-	cd /opt/shibboleth-identityprovider
-	${Echo} "\n\n\n\nRunning shiboleth installer"
-	sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 else
 	${Echo} "\nThis is a fresh Shibboleth Install"
 
