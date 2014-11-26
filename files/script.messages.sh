@@ -68,7 +68,7 @@ tomcatSettingsFileU="/etc/default/tomcat6"
 
 
 redhatCmdU="yum -y update"
-redhatCmd1="yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1"
+redhatCmd1=`${Echo} "Installing ntpdate unzip and curl..." && yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1`
 redhatCmd2="yum -y install git-core java-1.7.0-openjdk-devel >> ${statusFile} 2>&1"
 redhatCmd3="yum -y install java-1.7.0-openjdk >> ${statusFile} 2>&1"
 redhatCmd4="yum -y install tomcat6 >> ${statusFile} 2>&1"
@@ -82,12 +82,12 @@ centosCmdEduroam="yum -y install bind-utils ntp samba samba-winbind freeradius f
 centosCmdFedSSO="yum -y install java-1.6.0-openjdk-devel tomcat6 mysql-server mysql"
 
 #
-centosCmdU="yum -y update; yum clean all"
-centosCmd1="yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1"
-centosCmd2="yum -y install git java-1.7.0-openjdk-devel >> ${statusFile} 2>&1"
-centosCmd3="yum -y install java-1.7.0-openjdk >> ${statusFile} 2>&1"
-centosCmd4="yum -y install tomcat6 >> ${statusFile} 2>&1"
-centosCmd5="yum -y install mysql-server >> ${statusFile} 2>&1"
+centosCmdU=`${Echo} "Updating CentOS..." && yum -y update; yum clean all`
+centosCmd1=`${Echo} "Installing ntpdate unzip and curl..." && yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1`
+centosCmd2=`${Echo} "Installing git and OpenJDK..." && yum -y install git java-1.7.0-openjdk-devel >> ${statusFile} 2>&1`
+centosCmd3=`${Echo} "Installing OpenJDK..." && yum -y install java-1.7.0-openjdk >> ${statusFile} 2>&1`
+centosCmd4=`${Echo} "Installing Tomcat6..." && yum -y install tomcat6 >> ${statusFile} 2>&1`
+centosCmd5=`${Echo} "Installing mysql server..." && yum -y install mysql-server >> ${statusFile} 2>&1`
 tomcatSettingsFileC="/etc/sysconfig/tomcat6"
 
 redhatEpel5="rpm -Uvh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
