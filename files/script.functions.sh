@@ -417,7 +417,7 @@ installEPTIDSupport ()
 			test=`dpkg -s mysql-server > /dev/null 2>&1`
 			isInstalled=$?
 		else
-			test=`rpm -q mysql-serverd > /dev/null 2>&1`
+			[ -f /etc/init.d/mysqld ]
 			isInstalled=$?
 		fi
 
@@ -539,7 +539,6 @@ installTomcat() {
 fetchAndUnzipShibbolethIdP ()
 
 {
-
 	cd /opt
 
 	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
@@ -1017,7 +1016,7 @@ patchShibbolethLDAPLoginConfigs ()
 	if [ "${type}" = "ldap" ]; then
 		ldapServerStr=""
 		for i in `${Echo} ${ldapserver}`; do
-			ldapServerStr="`${Echo} ${ldapServerStr}` ldap://${i}"
+			ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
 		done
 		ldapServerStr="`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`"
 
@@ -1034,26 +1033,11 @@ patchTomcatConfigs ()
 
 {
 
-	if [ ! -d "/usr/share/tomcat6/endorsed" ]; then
-		mkdir /usr/share/tomcat6/endorsed
+	if [ -d "/usr/share/tomcat6/endorsed" ]; then
+		rm -rf /usr/share/tomcat6/endorsed
+		sed -e '/endorsed/ s/^#*/#/' -i ${tomcatSettingsFile}
 	fi
-	for i in `ls /opt/shibboleth-identityprovider/endorsed/`; do
-		if [ ! -s "/usr/share/tomcat6/endorsed/${i}" ]; then
-			cp /opt/shibboleth-identityprovider/endorsed/${i} /usr/share/tomcat6/endorsed
-		fi
-	done
 
-	. ${tomcatSettingsFile}
-	if [ -z "`${Echo} ${JAVA_OPTS} | grep '/usr/share/tomcat6/endorsed'`" ]; then
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/-Xmx128m//'` -Djava.endorsed.dirs=/usr/share/tomcat6/endorsed -Xms512m -Xmx512m -XX:MaxPermSize=128m"
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/^\s+//'`"
-		${Echo} "JAVA_OPTS=\"${JAVA_OPTS}\"" >> ${tomcatSettingsFile}
-		if [ "${dist}" != "ubuntu" ]; then
-			${Echo} 'JAVA_ENDORSED_DIRS="/usr/share/tomcat6/endorsed"' >> ${tomcatSettingsFile}
-		fi
-	else
-		${Echo} "JAVA_OPTS for tomcat already configured" >> ${messages}
-	fi
 	if [ "${dist}" == "ubuntu" ]; then
 		if [ "${AUTHBIND}" != "yes" ]; then
 			${Echo} "AUTHBIND=yes" >> ${tomcatSettingsFile}
@@ -1328,6 +1312,9 @@ ${Echo} "Previous installation found, performing upgrade."
 	#unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
 
+        cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
+        tar zcfP ${bupFile} --remove-files /opt/shibboleth-idp
+
 	unlink /opt/shibboleth-identityprovider
 	ln -s /opt/shibboleth-identityprovider-${shibVer} /opt/shibboleth-identityprovider
 
@@ -1353,15 +1340,7 @@ ${Echo} "Previous installation found, performing upgrade."
 		cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
 	fi
 
-	cd /opt
-	tar zcf ${bupFile} shibboleth-idp
-
-	cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
-
 	setJavaHome
-	cd /opt/shibboleth-identityprovider
-	${Echo} "\n\n\n\nRunning shiboleth installer"
-	sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 else
 	${Echo} "\nThis is a fresh Shibboleth Install"
 
@@ -1433,7 +1412,7 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 
 	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
-	fetchAndUnzipShibbolethIdP
+	[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
 
 	
 	installCasClientIfEnabled
