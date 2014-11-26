@@ -326,7 +326,7 @@ echo -e "${my_local_override_msg}"
 	if [ "${type}" = "ldap" ]; then
 		ldapServerStr=""
 		for i in `${Echo} ${ldapserver}`; do
-			ldapServerStr="`${Echo} ${ldapServerStr}` ldap://${i}"
+			ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
 		done
 		ldapServerStr="`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`"
 
