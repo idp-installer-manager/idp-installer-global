@@ -1016,7 +1016,7 @@ patchShibbolethLDAPLoginConfigs ()
 	if [ "${type}" = "ldap" ]; then
 		ldapServerStr=""
 		for i in `${Echo} ${ldapserver}`; do
-			ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
+			ldapServerStr="`${Echo} ${ldapServerStr}` ldap://${i}"
 		done
 		ldapServerStr="`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`"
 
