@@ -310,8 +310,9 @@ fi
 # bind LDAP user
 ##############################
 elo "${Echo} LDAP bind checking...(might take few minutes)"
-${Echo} "ldapwhoami -vvv -h ${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
-ldapwhoami -vvv -h ${test_ldapserver} -D "${ldap_user}" -x -w "${ldap_password}" &>> ${statusFile}
+echo "TLS_REQCERT ALLOW" > /root/.ldaprc
+${Echo} "ldapwhoami -vvv -H ldaps://${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
+ldapwhoami -vvv -H ldaps://${test_ldapserver} -D "${ldap_user}" -x -w "${ldap_password}" &>> ${statusFile}
   if [ $? == "0" ]
     then
         elo "${Echo} ldap bind - - - - ok"
