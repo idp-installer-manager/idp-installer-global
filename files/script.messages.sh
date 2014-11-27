@@ -68,7 +68,7 @@ tomcatSettingsFileU="/etc/default/tomcat6"
 
 
 redhatCmdU="yum -y update"
-redhatCmd1=`${Echo} "Installing ntpdate unzip and curl..." && yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1`
+redhatCmd1="yum -y install patch ntpdate unzip curl >> ${statusFile} 2>&1"
 redhatCmd2="yum -y install git-core java-1.7.0-openjdk-devel >> ${statusFile} 2>&1"
 redhatCmd3="yum -y install java-1.7.0-openjdk >> ${statusFile} 2>&1"
 redhatCmd4="yum -y install tomcat6 >> ${statusFile} 2>&1"

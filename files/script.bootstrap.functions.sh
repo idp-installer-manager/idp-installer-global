@@ -205,7 +205,12 @@ elo "${Echo} Validating ${test_ldapserver} reachability..."
 elo "${Echo} PING testing..."
 
 ${Echo} "ping -c 4 ${test_ldapserver}" >> ${statusFile}
+
 # create pipe to avoid 'while read' limitations
+if [ -e "mypipe" ]
+then
+  rm -f mypipe
+fi
 mkfifo mypipe
 ping -c 4 ${test_ldapserver} > mypipe &
 
