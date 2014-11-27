@@ -10,7 +10,7 @@ setEcho() {
 		Echo="echo"
 	fi
 
-	${Echo} "echo command is set to be '${Echo}'"
+	#${Echo} "echo command is set to be '${Echo}'"
 }
 
 echo "loading script.bootstrap.functions.sh"

@@ -4,7 +4,7 @@
 my_local_override_msg="Overriden by ${my_ctl_federation}"
 my_ctl_functionOverrides="configTomcatSSLServerKey installCertificates configShibbolethFederationValidationKey performStepsForShibbolethUpgradeIfRequired askForSaveConfigToLocalDisk patchShibbolethLDAPLoginConfigs"
 
-echo -e "\n\nOverriding functions: ${my_ctl_functionOverrides}\n\n"
+echo -e "Overriding functions: ${my_ctl_functionOverrides}" >> ${statusFile} 2>&1
 
 
 #
@@ -12,7 +12,7 @@ echo -e "\n\nOverriding functions: ${my_ctl_functionOverrides}\n\n"
 #
 #  Things you want to be available to any BASH function in the script should be overridden here.
 
-		echo -e "Overriding certOrg, CertCN, certC"
+		echo -e "Overriding certOrg, CertCN, certC" >> ${statusFile} 2>&1
 		certOrg="${freeRADIUS_svr_org_name}"
 		certCN="${freeRADIUS_svr_commonName}"
 		certC="CA"
@@ -29,7 +29,7 @@ centosCmdU="yum -y update; yum clean all"
 configTomcatSSLServerKey()
 
 {
-		echo -e "${my_local_override_msg}"
+		echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 	#set up ssl store
@@ -53,7 +53,7 @@ configTomcatSSLServerKey()
 installCertificates ()
 
 {
-			echo -e "${my_local_override_msg} "
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 			# Notes
 			# 1. CAF does not have access to TCS CA's, nor needs them. Elements have been commented out, but kept here for reference.
@@ -96,7 +96,7 @@ installCertificates ()
 configShibbolethFederationValidationKey ()
 
 {
-			echo -e "${my_local_override_msg}"
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 			# Notes:
 			#  1. the file of the certificate of the signer is saved as 'md-signer.crt' which is generic
@@ -128,7 +128,7 @@ configShibbolethFederationValidationKey ()
 patchShibbolethConfigs ()
 {
 
-echo -e "${my_local_override_msg}"
+echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 # patch shibboleth config files
 	${Echo} "Patching config files for ${my_ctl_federation}"
@@ -225,7 +225,7 @@ chmod o+r /opt/shibboleth-idp/conf/attribute-filter.xml
 performStepsForShibbolethUpgradeIfRequired ()
 
 {
-			echo -e "${my_local_override_msg}"
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 if [ "${upgrade}" -eq 1 ]; then
@@ -293,7 +293,7 @@ fi
 askForSaveConfigToLocalDisk ()
 {
 
-echo -e "${my_local_override_msg}"
+echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 # Since everything goes through the config process on the webpage, we do not need this anymore
 
@@ -322,7 +322,7 @@ patchShibbolethLDAPLoginConfigs ()
 
 {
 
-echo -e "${my_local_override_msg}"
+echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 #FIXME: alter override for federation aware setting rather than just the 'CAF' one
 
