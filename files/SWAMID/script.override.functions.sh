@@ -2,10 +2,10 @@
 
 # announce the override action since this is just a plain include
 my_local_override_msg="Overriden by ${my_ctl_federation}"
-echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired"
+echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired" >> ${statusFile} 2>&1
 
 configTomcatSSLServerKey() {
-	echo -e "${my_local_override_msg}"
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 	#set up ssl store
 	if [ ! -s "${certpath}server.key" ]; then
@@ -26,7 +26,7 @@ configTomcatSSLServerKey() {
 }
 
 installCertificates () {
-	echo -e "${my_local_override_msg}"
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 # change to certificate path whilst doing this part
@@ -63,7 +63,7 @@ installCertificates () {
 }
 
 configShibbolethFederationValidationKey () {
-			echo -e "${my_local_override_msg}"
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 ${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signer.crt
@@ -81,11 +81,8 @@ ${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signe
 }
 
 
-performStepsForShibbolethUpgradeIfRequired ()
-
-{
-
-	echo -e "${my_local_override_msg}"
+performStepsForShibbolethUpgradeIfRequired () {
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 	if [ "${upgrade}" -eq 1 ]; then
 

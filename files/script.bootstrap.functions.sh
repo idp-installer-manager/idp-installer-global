@@ -10,7 +10,7 @@ setEcho() {
 		Echo="echo"
 	fi
 
-	${Echo} "echo command is set to be '${Echo}'"
+	#${Echo} "echo command is set to be '${Echo}'"
 }
 
 echo "loading script.bootstrap.functions.sh"
@@ -205,7 +205,12 @@ elo "${Echo} Validating ${test_ldapserver} reachability..."
 elo "${Echo} PING testing..."
 
 ${Echo} "ping -c 4 ${test_ldapserver}" >> ${statusFile}
+
 # create pipe to avoid 'while read' limitations
+if [ -e "mypipe" ]
+then
+  rm -f mypipe
+fi
 mkfifo mypipe
 ping -c 4 ${test_ldapserver} > mypipe &
 
