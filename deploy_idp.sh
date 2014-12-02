@@ -109,7 +109,6 @@ then
 
 	ValidateConfig
 
-	# experimental --> 
 	validateConnectivity
 
 	#exit
