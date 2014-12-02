@@ -305,7 +305,7 @@ fi
 ##############################
 elo "${Echo} LDAP bind checking...(might take few minutes)"
 echo "TLS_REQCERT ALLOW" > /root/.ldaprc
-${Echo} "ldapwhoami -vvv -H ldaps://${ldapserver} -D \"${ldapbinddn}\" -x -w \"${ldappass}\"" >> ${statusFile}
+${Echo} "ldapwhoami -vvv -H ldaps://${ldapserver} -D \"${ldapbinddn}\" -x -w \"<removed>\"" >> ${statusFile}
 ldapwhoami -vvv -H ldaps://${ldapserver} -D "${ldapbinddn}" -x -w "${ldappass}" &>> ${statusFile}
   if [ $? == "0" ]
     then
