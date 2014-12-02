@@ -235,7 +235,7 @@ then
         PING="failed"
   elif [ $DD == "25%" -o $DD == "50%" -o $DD == "75%" ]
     then
-        elo "${Echo} Ping - - - - intermitten"
+        elo "${Echo} Ping - - - - intermittent"
         PING="warning"
     else
         elo "${Echo} Ping - - - - failed"
@@ -374,7 +374,7 @@ if [ $CERTIFICATE == "failed" -o $LDAP == "failed" ]
                         ${Echo} "Installation has been canceled."
                         exit
                 fi
-elif [ $PING == "failed" -o $PING == "intermitten" -o $PORT389 == "failed" -o $CERTIFICATE == "warning" -o $NTPSERVER == "failed" ];
+elif [ $PING == "failed" -o $PING == "warning" -o $PORT389 == "failed" -o $CERTIFICATE == "warning" -o $NTPSERVER == "failed" ];
         then
                 MESSAGE="[WARNING] Reachability test completed with some uncritical exceptions. Do you want to continue? [y/n] "
                 ${Echo} -n $MESSAGE
