@@ -368,29 +368,28 @@ if [ $CERTIFICATE == "failed" -o $LDAP == "failed" ]
                         if [ $choice != "continue" ]
                                 then
                                         ${Echo} "Installation has been canceled."
-                                        exit
+                                        exit 1
                         fi
                 else
                         ${Echo} "Installation has been canceled."
-                        exit
+                        exit 1
                 fi
 elif [ $PING == "failed" -o $PING == "warning" -o $PORT389 == "failed" -o $CERTIFICATE == "warning" -o $NTPSERVER == "failed" ];
         then
-                MESSAGE="[WARNING] Reachability test completed with some uncritical exceptions. Do you want to continue? [y/n] "
+                MESSAGE="[WARNING] Reachability test completed with some uncritical exceptions. Do you want to continue? [Y/n] "
                 ${Echo} -n $MESSAGE
                 read choice
                 if [ ! -z $choice ]
                 then
-                        if [ $choice == "y" -o $choice == "yes" ]
+                        if [ $choice == "Y" -o $choice == "y" -o $choice == "yes" ]
                                 then
                                         ${Echo} "Continue..."
                                 else
                                         ${Echo} "Installation has been canceled."
-                                        exit
+                                        exit 1
                         fi
                 else
-                        ${Echo} "Installation has been canceled."
-                        exit
+                        ${Echo} "Continue..."
                 fi
         else
                 MESSAGE="[SUCCESS] Reachability test has been completed successfully. [press Enter to continue] "
