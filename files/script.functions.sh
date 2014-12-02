@@ -1042,6 +1042,7 @@ patchTomcatConfigs ()
 	if [ -d "/usr/share/tomcat6/endorsed" ]; then
 		rm -rf /usr/share/tomcat6/endorsed
 		sed -e '/endorsed/ s/^#*/#/' -i ${tomcatSettingsFile}
+		echo JAVA_OPTS="-Xms512m -Xmx512m -XX:MaxPermSize=128m" >> ${tomcatSettingsFile}
 	fi
 
 	if [ "${dist}" == "ubuntu" ]; then
