@@ -155,11 +155,6 @@ guessLinuxDist() {
 	fi
 }
 
-
-###
-### experimental
-###
-
 validateConnectivity()
 
 {
