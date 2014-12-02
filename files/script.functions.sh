@@ -55,20 +55,20 @@ installDependanciesForInstallation ()
 fetchJavaIfNeeded ()
 
 {
-
+	${Echo} "setJavaHome deprecates fetchJavaIfNeeded and ensures latest java is used"
 	# install java if needed
-	javaBin=`which java 2>/dev/null`
-	if [ ! -s "${javaBin}" ]; then
-		eval ${distCmd2}
-		eval ${distCmd3}
+	#javaBin=`which java 2>/dev/null`
+	#if [ ! -s "${javaBin}" ]; then
+	#	eval ${distCmd2}
+	#	eval ${distCmd3}
 		
-		javaBin=`which java 2>/dev/null`
-	fi
-	if [ ! -s "${javaBin}" ]; then
-		${Echo} "No java could be found! Install a working JRE and re-run this script."
-		${Echo} "Try: ${distCmd2} and ${distCmd3}"
-		cleanBadInstall
-	fi
+	#	javaBin=`which java 2>/dev/null`
+	#fi
+	#if [ ! -s "${javaBin}" ]; then
+	#	${Echo} "No java could be found! Install a working JRE and re-run this script."
+	#	${Echo} "Try: ${distCmd2} and ${distCmd3}"
+	#	cleanBadInstall
+	#fi
 
 }
 
@@ -104,6 +104,15 @@ setVarCertCN ()
 }
 
 setJavaHome () {
+
+	# force the latest java onto the system to ensure latest is available for all operations.
+	# including the calculation of JAVA_HOME to be what this script sees on the system, not what a stale environment may have
+
+	unset JAVA_HOME
+
+		eval ${distCmd2}
+		eval ${distCmd3}
+
 	javaBin=`which java`
 	if [ -z "${JAVA_HOME}" ]; then
 		# check java
@@ -148,24 +157,16 @@ setJavaHome () {
 		
 		 if [ -z "`grep 'JAVA_HOME' /root/.bashrc`" ]; then
 		 	
-		 	${Echo} "${jEnvString}" >> /root/.bashrc
+		 	 ${Echo} "${jEnvString}" >> /root/.bashrc
 			 ${Echo} "\n\n\n JAVA_HOME added to end of /root/.bashrc"
+		
+		 else
 
-		fi
-		 #else
-
-			# askToRevJava=$(askYesNo "Java Version Updating" "This installer will update the system java.\n${jEnvString}\n\nWill be appended to /root/.bashrc  Choose Yes to continue, no to exit completely" "")
-
-			# if [ "${askToRevJava}" -eq "y" ]; then
-	 	# 		${Echo} "${jEnvString}" >> /root/.bashrc
-			#  	${Echo} "\n\n\n JAVA_HOME added to end of /root/.bashrc"
+	 	 	 ${Echo} "${jEnvString}" >> /root/.bashrc
+			 ${Echo} "\n\n\n ***EXISTING JAVA_HOME DETECTED AND OVERRIDDEN!***"
+			 ${Echo} "\n A new JAVA_HOME has been appended to end of /root/.bashrc to ensure the latest javahome is used. Hand edit as needed\n\n"
 			
-			# else
-			# 	${Echo} "\n\n\n ***User exit chosen. Please verify java version you want to have on this machine."
-			# 	exit
-			# fi
-
-		 #fi
+		 fi
 
 	fi
 
@@ -299,7 +300,12 @@ askString() {
 }
 
 installEPEL() {
-	${Echo} "Installing jpackage & EPEL..."
+	
+	if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
+			
+		${Echo} "Detected no EPEL and Jpackage, adding repos into /etc/yum.repos.d/ and updating them"	
+
+
 	cat > /etc/yum.repos.d/jpackage-generic-free.repo << EOF
 [jpackage-generic-free]
 name=JPackage generic free
@@ -321,6 +327,13 @@ gpgkey=http://www.jpackage.org/jpackage.asc
 EOF
 
 	eval $redhatEpel >> ${statusFile} 2>&1
+
+else
+
+	${Echo} "Dected EPEL and JPackage EXIST on this system. Skipping this step as system already updated"
+fi
+
+
 }
 
 setHostnames() {
@@ -350,12 +363,13 @@ fetchCas() {
 
 fetchMysqlCon() {
 
-	${fetchCmd} ${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz ${mysqlConnectorURL}
-	
-	if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
-		${Echo} "Error while downloading mysql-connector, aborting."
-		cleanBadInstall
-	fi
+	echo "Mysql Connector now in the download folder"
+	#  Deprecated fetching to presence in downloadPath
+
+	#	if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
+	#		${Echo} "Error while downloading mysql-connector, aborting."
+	#		cleanBadInstall
+	#	fi
 }
 
 
@@ -364,8 +378,11 @@ installFticksIfEnabled() {
 
 if [ "${fticks}" != "n" ]; then
 
+	${Echo} "Installing ndn-shib-fticks"
+
 		eval ${distCmd2} >> ${statusFile} 2>&1
 		Cres=$?
+
 		if [ $Cres -gt 0 ]; then
 			${Echo} "Command failed: ${distCmd2}"
 			cleanBadInstall
@@ -378,17 +395,6 @@ if [ "${fticks}" != "n" ]; then
 			${Echo} "Maven2 not found! Install Maven2 and re-run this script."
 			cleanBadInstall
 		fi
-
-
-	${Echo} "Installing ndn-shib-fticks"
-	eval ${distCmd2} >> ${statusFile} 2>&1
-	if [ ! -x "`which mvn 2>/dev/null`" ]; then
-		continueF=$(askYesNo "Maven2" "Make sure Maven2 is installed?\nContinue?" "no")
-
-		if [ "${continueF}" = "n" ]; then
-			cleanBadInstall
-		fi
-	fi
 
 	cd /opt
 	git clone git://github.com/leifj/ndn-shib-fticks.git >> ${statusFile} 2>&1
@@ -763,18 +769,17 @@ setDistCommands() {
 			redhatEpel=${redhatEpel5}
 		fi
 
-		if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
-			
-			# Consider this base requirement for system, or maybe move it to the installation phase for Shibboleth??
-			#
-			#continueF=$(askYesNo "Centos" "${Rmsg}")
-			continueF="y"
-
-
-			if [ "${continueF}" = "y" ]; then
-				installEPEL
-			fi
-		fi
+		#if [ ! -z "`rpm -q epel-release | grep ' is not installed'`" ]; then
+		#	
+		#	# Consider this base requirement for system, or maybe move it to the installation phase for Shibboleth??
+		#	#
+		##	continueF="y"
+#
+#
+#			if [ "${continueF}" = "y" ]; then
+#				installEPEL
+#			fi
+#		fi
 
 		if [ "`which host 2>/dev/null`" == "" ]; then
 			${Echo} "Installing bind-utils..."
@@ -1434,7 +1439,9 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 
 	installTomcat
 	
-	
+	# moved from above tomcat, to here just after.
+
+	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
 	fetchAndUnzipShibbolethIdP
 
@@ -1445,9 +1452,7 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 	installFticksIfEnabled
 
 	
-	
 	installEPTIDSupport
-
 
 
 	configTomcatServerXMLForPasswd

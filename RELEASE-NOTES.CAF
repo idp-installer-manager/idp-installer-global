@@ -1,11 +1,49 @@
 Release Notes
 
+Overview
+
+Please see README.md for overview, key functions and related software dependancies.
+This tool benefits from, and relies on you being online and connected to your environment to fetch the latest 
+from your repository for your OS as well as the necessary certificates.
+
+
 Tag	Details
 
+2.0.0-CAF  General Release
 
-2.0.0CAFbeta1 Documentation updated and draft watermark removed, no code changes
+			Commit notes:
+			Fixed: Removed dependancy on EPEL repositories to prevent installation problem with tomcat & mysql
 
-2.0.0CAFbeta	Initial CAF release
+			Known Issues
+			
+			Build is designed for Active Directory installation via LDAP and depends on 'sAMAccountName' in various places.
+			  Workaround:
+			  	Pure LDAP installation *IS* possible but must happen over LDAPS (636) by just entering your LDAP server.
+			  	 Post installation, replace sAMAccountName wherver it occurs in /opt/shibboleth-idp/conf/ with 'uid' to match your LDAP schema for both attribute-resolver.xml and login.xml
+
+			Build is intended for CentOS6.5 and NOT CentOS7
+				Workaround:
+					Use the CentOS6.5 Minimal iso distribution for your OS.  This is the only platform CAF can support for the tool. 
+					The tool MAY run on ubuntu but is NOT a supported installation environment CAF. This is to say that it may not behave as expected at this time & require hand edits around java support for installation.
+
+
+2.0.0-CAFbeta3 Release candidate 3
+
+			Commit notes: 
+			Updated settings use Mysql J Connector of v5.1.32 instead of 5.1.29 
+ 			Improved handling of JAVA_HOME to prevent java version collisions 
+				Tip: remember to log out and back in again to get latest version of java you just updated
+			Merged fix for sAMAccountName issues from beta2 into native build. No longer need manual intervention to properly resolve attributes for Active Directory.
+			CAF Inter-federation feed is now available by default. 
+			IdP installers/operators still need to email tickets@canarie.ca to request their IdP to be present in eduGAIN (which is only extra elements added to metadata, no technical steps required)
+			CAF SHA256 feed is now the default CAF metadata aggregate
+
+2.0.0-CAFbeta2 Updated settings to pull Mysql Connection of v5.1.29 instead of 5.1.27 due to broken link to download
+
+
+2.0.0-CAFbeta1 Documentation updated and draft watermark removed, no code changes
+
+2.0.0-CAFbeta	Initial CAF release
 		- contains eduroam and Shibboleth functionality
 		-  initial draft documentation
 

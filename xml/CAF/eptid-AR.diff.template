@@ -33,7 +33,7 @@
 >             xsi:type="StoredId"
 >             xmlns="urn:mace:shibboleth:2.0:resolver:dc"
 >             generatedAttributeID="persistentId"
->             sourceAttributeID="samaccountname"
+>             sourceAttributeID="sAMAccountName"
 >             salt="Large_Random_Salt_Value">
 >        <resolver:Dependency ref="uid" />
 >        <ApplicationManagedConnection
