@@ -167,14 +167,8 @@ validateConnectivity()
 ##############################
 # variables definition
 ##############################
-config_dir='/root/idp-installer-CAF'
-test_ldapserver=$(cat ${config_dir}/config | grep ldapserver | awk -F"'" '{print $2}')
-ldap_password=$(cat config | grep ldappass | awk -F"'" '{print $2}')
-ldap_user=$(cat config | grep ldapbinddn | awk -F"'" '{print $2}')
 distr_install_nc='yum install -y nc'
 distr_install_ldaptools='yum install -y openldap-clients'
-ntpserver=$(cat config | grep ntpserver | awk -F"'" '{print $2}')
-myecho=${Echo}
 
 ##############################
 # functions definition
@@ -197,14 +191,14 @@ elo "${Echo} ---------------------------------------------"
 elo "${Echo} Installing additional software..."
 el "$distr_install_nc"
 el "$distr_install_ldaptools"
-elo "${Echo} Validating ${test_ldapserver} reachability..."
+elo "${Echo} Validating ${ldapserver} reachability..."
 
 ##############################
 # PING test
 ##############################
 elo "${Echo} PING testing..."
 
-${Echo} "ping -c 4 ${test_ldapserver}" >> ${statusFile}
+${Echo} "ping -c 4 ${ldapserver}" >> ${statusFile}
 
 # create pipe to avoid 'while read' limitations
 if [ -e "mypipe" ]
@@ -212,7 +206,7 @@ then
   rm -f mypipe
 fi
 mkfifo mypipe
-ping -c 4 ${test_ldapserver} > mypipe &
+ping -c 4 ${ldapserver} > mypipe &
 
 while read pong 
 do
@@ -251,7 +245,7 @@ fi
 ##############################
 elo "${Echo} Port availability checking..."
 
-el "nc -z -w5 ${test_ldapserver} 636 "
+el "nc -z -w5 ${ldapserver} 636 "
   if [ $? == "0" ]
     then
         elo "${Echo} port 636 - - - - ok"
@@ -261,7 +255,7 @@ el "nc -z -w5 ${test_ldapserver} 636 "
         PORT636="failed"
   fi
 
-el "nc -z -w5 ${test_ldapserver} 389"
+el "nc -z -w5 ${ldapserver} 389"
   if [ $? == "0" ]
     then
         elo "${Echo} port 389 - - - - ok"
@@ -277,8 +271,8 @@ el "nc -z -w5 ${test_ldapserver} 389"
   if [ $PORT636 == "ok" ]
     then
         elo "${Echo} Trying retrieve certificate..."
-        ${Echo} "${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
-        ${Echo} | openssl s_client -connect ${test_ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
+        ${Echo} "${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
+        ${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
         if [ $? == "0" ]
           then
                 elo "${Echo} certificate check - - - - ok"
@@ -316,8 +310,8 @@ fi
 ##############################
 elo "${Echo} LDAP bind checking...(might take few minutes)"
 echo "TLS_REQCERT ALLOW" > /root/.ldaprc
-${Echo} "ldapwhoami -vvv -H ldaps://${test_ldapserver} -D \"${ldap_user}\" -x -w \"${ldap_password}\"" >> ${statusFile}
-ldapwhoami -vvv -H ldaps://${test_ldapserver} -D "${ldap_user}" -x -w "${ldap_password}" &>> ${statusFile}
+${Echo} "ldapwhoami -vvv -H ldaps://${ldapserver} -D \"${ldapbinddn}\" -x -w \"${ldappass}\"" >> ${statusFile}
+ldapwhoami -vvv -H ldaps://${ldapserver} -D "${ldapbinddn}" -x -w "${ldappass}" &>> ${statusFile}
   if [ $? == "0" ]
     then
         elo "${Echo} ldap bind - - - - ok"
