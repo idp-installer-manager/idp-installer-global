@@ -272,7 +272,7 @@ el "nc -z -w5 ${ldapserver} 389"
           then
                 elo "${Echo} certificate check - - - - ok"
                 CERTIFICATE="ok"
-                enddate=$(${Echo} | openssl s_client -connect dc2.ad.cybera.ca:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
+                enddate=$(${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
 
                 cert=$(date --date="$enddate" +%s)
                 now=$(date +%s)
