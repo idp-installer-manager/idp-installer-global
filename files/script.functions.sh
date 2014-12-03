@@ -48,8 +48,10 @@ setBackTitle ()
 installDependanciesForInstallation ()
 {
 	${Echo} "Updating repositories and installing generic dependencies"
+	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 	eval ${distCmdU} >> ${statusFile} 2>&1
 	eval ${distCmd1} >> ${statusFile} 2>&1
+	${Echo} "Done."
 }
 
 fetchJavaIfNeeded ()
@@ -109,8 +111,11 @@ setJavaHome () {
 
 	unset JAVA_HOME
 
+		${Echo} "Installing Java OpenJDK packages ..."
+		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 		eval ${distCmd2}
 		eval ${distCmd3}
+		${Echo} "Done."
 
 	javaBin=`which java`
 	if [ -z "${JAVA_HOME}" ]; then
@@ -134,36 +139,31 @@ setJavaHome () {
 	JAVA_HOME="${JAVA_HOME%/}"
 	echo "***javahome is: ${JAVA_HOME}"
 
-
 	# validate java_home and ensure it runs as expected before going any further
-
 	${JAVA_HOME}/bin/java -version >> ${statusFile} 2>&1
-
-
-
 
 	retval=$?
 	if [ "${retval}" -ne 0 ]; then
-		${Echo} "\n\n\nAn error has occurred in the configuration of the JAVA_HOME variable."
+		${Echo} "\nAn error has occurred in the configuration of the JAVA_HOME variable."
 		${Echo} "Please review the java installation and status.log to see what went wrong."
 		${Echo} "Install is aborted until this is resolved."
 		cleanBadInstall
 		exit
 	else
 
-		${Echo} "\n\n\n JAVA_HOME version verified as good."
+		${Echo} "JAVA_HOME version verified as good."
 		jEnvString="export JAVA_HOME=${JAVA_HOME}"
 		
 		 if [ -z "`grep 'JAVA_HOME' /root/.bashrc`" ]; then
 		 	
 		 	 ${Echo} "${jEnvString}" >> /root/.bashrc
-			 ${Echo} "\n\n\n JAVA_HOME added to end of /root/.bashrc"
+			 ${Echo} "JAVA_HOME added to end of /root/.bashrc"
 		
 		 else
 
 	 	 	 ${Echo} "${jEnvString}" >> /root/.bashrc
-			 ${Echo} "\n\n\n ***EXISTING JAVA_HOME DETECTED AND OVERRIDDEN!***"
-			 ${Echo} "\n A new JAVA_HOME has been appended to end of /root/.bashrc to ensure the latest javahome is used. Hand edit as needed\n\n"
+			 ${Echo} "***EXISTING JAVA_HOME DETECTED AND OVERRIDDEN!***"
+			 ${Echo} "A new JAVA_HOME has been appended to end of /root/.bashrc to ensure the latest javahome is used. Hand edit as needed\n"
 			
 		 fi
 
@@ -378,7 +378,7 @@ installFticksIfEnabled() {
 if [ "${fticks}" != "n" ]; then
 
 	${Echo} "Installing ndn-shib-fticks"
-
+	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 		eval ${distCmd2} >> ${statusFile} 2>&1
 		Cres=$?
 
@@ -417,13 +417,16 @@ installEPTIDSupport ()
 			test=`dpkg -s mysql-server > /dev/null 2>&1`
 			isInstalled=$?
 		else
-			test=`rpm -q mysql-serverd > /dev/null 2>&1`
+			[ -f /etc/init.d/mysqld ]
 			isInstalled=$?
 		fi
 
 		if [ "${isInstalled}" -ne 0 ]; then
 			export DEBIAN_FRONTEND=noninteractive
+			${Echo} "Installing mysql server packages..."
+			${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 			eval ${distCmd5} >> ${statusFile} 2>&1
+			${Echo} "Done."
 
 			mysqldTest=`pgrep mysqld`
 			if [ -z "${mysqldTest}" ]; then
@@ -529,7 +532,10 @@ installTomcat() {
 		isInstalled=$?
 	fi
 	if [ "${isInstalled}" -ne 0 ]; then
+		${Echo} "Installing Tomcat6 packages..."
+		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 		eval ${distCmd4}
+		${Echo} "Done."
 		if [ "${dist}" != "ubuntu" ]; then
 			/sbin/chkconfig tomcat6 on
 		fi
@@ -539,7 +545,6 @@ installTomcat() {
 fetchAndUnzipShibbolethIdP ()
 
 {
-
 	cd /opt
 
 	if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
@@ -970,7 +975,7 @@ configShibbolethSSLForLDAPJavaKeystore()
 	# note the numerical comparison of 
 	if [ "$numLDAPCertificateFiles" -ge "$minRequiredLDAPCertificateFiles" ]; then
 
-		${Echo} "Successfully fetched LDAP SSL certificate(s) fetch from LDAP directory. Number loaded: ${numLDAPCertificateFiles} into this keystore ${javaCAcerts}\n"
+		${Echo} "Successfully fetched LDAP SSL certificate(s) fetch from LDAP directory. Number loaded: ${numLDAPCertificateFiles} into this keystore ${javaCAcerts}"
 		
 
 	else
@@ -1034,26 +1039,13 @@ patchTomcatConfigs ()
 
 {
 
-	if [ ! -d "/usr/share/tomcat6/endorsed" ]; then
-		mkdir /usr/share/tomcat6/endorsed
+	if [ -d "/usr/share/tomcat6/endorsed" ]; then
+		rm -rf /usr/share/tomcat6/endorsed
+		sed -e '/endorsed/ s/^#*/#/' -i ${tomcatSettingsFile}
 	fi
-	for i in `ls /opt/shibboleth-identityprovider/endorsed/`; do
-		if [ ! -s "/usr/share/tomcat6/endorsed/${i}" ]; then
-			cp /opt/shibboleth-identityprovider/endorsed/${i} /usr/share/tomcat6/endorsed
-		fi
-	done
 
-	. ${tomcatSettingsFile}
-	if [ -z "`${Echo} ${JAVA_OPTS} | grep '/usr/share/tomcat6/endorsed'`" ]; then
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/-Xmx128m//'` -Djava.endorsed.dirs=/usr/share/tomcat6/endorsed -Xms512m -Xmx512m -XX:MaxPermSize=128m"
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/^\s+//'`"
-		${Echo} "JAVA_OPTS=\"${JAVA_OPTS}\"" >> ${tomcatSettingsFile}
-		if [ "${dist}" != "ubuntu" ]; then
-			${Echo} 'JAVA_ENDORSED_DIRS="/usr/share/tomcat6/endorsed"' >> ${tomcatSettingsFile}
-		fi
-	else
-		${Echo} "JAVA_OPTS for tomcat already configured" >> ${messages}
-	fi
+	echo "JAVA_OPTS=\"-Xms512m -Xmx512m -XX:MaxPermSize=128m\"" >> ${tomcatSettingsFile}
+
 	if [ "${dist}" == "ubuntu" ]; then
 		if [ "${AUTHBIND}" != "yes" ]; then
 			${Echo} "AUTHBIND=yes" >> ${tomcatSettingsFile}
@@ -1244,14 +1236,14 @@ notifyUserBeforeExit()
 {
 
 	${Echo} "======================================"
-	${Echo} "Install processing complete\n\n\n"
+	${Echo} "Install processing complete\n\n"
 
 	if [ "${selfsigned}" = "n" ]; then
 		cat ${certREQ}
-		${Echo} "\n\nLooks like you have chosen to use use a commercial certificate for Shibboleth\n"
+		${Echo} "Looks like you have chosen to use use a commercial certificate for Shibboleth"
 		${Echo} "Here is the certificate request you need to request a certificate from a commercial provider"
 		${Echo} "Or replace the cert files in ${certpath}"
-		${Echo} "\n\nNOTE!!! the keystore for https is a PKCS12 store\n\n"
+		${Echo} "\nNOTE!!! the keystore for https is a PKCS12 store\n"
 	fi
 	${Echo} ""
 	${Echo} "If you installed Shibboleth, the default installation for Shibboleth is done.\n"
@@ -1259,12 +1251,12 @@ notifyUserBeforeExit()
 	${Echo} "Certificate for idp metadata is in the file: /opt/shibboleth-idp/credentials/idp.crt"
 
 if [ "${type}" = "ldap" ]; then
-	${Echo} "\n\n"
-	${Echo} "Looks like you have chosen to use ldap for Shibboleth single sign on.\n"
+	${Echo} "\n"
+	${Echo} "Looks like you have chosen to use ldap for Shibboleth single sign on."
 	${Echo} "Please read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
 fi
 
-	${Echo} "\n\nProcessing complete. You may want to reboot to ensure all services start up as expected.\n\nExiting.\n"
+	${Echo} "Processing complete. You may want to reboot to ensure all services start up as expected.\nExiting.\n"
 
 
 }
@@ -1328,6 +1320,9 @@ ${Echo} "Previous installation found, performing upgrade."
 	#unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
 
+        cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
+        tar zcfP ${bupFile} --remove-files /opt/shibboleth-idp
+
 	unlink /opt/shibboleth-identityprovider
 	ln -s /opt/shibboleth-identityprovider-${shibVer} /opt/shibboleth-identityprovider
 
@@ -1353,17 +1348,9 @@ ${Echo} "Previous installation found, performing upgrade."
 		cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
 	fi
 
-	cd /opt
-	tar zcf ${bupFile} shibboleth-idp
-
-	cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
-
 	setJavaHome
-	cd /opt/shibboleth-identityprovider
-	${Echo} "\n\n\n\nRunning shiboleth installer"
-	sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 else
-	${Echo} "\nThis is a fresh Shibboleth Install"
+	${Echo} "This is a fresh Shibboleth Install"
 
 
 fi
@@ -1433,7 +1420,7 @@ ${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customiz
 
 	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
-	fetchAndUnzipShibbolethIdP
+	[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
 
 	
 	installCasClientIfEnabled

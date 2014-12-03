@@ -76,10 +76,11 @@ setEcho
 guessLinuxDist
 
 ${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
-${Echo} "\nLive logging can be seen by this command in another window:\n\ntail -f ${statusFile}"
-${Echo} "\n\nSleeping for 4 sec and then beginning processing..."
+${Echo} "Live logging can be seen by this command in another window:\ntail -f ${statusFile}"
+${Echo} "Sleeping for 4 sec and then beginning processing..."
+touch ${statusFile}
+${Echo} "==============================================================================="
 sleep 4
-${Echo} "======================================"
 # bootstrapping step from minimal install
 #
 # bindutils to get the basic host info from machine
@@ -87,11 +88,11 @@ ${Echo} "======================================"
 #
 
 if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
-	${Echo} "\n\nAdding a few packages that we will use during the installation process..."
+	${Echo} "\nAdding a few packages that we will use during the installation process..."
 	if [ "${dist}" = "ubuntu" ]; then
-		apt-get -y install dos2unix
+		apt-get -y install dos2unix >> ${statusFile} 2>&1
 	else
-		yum -y install bind-utils dos2unix
+		yum -y install bind-utils dos2unix >> ${statusFile} 2>&1
 	fi
 fi
 
@@ -108,7 +109,7 @@ then
 
 	ValidateConfig
 
-	# experimental --> validateConnectivity
+	validateConnectivity
 
 	#exit
 
@@ -131,11 +132,11 @@ federationSpecificInstallerOverrides="${Spath}/files/${my_ctl_federation}/script
 
 if [ -f "${federationSpecificInstallerOverrides}" ]
 then
-	${Echo} "\n\nAdding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}"
+	${Echo} "Adding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}" >> ${statusFile} 2>&1
 	. ${federationSpecificInstallerOverrides}
 else
 	${Echo} "\n\nNo federation specific overrides detected for federation: ${my_ctl_federation} (if this was blank, the config file does not contain BASH variable my_ctl_federation)"
-	${Echo} "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now"
+	${Echo} "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now" 
 	exit
 fi
 
