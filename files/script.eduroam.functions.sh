@@ -255,97 +255,97 @@ doInstall() {
 
 displayMainMenu() {
 
-                if [ "${GUIen}" = "y" ]
-                then
- 		#	${whiptailBin} --backtitle "${GUIbacktitle}" --title "Review and Confirm Install Settings" --scrolltext --clear --defaultno --yesno --textbox ${freeradiusfile} 20 75 3>&1 1>&2 2>&3
-                  #eduroamTask=$(${whiptailBin} --backtitle "${GUIbacktitle}" --title "Identity Server Main Menu" --cancel-button "exit, no changes" menu --clear  -- "${getStatusString}\nWhich do you want to do?" ${whipSize} 2 review "install Settings" refresh "relevant CentOS packages" install "full eduroam base server" 20 75 3>&1 1>&2 2>&3)
+	if [ "${GUIen}" = "y" ]
+	then
+		#${whiptailBin} --backtitle "${GUIbacktitle}" --title "Review and Confirm Install Settings" --scrolltext --clear --defaultno --yesno --textbox ${freeradiusfile} 20 75 3>&1 1>&2 2>&3
+		#eduroamTask=$(${whiptailBin} --backtitle "${GUIbacktitle}" --title "Identity Server Main Menu" --cancel-button "exit, no changes" menu --clear  -- "${getStatusString}\nWhich do you want to do?" ${whipSize} 2 review "install Settings" refresh "relevant CentOS packages" install "full eduroam base server" 20 75 3>&1 1>&2 2>&3)
 
-                  eduroamTask=$(${whiptailBin} --backtitle "${GUIbacktitle}" --title "Identity Server Main Menu" --cancel-button "exit" --menu --clear  -- "Which do you want to do?" ${whipSize} 5 refresh "Refresh relevant CentOS packages" review "Review install Settings" installEduroam "Install only the eduroam service" installFedSSO "Install only Federated SSO service"  installAll "Install eduroam and Federated SSO services" 3>&1 1>&2 2>&3)
+		eduroamTask=$(${whiptailBin} --backtitle "${GUIbacktitle}" --title "Identity Server Main Menu" --cancel-button "exit" --menu --clear  -- "Which do you want to do?" ${whipSize} 5 refresh "Refresh relevant CentOS packages" review "Review install Settings" installEduroam "Install only the eduroam service" installFedSSO "Install only Federated SSO service"  installAll "Install eduroam and Federated SSO services" 3>&1 1>&2 2>&3)
 
 
-                else
-                        echo "eduroam tasks[ install| uninstall ]"
-                        read eduroamTask
-                        echo ""
-                fi
+	else
+		echo "eduroam tasks[ install| uninstall ]"
+		read eduroamTask
+		echo ""
+	fi
 
-		if [ "${eduroamTask}" = "review" ]
-		then
-			echo "review selected!"
-			review
-		elif [ "${eduroamTask}" = "refresh" ]
-		then	
+	if [ "${eduroamTask}" = "review" ]
+	then
+		echo "review selected!"
+		review
+	elif [ "${eduroamTask}" = "refresh" ]
+	then	
 
-                        echo "refresh chosen, creating Restore Point" >> ${statusFile} 2>&1
+		echo "refresh chosen, creating Restore Point" >> ${statusFile} 2>&1
+		createRestorePoint
+		refresh
+
+	elif [ "${eduroamTask}" = "installEduroam" ]
+	then
+
+		if echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
+
+
+			echo "install chosen, creating Restore Point" >> ${statusFile} 2>&1
 			createRestorePoint
-			refresh
+			echo "Restore Point Completed" >> ${statusFile} 2>&1
+			invokeEduroamInstallProcess
+			echo "Update Completed" >> ${statusFile} 2>&1
 
-		elif [ "${eduroamTask}" = "installEduroam" ]
-		then
+			doInstall
+		else
+			echo "Sorry, necessary configuration for eduroam is incomplete, please redo config file"
+			exit
 
-			if echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
-
-
-	                        echo "install chosen, creating Restore Point" >> ${statusFile} 2>&1
-				createRestorePoint
-	                        echo "Restore Point Completed" >> ${statusFile} 2>&1
-				invokeEduroamInstallProcess
-	                        echo "Update Completed" >> ${statusFile} 2>&1
-
-				doInstall
-			else
-				echo "Sorry, necessary configuration for eduroam is incomplete, please redo config file"
-				exit
-
-			fi
-
-
-		elif [ "${eduroamTask}" = "installFedSSO" ]
-		then
-
-
-			if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
-
-
-		                        echo "install of Federated SSO chosen, creating Restore Point" >> ${statusFile} 2>&1
-					
-					# FIXME: REDUNDANT? --> softwareInstallMaven
-					
-					invokeShibbolethInstallProcess
-
-					createRestorePoint
-		                        echo "Restore Point Completed" >> ${statusFile} 2>&1
-				#	eval ${redhatCmdFedSSO}
-		                        echo "Update Completed" >> ${statusFile} 2>&1
-		    
-			else
-				echo "Sorry, necessary configuration for shibboleth is incomplete, please redo config file"
-				exit
 		fi
 
-		elif [ "${eduroamTask}" = "installAll" ]
-		then
-					
 
-                        echo "install everything chosen, creating Restore Point" >> ${statusFile} 2>&1
-			createRestorePoint
-                        echo "Restore Point Completed" >> ${statusFile} 2>&1
-                        echo "Installing FreeRADIUS and eduroam configuration" >> ${statusFile} 2>&1
-			invokeEduroamInstallProcess
-			doInstall
-			             echo "Installing Shibboleth and Federated SSO configuration" >> ${statusFile} 2>&1
-			
+	elif [ "${eduroamTask}" = "installFedSSO" ]
+	then
+
+
+		if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
+
+
+			echo "install of Federated SSO chosen, creating Restore Point" >> ${statusFile} 2>&1
+
+			# FIXME: REDUNDANT? --> softwareInstallMaven
+
 			invokeShibbolethInstallProcess
 
-                                echo ""
-                                echo "Update Completed" >> ${statusFile} 2>&1
+			createRestorePoint
+			echo "Restore Point Completed" >> ${statusFile} 2>&1
+			#	eval ${redhatCmdFedSSO}
+			echo "Update Completed" >> ${statusFile} 2>&1
 
-#			doInstall
 		else
-
-			mainMenuExitFlag=1
-			
+			echo "Sorry, necessary configuration for shibboleth is incomplete, please redo config file"
+			exit
 		fi
+
+	elif [ "${eduroamTask}" = "installAll" ]
+	then
+
+
+		echo "install everything chosen, creating Restore Point" >> ${statusFile} 2>&1
+		createRestorePoint
+		echo "Restore Point Completed" >> ${statusFile} 2>&1
+		echo "Installing FreeRADIUS and eduroam configuration" >> ${statusFile} 2>&1
+		invokeEduroamInstallProcess
+		doInstall
+		echo "Installing Shibboleth and Federated SSO configuration" >> ${statusFile} 2>&1
+
+		invokeShibbolethInstallProcess
+
+		echo ""
+		echo "Update Completed" >> ${statusFile} 2>&1
+
+		#doInstall
+	else
+
+		mainMenuExitFlag=1
+
+	fi
 
 }
 createRestorePoint() {

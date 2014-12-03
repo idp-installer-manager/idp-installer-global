@@ -1382,98 +1382,99 @@ invokeShibbolethInstallProcess ()
 
 	### Begin of SAML IdP installation Process
 
-${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
-                	continueFwipe=$?
-                	if [ "${continueFwipe}" -eq 0 ]
-                	then
+	${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
+	continueFwipe=$?
 
-	# check for installed IDP
-	setVarUpgradeType
+	if [ "${continueFwipe}" -eq 0 ]
+	then
 
-	# Override per federation
-	performStepsForShibbolethUpgradeIfRequired
+		# check for installed IDP
+		setVarUpgradeType
 
-	askForConfigurationData
-	prepConfirmBox
+		# Override per federation
+		performStepsForShibbolethUpgradeIfRequired
 
-	askForSaveConfigToLocalDisk
+		askForConfigurationData
+		prepConfirmBox
 
-	notifyMessageDeployBeginning
+		askForSaveConfigToLocalDisk
 
-
-	setVarPrepType
-	setVarCertCN
-
-	installDependanciesForInstallation
-
-	fetchJavaIfNeeded
-
-	setJavaHome
-	
-	setJavaCACerts
-
-	generatePasswordsForSubsystems
-
-	installTomcat
-	
-	# moved from above tomcat, to here just after.
-
-	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
-
-	[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
-
-	
-	installCasClientIfEnabled
-	
-
-	installFticksIfEnabled
-
-	
-	installEPTIDSupport
+		notifyMessageDeployBeginning
 
 
-	configTomcatServerXMLForPasswd
+		setVarPrepType
+		setVarCertCN
 
-	configShibbolethXMLAttributeResolverForLDAP
-	
+		installDependanciesForInstallation
 
-	runShibbolethInstaller
+		fetchJavaIfNeeded
 
+		setJavaHome
 
-	createCertificatePathAndHome
+		setJavaCACerts
 
-	
-	# Override per federation
-	installCertificates
+		generatePasswordsForSubsystems
 
-	configShibbolethSSLForLDAPJavaKeystore
+		installTomcat
 
-	# Override per federation
-	configTomcatSSLServerKey
+		# moved from above tomcat, to here just after.
 
-	patchShibbolethLDAPLoginConfigs
+		# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
-	patchTomcatConfigs
-	
-	# Override per federation
-	configShibbolethFederationValidationKey
-
-	patchShibbolethConfigs
-
-	updateMachineTime
-
-	updateTomcatAddingIDPWar
+		[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
 
 
-restartTomcatService
+		installCasClientIfEnabled
 
-enableTomcatOnRestart
 
-else
+		installFticksIfEnabled
 
-				${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
 
-                	fi
+		installEPTIDSupport
+
+
+		configTomcatServerXMLForPasswd
+
+		configShibbolethXMLAttributeResolverForLDAP
+
+
+		runShibbolethInstaller
+
+
+		createCertificatePathAndHome
+
+
+		# Override per federation
+		installCertificates
+
+		configShibbolethSSLForLDAPJavaKeystore
+
+		# Override per federation
+		configTomcatSSLServerKey
+
+		patchShibbolethLDAPLoginConfigs
+
+		patchTomcatConfigs
+
+		# Override per federation
+		configShibbolethFederationValidationKey
+
+		patchShibbolethConfigs
+
+		updateMachineTime
+
+		updateTomcatAddingIDPWar
+
+
+		restartTomcatService
+
+		enableTomcatOnRestart
+
+	else
+
+		${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
+
+	fi
 
 
 }
