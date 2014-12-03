@@ -188,13 +188,25 @@ generatePasswordsForSubsystems ()
 	# generate keystore pass
 	if [ -z "${pass}" ]; then
 		pass=`${passGenCmd}`
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "Shibboleth keystore password is '${pass}'" >> ${statusFile}
+		fi
 	fi
 	if [ -z "${httpspass}" ]; then
 		httpspass=`${passGenCmd}`
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "HTTPS JKS keystore password is '${httpspass}'" >> ${statusFile}
+		fi
 	fi
 	if [ -z "${mysqlPass}" -a "${eptid}" != "n" ]; then
 		mysqlPass=`${passGenCmd}`
 		${Echo} "Mysql root password generated\nPassword is '${mysqlPass}'" >> ${messages}
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "MySQL password is '${mysqlPass}'" >> ${statusFile}
+		fi
 	fi
 
 }
@@ -1382,8 +1394,13 @@ invokeShibbolethInstallProcess ()
 
 	### Begin of SAML IdP installation Process
 
-	${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
-	continueFwipe=$?
+	if [ "${installer_interactive}" = "y" ]
+	then
+		${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
+		continueFwipe=$?
+	else
+		continueFwipe=0
+	fi
 
 	if [ "${continueFwipe}" -eq 0 ]
 	then
@@ -1394,10 +1411,12 @@ invokeShibbolethInstallProcess ()
 		# Override per federation
 		performStepsForShibbolethUpgradeIfRequired
 
-		askForConfigurationData
-		prepConfirmBox
-
-		askForSaveConfigToLocalDisk
+		if [ "${installer_interactive}" = "y" ]
+		then
+			askForConfigurationData
+			prepConfirmBox
+			askForSaveConfigToLocalDisk
+		fi
 
 		notifyMessageDeployBeginning
 

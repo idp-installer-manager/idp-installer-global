@@ -109,6 +109,11 @@ then
 
 	ValidateConfig
 
+	if [ -z "${installer_interactive}" ]
+	then
+		installer_interactive="y"
+	fi
+
 	validateConnectivity
 
 	#exit
