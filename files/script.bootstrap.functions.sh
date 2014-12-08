@@ -268,13 +268,13 @@ if [ $PORT636 == "ok" ]
     then
         elo "${Echo} Trying retrieve certificate..."
         ${Echo} "${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
-        ${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
+	chk=$(${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer)
         if [ $? == "0" ]
           then
-                chk=$(openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p')
-		if [ ! -z "$chk" ] 
+		if [ ! -z "${chk}" ] 
 		then
-		enddate=$(${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}' )
+		${Echo} "${chk}" | tee -a ${statusFile}
+		enddate=$(${Echo} "${chk}" | grep notAfter | awk -F"=" '{print $2}' )
                 	  cert=$(date --date="$enddate" +%s)
                 	  now=$(date +%s)
                 	  nowexp=$(date -d "+30 days" +%s)
