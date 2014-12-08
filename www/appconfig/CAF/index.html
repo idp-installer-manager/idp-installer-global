@@ -157,6 +157,16 @@
                                               type="checkbox" name="ida_component_shibboleth" value="on" />
                                             </td>
                                           </tr>
+                                          <tr><td><hr></td></tr>
+                                          <tr>
+                                            <td>
+                                              Non-interactive installation
+                                              <img id="nonInteractiveInstallationToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip" title="In non-interactive mode the installer will not ask for any user input or confirmation and will automatically generate all passwords.">
+                                            </td>
+                                            <td>
+                                              <input id="installer_interactive" type="checkbox" value="y" onclick="updateCtx(this)"/>
+                                            </td>
+                                          </tr>
                                         </table>
                                         <input type="hidden" id="installer_section0_buildComponentList" type="text" placeholder="" value="" >
                                         

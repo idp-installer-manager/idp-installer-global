@@ -109,10 +109,14 @@ then
 
 	ValidateConfig
 
+	if [ -z "${installer_interactive}" ]
+	then
+		installer_interactive="y"
+	fi
+
 	if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
 		validateConnectivity
 	fi
-	#exit
 
 else
 	${Echo} "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"
