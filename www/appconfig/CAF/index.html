@@ -695,7 +695,7 @@ installer_section3_title:
                   :
                   <input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" >
                   <BR>
-                  Authentication type (ldap) 
+                  Authentication type 
 <img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="LDAP is the default method for FedSSO.  The LDAP directory MUST be able to do SSL and be visible during installation as the LDAP SSL certificate is fetched realtime during the installation process."
            />
@@ -788,9 +788,8 @@ installer_section3_title:
                     </option>
                   </select>
                   <br>
-		<table>
-		<tr><td id="casurlRow">
-                 Cas Server Login URL
+		<div id="casurlRow">
+                  CAS Server Login URL
                   <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="An unauthenticated user will be redirected to this URL"
            />
@@ -798,16 +797,14 @@ installer_section3_title:
                   <input  style="width: 250px;" id="caslogurl" type="text" placeholder="e.g. http://casserver/login" onchange="updateCtx(this)" >
                   <BR>                  
 
-                 Cas Server Validation URL
+                 CAS Server Validation URL
                   <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="CAS Ticket validation URL. Idp will validate the SP ticket to this CAS URL."
            />
            :
                   <input  style="width: 250px;" id="casurl" type="text" placeholder="e.g. http://casserver/" onchange="updateCtx(this)" >
                   <BR>
-		</td></tr>
-		</table>
-
+                </div>
                   
                 </td>
               </tr>

@@ -109,8 +109,9 @@ then
 
 	ValidateConfig
 
-	validateConnectivity
-
+	if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
+		validateConnectivity
+	fi
 	#exit
 
 else
