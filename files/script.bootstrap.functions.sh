@@ -263,34 +263,43 @@ el "nc -z -w5 ${ldapserver} 389"
 #############################
 # retrive certificate
 #############################
-  if [ $PORT636 == "ok" ]
+
+if [ $PORT636 == "ok" ]
     then
         elo "${Echo} Trying retrieve certificate..."
         ${Echo} "${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer" >> ${statusFile}
         ${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | tee -a ${statusFile}
         if [ $? == "0" ]
           then
-                elo "${Echo} certificate check - - - - ok"
-                CERTIFICATE="ok"
-                enddate=$(${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}')
+                chk=$(openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p')
+		if [ ! -z "$chk" ] 
+		then
+		enddate=$(${Echo} | openssl s_client -connect ${ldapserver}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | openssl x509 -noout -subject -dates -issuer | grep notAfter | awk -F"=" '{print $2}' )
+                	  cert=$(date --date="$enddate" +%s)
+                	  now=$(date +%s)
+                	  nowexp=$(date -d "+30 days" +%s)
 
-                cert=$(date --date="$enddate" +%s)
-                now=$(date +%s)
-                nowexp=$(date -d "+30 days" +%s)
+                	  if [ $cert -lt $now ]
+                	    then
+				elo "${Echo} certificate check - - - - failed"
+                	      	elo "${Echo} ERROR: Certificate expired!"
+                	      	CERTIFICATE="failed"
+                	    else
+				elo "${Echo} certificate check - - - - ok"
+                	      	elo "${Echo} Certificate still valid"
+				CERTIFICATE="ok"
+                	  fi
 
-                if [ $cert -lt $now ]
-                  then
-                    elo "${Echo} ERROR: Certificate expired!"
-                    CERTIFICATE="failed"
-                  else
-                    elo "${Echo} Certificate still valid"
-                fi
-
-                if [ $cert -lt $nowexp ]
-                  then
-                    elo "${Echo} WARNING: certificate will expire soon"
-                    CERTIFICATE="warning"
-                fi
+                	  if [ $cert -lt $nowexp ]
+                	    then
+				elo "${Echo} certificate check - - - - warning"
+                	      	elo "${Echo} WARNING: certificate will expire soon"
+                	      	CERTIFICATE="warning"
+                	  fi
+		else
+			elo "${Echo} certificate check - - - - failed"
+                        CERTIFICATE="failed"
+		fi
           else
                 elo "${Echo} certificate check - - - - failed"
                 CERTIFICATE="failed"
