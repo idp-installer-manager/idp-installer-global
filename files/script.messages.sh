@@ -6,7 +6,7 @@ GUIen=y
 cleanUp=1
 upgrade=0
 shibVer="2.4.3"
-casVer="3.2.1"
+casVer="3.3.3"
 mysqlConVer="5.1.32"
 
 files=""

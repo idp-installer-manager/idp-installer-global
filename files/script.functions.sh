@@ -512,7 +512,6 @@ if [ "${type}" = "cas" ]; then
 	fi
 
 	cp /opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar /opt/shibboleth-identityprovider/lib/
-	cp /opt/cas-client-${casVer}/modules/commons-logging-1.1.jar /opt/shibboleth-identityprovider/lib/
 	mkdir /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
 	cp /opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
 	cp /opt/cas-client-${casVer}/modules/commons-logging-1.1.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
