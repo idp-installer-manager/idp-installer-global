@@ -184,8 +184,8 @@ function el () {
 ##############################
 elo "${Echo} ---------------------------------------------"
 elo "${Echo} Installing additional software..."
-el "$distr_install_nc"
-el "$distr_install_ldaptools"
+elo "$distr_install_nc"
+elo "$distr_install_ldaptools"
 elo "${Echo} Validating ${ldapserver} reachability..."
 
 ##############################

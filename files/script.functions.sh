@@ -49,8 +49,8 @@ installDependanciesForInstallation ()
 {
 	${Echo} "Updating repositories and installing generic dependencies"
 	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-	eval ${distCmdU} >> ${statusFile} 2>&1
-	eval ${distCmd1} >> ${statusFile} 2>&1
+	eval ${distCmdU} &> >(tee -a ${statusFile}) 
+	eval ${distCmd1} &> >(tee -a ${statusFile})
 	${Echo} "Done."
 }
 
@@ -113,8 +113,8 @@ setJavaHome () {
 
 		${Echo} "Installing Java OpenJDK packages ..."
 		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd2}
-		eval ${distCmd3}
+		eval ${distCmd2} &> >(tee -a ${statusFile})
+		eval ${distCmd3} &> >(tee -a ${statusFile})
 		${Echo} "Done."
 
 	javaBin=`which java`
@@ -391,7 +391,7 @@ if [ "${fticks}" != "n" ]; then
 
 	${Echo} "Installing ndn-shib-fticks"
 	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd2} >> ${statusFile} 2>&1
+		eval ${distCmd2} &> >(tee -a ${statusFile})
 		Cres=$?
 
 		if [ $Cres -gt 0 ]; then
@@ -437,7 +437,7 @@ installEPTIDSupport ()
 			export DEBIAN_FRONTEND=noninteractive
 			${Echo} "Installing mysql server packages..."
 			${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-			eval ${distCmd5} >> ${statusFile} 2>&1
+			eval ${distCmd5} &> >(tee -a ${statusFile})
 			${Echo} "Done."
 
 			mysqldTest=`pgrep mysqld`
@@ -544,7 +544,7 @@ installTomcat() {
 	if [ "${isInstalled}" -ne 0 ]; then
 		${Echo} "Installing Tomcat6 packages..."
 		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd4}
+		eval ${distCmd4} &> >(tee -a ${statusFile})
 		${Echo} "Done."
 		if [ "${dist}" != "ubuntu" ]; then
 			/sbin/chkconfig tomcat6 on
@@ -1316,7 +1316,7 @@ if [ "${upgrade}" -eq 1 ]; then
 
 ${Echo} "Previous installation found, performing upgrade."
 
-	eval ${distCmd1}
+	eval ${distCmd1} &> >(tee -a ${statusFile})
 	cd /opt
 	currentShib=`ls -l /opt/shibboleth-identityprovider | awk '{print $NF}'`
 	currentVer=`${Echo} ${currentShib} | awk -F\- '{print $NF}'`
