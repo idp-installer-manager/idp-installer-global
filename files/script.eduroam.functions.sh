@@ -35,7 +35,7 @@ refresh() {
                 	continueFwipe=$?
                 	if [ "${continueFwipe}" -eq 0 ]
                 	then
-				eval ${redhatCmdEduroam}	
+				eval ${redhatCmdEduroam} &> >(tee -a ${statusFile})	
 				echo ""
 				echo "Update Completed" >> ${statusFile} 2>&1 
                 	fi
@@ -232,7 +232,7 @@ doInstall() {
                 	continueFwipe=$?
                 	if [ "${continueFwipe}" -eq 0 ]
                 	then
-				eval ${redhatCmdEduroam}	
+				eval ${redhatCmdEduroam} &> >(tee -a ${statusFile})	
 				echo ""
 				echo "Update Completed" >> ${statusFile} 2>&1 
                         	echo "Beginning overlay , creating Restore Point" >> ${statusFile} 2>&1
@@ -390,6 +390,6 @@ invokeEduroamInstallProcess ()
 
 {
 
-eval ${redhatCmdEduroam}
+eval ${redhatCmdEduroam} &> >(tee -a ${statusFile})
 
 }
