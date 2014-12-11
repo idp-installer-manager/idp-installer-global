@@ -48,7 +48,7 @@ setBackTitle ()
 installDependanciesForInstallation ()
 {
 	${Echo} "Updating repositories and installing generic dependencies"
-	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+	#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 	eval ${distCmdU} &> >(tee -a ${statusFile}) 
 	eval ${distCmd1} &> >(tee -a ${statusFile})
 	${Echo} "Done."
@@ -112,7 +112,7 @@ setJavaHome () {
 	unset JAVA_HOME
 
 		${Echo} "Installing Java OpenJDK packages ..."
-		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+		#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 		eval ${distCmd2} &> >(tee -a ${statusFile})
 		eval ${distCmd3} &> >(tee -a ${statusFile})
 		${Echo} "Done."
@@ -436,7 +436,7 @@ installEPTIDSupport ()
 		if [ "${isInstalled}" -ne 0 ]; then
 			export DEBIAN_FRONTEND=noninteractive
 			${Echo} "Installing mysql server packages..."
-			${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+			#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 			eval ${distCmd5} &> >(tee -a ${statusFile})
 			${Echo} "Done."
 
@@ -543,7 +543,7 @@ installTomcat() {
 	fi
 	if [ "${isInstalled}" -ne 0 ]; then
 		${Echo} "Installing Tomcat6 packages..."
-		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+		#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
 		eval ${distCmd4} &> >(tee -a ${statusFile})
 		${Echo} "Done."
 		if [ "${dist}" != "ubuntu" ]; then
