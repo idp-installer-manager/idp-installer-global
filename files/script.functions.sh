@@ -48,9 +48,9 @@ setBackTitle ()
 installDependanciesForInstallation ()
 {
 	${Echo} "Updating repositories and installing generic dependencies"
-	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-	eval ${distCmdU} >> ${statusFile} 2>&1
-	eval ${distCmd1} >> ${statusFile} 2>&1
+	#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+	eval ${distCmdU} &> >(tee -a ${statusFile}) 
+	eval ${distCmd1} &> >(tee -a ${statusFile})
 	${Echo} "Done."
 }
 
@@ -112,9 +112,9 @@ setJavaHome () {
 	unset JAVA_HOME
 
 		${Echo} "Installing Java OpenJDK packages ..."
-		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd2}
-		eval ${distCmd3}
+		#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+		eval ${distCmd2} &> >(tee -a ${statusFile})
+		eval ${distCmd3} &> >(tee -a ${statusFile})
 		${Echo} "Done."
 
 	javaBin=`which java`
@@ -188,13 +188,25 @@ generatePasswordsForSubsystems ()
 	# generate keystore pass
 	if [ -z "${pass}" ]; then
 		pass=`${passGenCmd}`
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "Shibboleth keystore password is '${pass}'" >> ${statusFile}
+		fi
 	fi
 	if [ -z "${httpspass}" ]; then
 		httpspass=`${passGenCmd}`
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "HTTPS JKS keystore password is '${httpspass}'" >> ${statusFile}
+		fi
 	fi
 	if [ -z "${mysqlPass}" -a "${eptid}" != "n" ]; then
 		mysqlPass=`${passGenCmd}`
 		${Echo} "Mysql root password generated\nPassword is '${mysqlPass}'" >> ${messages}
+
+		if [ "${installer_interactive}" = "n" ]; then
+			${Echo} "MySQL password is '${mysqlPass}'" >> ${statusFile}
+		fi
 	fi
 
 }
@@ -379,7 +391,7 @@ if [ "${fticks}" != "n" ]; then
 
 	${Echo} "Installing ndn-shib-fticks"
 	${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd2} >> ${statusFile} 2>&1
+		eval ${distCmd2} &> >(tee -a ${statusFile})
 		Cres=$?
 
 		if [ $Cres -gt 0 ]; then
@@ -424,8 +436,8 @@ installEPTIDSupport ()
 		if [ "${isInstalled}" -ne 0 ]; then
 			export DEBIAN_FRONTEND=noninteractive
 			${Echo} "Installing mysql server packages..."
-			${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-			eval ${distCmd5} >> ${statusFile} 2>&1
+			#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+			eval ${distCmd5} &> >(tee -a ${statusFile})
 			${Echo} "Done."
 
 			mysqldTest=`pgrep mysqld`
@@ -500,11 +512,9 @@ if [ "${type}" = "cas" ]; then
 	fi
 
 	cp /opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar /opt/shibboleth-identityprovider/lib/
-	cp /opt/cas-client-${casVer}/modules/commons-logging-1.1.jar /opt/shibboleth-identityprovider/lib/
 	mkdir /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
 	cp /opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
-	cp /opt/cas-client-${casVer}/modules/commons-logging-1.1.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
-
+	
 	cat ${Spath}/${prep}/shibboleth-identityprovider-web.xml.diff.template \
 		| sed -re "s#IdPuRl#${idpurl}#;s#CaSuRl#${caslogurl}#;s#CaS2uRl#${casurl}#" \
 		> ${Spath}/${prep}/shibboleth-identityprovider-web.xml.diff
@@ -533,8 +543,8 @@ installTomcat() {
 	fi
 	if [ "${isInstalled}" -ne 0 ]; then
 		${Echo} "Installing Tomcat6 packages..."
-		${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
-		eval ${distCmd4}
+		#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+		eval ${distCmd4} &> >(tee -a ${statusFile})
 		${Echo} "Done."
 		if [ "${dist}" != "ubuntu" ]; then
 			/sbin/chkconfig tomcat6 on
@@ -1306,7 +1316,7 @@ if [ "${upgrade}" -eq 1 ]; then
 
 ${Echo} "Previous installation found, performing upgrade."
 
-	eval ${distCmd1}
+	eval ${distCmd1} &> >(tee -a ${statusFile})
 	cd /opt
 	currentShib=`ls -l /opt/shibboleth-identityprovider | awk '{print $NF}'`
 	currentVer=`${Echo} ${currentShib} | awk -F\- '{print $NF}'`
@@ -1382,98 +1392,106 @@ invokeShibbolethInstallProcess ()
 
 	### Begin of SAML IdP installation Process
 
-${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
-                	continueFwipe=$?
-                	if [ "${continueFwipe}" -eq 0 ]
-                	then
+	if [ "${installer_interactive}" = "y" ]
+	then
+		${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
+		continueFwipe=$?
+	else
+		continueFwipe=0
+	fi
 
-	# check for installed IDP
-	setVarUpgradeType
+	if [ "${continueFwipe}" -eq 0 ]
+	then
 
-	# Override per federation
-	performStepsForShibbolethUpgradeIfRequired
+		# check for installed IDP
+		setVarUpgradeType
 
-	askForConfigurationData
-	prepConfirmBox
+		# Override per federation
+		performStepsForShibbolethUpgradeIfRequired
 
-	askForSaveConfigToLocalDisk
+		if [ "${installer_interactive}" = "y" ]
+		then
+			askForConfigurationData
+			prepConfirmBox
+			askForSaveConfigToLocalDisk
+		fi
 
-	notifyMessageDeployBeginning
-
-
-	setVarPrepType
-	setVarCertCN
-
-	installDependanciesForInstallation
-
-	fetchJavaIfNeeded
-
-	setJavaHome
-	
-	setJavaCACerts
-
-	generatePasswordsForSubsystems
-
-	installTomcat
-	
-	# moved from above tomcat, to here just after.
-
-	# installEPEL Sept 26 - no longer needed since Maven is installed via zip
-
-	[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
-
-	
-	installCasClientIfEnabled
-	
-
-	installFticksIfEnabled
-
-	
-	installEPTIDSupport
+		notifyMessageDeployBeginning
 
 
-	configTomcatServerXMLForPasswd
+		setVarPrepType
+		setVarCertCN
 
-	configShibbolethXMLAttributeResolverForLDAP
-	
+		installDependanciesForInstallation
 
-	runShibbolethInstaller
+		fetchJavaIfNeeded
 
+		setJavaHome
 
-	createCertificatePathAndHome
+		setJavaCACerts
 
-	
-	# Override per federation
-	installCertificates
+		generatePasswordsForSubsystems
 
-	configShibbolethSSLForLDAPJavaKeystore
+		installTomcat
 
-	# Override per federation
-	configTomcatSSLServerKey
+		# moved from above tomcat, to here just after.
 
-	patchShibbolethLDAPLoginConfigs
+		# installEPEL Sept 26 - no longer needed since Maven is installed via zip
 
-	patchTomcatConfigs
-	
-	# Override per federation
-	configShibbolethFederationValidationKey
-
-	patchShibbolethConfigs
-
-	updateMachineTime
-
-	updateTomcatAddingIDPWar
+		[[ "${upgrade}" -ne 1 ]] && fetchAndUnzipShibbolethIdP
 
 
-restartTomcatService
+		installCasClientIfEnabled
 
-enableTomcatOnRestart
 
-else
+		installFticksIfEnabled
 
-				${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
 
-                	fi
+		installEPTIDSupport
+
+
+		configTomcatServerXMLForPasswd
+
+		configShibbolethXMLAttributeResolverForLDAP
+
+
+		runShibbolethInstaller
+
+
+		createCertificatePathAndHome
+
+
+		# Override per federation
+		installCertificates
+
+		configShibbolethSSLForLDAPJavaKeystore
+
+		# Override per federation
+		configTomcatSSLServerKey
+
+		patchShibbolethLDAPLoginConfigs
+
+		patchTomcatConfigs
+
+		# Override per federation
+		configShibbolethFederationValidationKey
+
+		patchShibbolethConfigs
+
+		updateMachineTime
+
+		updateTomcatAddingIDPWar
+
+
+		restartTomcatService
+
+		enableTomcatOnRestart
+
+	else
+
+		${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
+
+	fi
 
 
 }

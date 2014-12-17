@@ -75,7 +75,7 @@ setEcho
 # (validateConfig)
 guessLinuxDist
 
-${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
+${Echo} "\n\n\nStarting up.\n\n\n"
 ${Echo} "Live logging can be seen by this command in another window:\ntail -f ${statusFile}"
 ${Echo} "Sleeping for 4 sec and then beginning processing..."
 touch ${statusFile}
@@ -89,10 +89,11 @@ sleep 4
 
 if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 	${Echo} "\nAdding a few packages that we will use during the installation process..."
+	${Echo} "Package updates on the machine which could take a few minutes."
 	if [ "${dist}" = "ubuntu" ]; then
-		apt-get -y install dos2unix >> ${statusFile} 2>&1
+		apt-get -y install dos2unix &> >(tee -a ${statusFile})
 	else
-		yum -y install bind-utils dos2unix >> ${statusFile} 2>&1
+		yum -y install bind-utils dos2unix &> >(tee -a ${statusFile})
 	fi
 fi
 
@@ -109,9 +110,14 @@ then
 
 	ValidateConfig
 
-	validateConnectivity
+	if [ -z "${installer_interactive}" ]
+	then
+		installer_interactive="y"
+	fi
 
-	#exit
+	if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
+		validateConnectivity
+	fi
 
 else
 	${Echo} "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"

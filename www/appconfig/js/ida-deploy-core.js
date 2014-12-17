@@ -415,6 +415,8 @@ var cNeutral = "#FFFFFF"
 
 $(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
 
+        var checkbox = $("#installer_interactive");
+        checkbox.val(checkbox.prop("checked") ? "n" : "y");
 
         //////////////////////////// my_eduroamDomain
 
@@ -529,6 +531,7 @@ output += "installer_section0_version=\'"+generatorVersion+"\'\n";
 output += "installer_section0_builddate=\'"+builddate+"\'\n";
 output += "installer_section0_buildDescription=\'"+ $("#installer_section0_buildDescription").val()+ "\'\n";
 output += "installer_section0_buildComponentList=\'"+ $("#installer_section0_buildComponentList").val()+ "\'\n";
+output += "installer_interactive=\'"+ $("#installer_interactive").val()+ "\'\n";
 
 output += "installer_section0_title=\'Federation Settings\'\n";
 output += "my_ctl_federation=\'"+ $("#my_ctl_federation").val()+ "\'\n";
