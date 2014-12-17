@@ -25,16 +25,17 @@ Branch	Details
 		
 		Version compatibility:
 			This tool is an installer tool and usually only used once to perform an installation.
-			To this end, we recommend using the latest version of this tool.
+			To this end, we recommend using the latest version of this tool when doing installations.
 		
 			If you installed with the 2.0.0-CAF release:
-			the 2.0.0-CAF release installs the Shibboleth IdP v2.4.0.
-			To be current, you need to either apply these fixes to your IdP:
+			    The 2.0.0-CAF release installs the Shibboleth IdP v2.4.0.
+			    To be current on security fixes on v2.4.0, you need to either apply these fixes to your IdP:
 				-for CVE2013-4002: http://shibboleth.net/community/advisories/secadv_20141103.txt
 				-for CVE2014-3566: https://tts.canarie.ca/otrs/public.pl?Action=PublicFAQZoom;ItemID=33
 			OR
-				Re-install with this tool and migrate the necessary keystores for certificates and 
-				regenerate any changes to the look and feel of the IdP
+				- Re-install with this version of the tool to use the v2.4.3 IdP on a clean VM with your existing config file
+				- Migrate the tomcat and shibboleth keystores for webserver and IdP certificates respectively
+				- Regenerate any changes to the look and feel of the IdP
 		
 		Known Issues
 			Build is designed for Active Directory installation via LDAP and depends on 'sAMAccountName' in various places.
