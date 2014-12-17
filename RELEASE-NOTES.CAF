@@ -21,7 +21,7 @@ Branch	Details
 			(see: https://github.com/canariecaf/idp-installer-CAF/issues/22 for further details of behaviour)
 
 		    New Features for post install operations of the components:
-			- No new features added in this release
+			- added the ability to have the Shibboleth IdP use CAS for authentication with a v3.3.3 CAS client jar.
 		
 		Version compatibility:
 			This tool is an installer tool and usually only used once to perform an installation.
