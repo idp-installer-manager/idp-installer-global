@@ -2,10 +2,10 @@
 
 # announce the override action since this is just a plain include
 my_local_override_msg="Overriden by ${my_ctl_federation}"
-echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired"
+echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired" >> ${statusFile} 2>&1
 
 configTomcatSSLServerKey() {
-	echo -e "${my_local_override_msg}"
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 	#set up ssl store
 	if [ ! -s "${certpath}server.key" ]; then
@@ -26,7 +26,7 @@ configTomcatSSLServerKey() {
 }
 
 installCertificates () {
-	echo -e "${my_local_override_msg}"
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 # change to certificate path whilst doing this part
@@ -63,7 +63,7 @@ installCertificates () {
 }
 
 configShibbolethFederationValidationKey () {
-			echo -e "${my_local_override_msg}"
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 
 ${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signer.crt
@@ -82,8 +82,7 @@ ${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signe
 
 
 performStepsForShibbolethUpgradeIfRequired () {
-	echo -e "${my_local_override_msg}"
-
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 	if [ "${upgrade}" -eq 1 ]; then
 
@@ -97,11 +96,14 @@ performStepsForShibbolethUpgradeIfRequired () {
 			mv ${currentShib} ${currentShib}.${ts}
 		fi
 
-		if [ ! -f "${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
-			fetchShibboleth
+		if [ ! -f "${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
+			fetchAndUnzipShibbolethIdP
 		fi
-		unzip -q ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
+		#unzip -q ${downloadPath}/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
 		chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
+
+		cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
+		tar zcfP ${bupFile} --remove-files /opt/shibboleth-idp
 
 		unlink /opt/shibboleth-identityprovider
 		ln -s /opt/shibboleth-identityprovider-${shibVer} /opt/shibboleth-identityprovider
@@ -128,15 +130,7 @@ performStepsForShibbolethUpgradeIfRequired () {
 			cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
 		fi
 
-		cd /opt
-		tar zcf ${bupFile} shibboleth-idp
-
-		cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
-
 		setJavaHome
-		cd /opt/shibboleth-identityprovider
-		${Echo} "\n\n\n\nRunning shiboleth installer"
-		sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
 	else
 		${Echo} "\nThis is a fresh Shibboleth Install"
 	fi

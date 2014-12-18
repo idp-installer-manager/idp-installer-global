@@ -23,12 +23,12 @@ Supported Platforms
 -------------------------------------------------------------------------------
 
 This installer script is intended to be used on a clean install of:
- - Ubuntu Server 12.04  or newer (SWAMID only)
- - CentOS 6.4 'minimal' or newer (SWAMID or CAF only)
+ - Ubuntu Server 12.04   (SWAMID only)
+ - CentOS 6.5 'minimal'  (SWAMID or CAF only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
-existing settings.
+existing host settings.
 
 
 
@@ -36,7 +36,7 @@ Configuration
 -------------------------------------------------------------------------------
 
 This script requires a configuration file to run. The configuration file is 
-generated using a local HTML based  configuration builder to construct it. 
+generated using a local HTML based configuration builder to construct it. 
 This technique helps avoid storing sensitive data like passwords anywhere.
 
 Configuration builders are federation specific and can be launched from:
@@ -87,16 +87,16 @@ Shibboleth (SAML2):
 	- optional anonymized usage reporting in FTICKS formats
 
 
-Please see: ~/docs/README.<federation_name> for federation specifics on post install
+Please see: ~/docs/README.<federation_name> for federation specific usage
 
 
 Profile of installed software 
 -------------------------------------------------------------------------------
 SAML2 Uses: 
-	  tomcat6                                                        
-      shibboleth-identityprovider-2.4.0                                    
-      cas-client-3.2.1-release                                             
-      mysql-connector-java-5.1.27 (for EPTID)                              
+      tomcat6                                                        
+      shibboleth-identityprovider-2.4.3                                    
+      cas-client-3.3.3-release                                             
+      mysql-connector-java-5.1.32 (for EPTID)                              
       apache-maven-3.1.1 (for building FTICKS plugin) 
 
 
@@ -127,5 +127,3 @@ Contributors
 -------------------------------------------------------------------------------
  Anders Lördal, SWAMID
  Chris Phillips, CANARIE
-
-
