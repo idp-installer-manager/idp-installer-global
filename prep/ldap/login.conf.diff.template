@@ -2,7 +2,7 @@
 >    edu.vt.middleware.ldap.jaas.LdapLoginModule required
 >       ldapUrl="LdApUrI"
 >       baseDn="LdApBaSeDn"
->       tls="true"
+>       //tls="true"
 >       userFilter="uid={0}"
 >       subtreeSearch="SuBsEaRcH"
 >    ;

@@ -4,7 +4,7 @@
 >       base="LdApBaSeDn"
 >       bindDn="LdApCrEdS"
 >       bindCredential="LdApPaSsWoRd"
->	tls="true"
+>       ssl="true"
 >       userField="samaccountname"
 >       subtreeSearch="SuBsEaRcH";
 >    

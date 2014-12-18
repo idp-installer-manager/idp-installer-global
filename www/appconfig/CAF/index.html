@@ -157,6 +157,16 @@
                                               type="checkbox" name="ida_component_shibboleth" value="on" />
                                             </td>
                                           </tr>
+                                          <tr><td><hr></td></tr>
+                                          <tr>
+                                            <td>
+                                              Non-interactive installation
+                                              <img id="nonInteractiveInstallationToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip" title="In non-interactive mode the installer will not ask for any user input or confirmation and will automatically generate all passwords.">
+                                            </td>
+                                            <td>
+                                              <input id="installer_interactive" type="checkbox" value="y" onclick="updateCtx(this)"/>
+                                            </td>
+                                          </tr>
                                         </table>
                                         <input type="hidden" id="installer_section0_buildComponentList" type="text" placeholder="" value="" >
                                         
@@ -695,13 +705,21 @@ installer_section3_title:
                   :
                   <input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" >
                   <BR>
-                  Authentication type (ldap) 
+                  Authentication type 
 <img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="LDAP is the default method for FedSSO.  The LDAP directory MUST be able to do SSL and be visible during installation as the LDAP SSL certificate is fetched realtime during the installation process."
            />
 
                   :
-                  <input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="updateCtx(this)" >
+         <!-- <input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="updateCtx(this)" > -->
+                 <select id="type"  onchange="updateCtx(this)" >
+                    <option name="ldap" value="ldap" selected>
+                      ldap
+                    </option>
+                    <option name="cas" value="cas">
+		      cas
+		    </option>
+		 </select>  
                   <BR>
                   ntpserver 
                   <img id="ntpserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
@@ -780,7 +798,23 @@ installer_section3_title:
                     </option>
                   </select>
                   <br>
-                  
+		<div id="casurlRow">
+                  CAS Server Login URL
+                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="An unauthenticated user will be redirected to this URL"
+           />
+           :
+                  <input  style="width: 250px;" id="caslogurl" type="text" placeholder="e.g. http://casserver/login" onchange="updateCtx(this)" >
+                  <BR>                  
+
+                 CAS Server Validation URL
+                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="CAS Ticket validation URL. Idp will validate the SP ticket to this CAS URL."
+           />
+           :
+                  <input  style="width: 250px;" id="casurl" type="text" placeholder="e.g. http://casserver/" onchange="updateCtx(this)" >
+                  <BR>
+                </div>
                   
                 </td>
               </tr>

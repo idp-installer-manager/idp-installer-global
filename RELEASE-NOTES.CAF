@@ -6,6 +6,50 @@ Please see README.md for overview, key functions and related software dependanci
 This tool benefits from, and relies on you being online and connected to your environment to fetch the latest 
 from your repository for your OS as well as the necessary certificates.
 
+Branch	Details
+
+2.1.0-CAF 
+		Commit notes:
+			- This version is now managed by branching in github rather than tagging 
+			- Updated Shibboleth IdP to v2.4.3 software to respond to 2.4.0 vulnerability(Xalan/Xerces risk CVE2013-4002)
+			- Integrated external security fix for SSLv3/Poodle CVE2014-3566
+		
+		    New Features for the installation process:
+			- Added ability to do 'Preflight check' to installation to assist in rapid diagnosis of common connectivity issues
+			- Added additional user feedback by redirecting yum output to user
+			- Ability to do headless install by setting 'installer_interactive=n' which will automatically generate needed passwords
+			(see: https://github.com/canariecaf/idp-installer-CAF/issues/22 for further details of behaviour)
+
+		    New Features for post install operations of the components:
+			- added the ability to have the Shibboleth IdP use CAS for authentication with a v3.3.3 CAS client jar.
+		
+		Version compatibility:
+			This tool is an installer tool and usually only used once to perform an installation.
+			To this end, we recommend using the latest version of this tool when doing installations.
+		
+			If you installed with the 2.0.0-CAF release:
+			    The 2.0.0-CAF release installs the Shibboleth IdP v2.4.0.
+			    To be current on security fixes on v2.4.0, you need to either apply these fixes to your IdP:
+				-for CVE2013-4002: http://shibboleth.net/community/advisories/secadv_20141103.txt
+				-for CVE2014-3566: https://tts.canarie.ca/otrs/public.pl?Action=PublicFAQZoom;ItemID=33
+			OR
+				- Re-install with this version of the tool to use the v2.4.3 IdP on a clean VM with your existing config file
+				- Migrate the tomcat and shibboleth keystores for webserver and IdP certificates respectively
+				- Regenerate any changes to the look and feel of the IdP
+		
+		Known Issues
+			Build is designed for Active Directory installation via LDAP and depends on 'sAMAccountName' in various places.
+			  Workaround:
+			  	Pure LDAP installation *IS* possible but must happen over LDAPS (636) by just entering your LDAP server.
+			  	Post installation, replace sAMAccountName wherver it occurs in /opt/shibboleth-idp/conf/ with 'uid' to match your LDAP schema for both attribute-resolver.xml and login.xml
+
+			Build is intended for CentOS6.5 and NOT CentOS7
+				Workaround:
+					Use the CentOS6.5 Minimal iso distribution for your OS.  This is the only platform CAF can support for the tool. 
+					The tool MAY run on ubuntu but is NOT a supported installation environment CAF. This is to say that it may not behave as expected at this time & require hand edits around java support for installation.
+
+
+Release History
 
 Tag	Details
 
