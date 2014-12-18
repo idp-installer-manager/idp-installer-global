@@ -16,8 +16,8 @@ cleanBadInstall() {
 	if [ -d "/opt/shibboleth-idp" ]; then
 		rm -rf /opt/shibboleth-idp
 	fi
-	if [ -d "/opt/mysql-connector-java-5.1.27" ]; then
-		rm -rf /opt/mysql-connector-java-5.1.27
+	if [ -d "/opt/mysql-connector-java-${mysqlConVer}/" ]; then
+		rm -rf /opt/mysql-connector-java-${mysqlConVer}/
 	fi
 	if [ -f "/usr/share/tomcat6/lib/tomcat6-dta-ssl-1.0.0.jar" ]; then
 		rm /usr/share/tomcat6/lib/tomcat6-dta-ssl-1.0.0.jar
@@ -93,15 +93,16 @@ setVarUpgradeType ()
 setVarPrepType ()
 
 {
-prep="prep/${type}"
-
+	prep="prep/${type}"
 }
 
 setVarCertCN ()
 
 {
-certCN=`${Echo} ${idpurl} | cut -d/ -f3`
-
+	if [ "`echo "${idpurl: -1}"`" = "/" ]; then
+		idpurl=`echo ${idpurl%?}`
+	fi
+	certCN=`${Echo} ${idpurl} | cut -d/ -f3`
 }
 
 setJavaHome () {
@@ -442,7 +443,11 @@ installEPTIDSupport ()
 
 			mysqldTest=`pgrep mysqld`
 			if [ -z "${mysqldTest}" ]; then
-				/etc/init.d/mysqld start >> ${statusFile} 2>&1
+				if [ "${dist}" == "ubuntu" ]; then
+					service mysql start >> ${statusFile} 2>&1
+				else
+					/etc/init.d/mysqld start >> ${statusFile} 2>&1
+				fi
 			fi
 			# set mysql root password
 			tfile=`mktemp`
@@ -906,11 +911,13 @@ configShibbolethXMLAttributeResolverForLDAP ()
 		ldapServerStr="`${Echo} ${ldapServerStr}` ldaps://${i}"
 	done
 	ldapServerStr=`${Echo} ${ldapServerStr} | sed -re 's/^\s+//'`
-	orgTopDomain=`${Echo} ${certCN} | cut -d. -f2-`
+	if [ -z "${my_eduroamDomain}" ]; then
+		my_eduroamDomain=`${Echo} ${certCN} | cut -d. -f2-`
+	fi
 	cat ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.template \
 		| sed -re "s#LdApUrI#${ldapServerStr}#;s/LdApBaSeDn/${ldapbasedn}/;s/LdApCrEdS/${ldapbinddn}/;s/LdApPaSsWoRd/${ldappass}/" \
 		| sed -re "s/NiNcRePlAcE/${ninc}/;s/CeRtAcRoNyM/${certAcro}/;s/CeRtOrG/${certOrg}/;s/CeRtC/${certC}/;s/CeRtLoNgC/${certLongC}/" \
-		| sed -re "s/SCHAC_HOME_ORG/${orgTopDomain}/" \
+		| sed -re "s/SCHAC_HOME_ORG/${my_eduroamDomain}/" \
 		> ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml
 	files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml"
 
@@ -1214,7 +1221,7 @@ updateTomcatAddingIDPWar ()
 	else
 		cp ${Spath}/xml/${my_ctl_federation}/tomcat.idp.xml /etc/tomcat6/Catalina/localhost/idp.xml
 		# make sure tomcat can see the file
-		chown tomcat /etc/tomcat6/Catalina/localhost/idp.xml
+		chown ${tcatUser} /etc/tomcat6/Catalina/localhost/idp.xml
 
 	fi
 }
@@ -1287,24 +1294,27 @@ fi
 
 askForSaveConfigToLocalDisk ()
 {
+echo -e "${my_local_override_msg}"
 
-cAns=$(askYesNo "Save config" "Do you want to save theese config values?\n\nIf you save theese values the current config file will be ovverwritten.\n NOTE: No passwords will be saved.")
+# Since everything goes through the config process on the webpage, we do not need this anymore
 
-	if [ "${cAns}" = "y" ]; then
-		writeConfigFile
-	fi
-
-	if [ "${GUIen}" = "y" ]; then
-		${whiptailBin} --backtitle "${my_ctl_federation} IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
-	else
-		cat ${downloadPath}/confirm.tx
-	fi
-	cAns=$(askYesNo "Confirm" "Do you want to install this IDP with theese options?" "no")
-
-	rm ${downloadPath}/confirm.tx
-	if [ "${cAns}" = "n" ]; then
-		exit
-	fi
+# cAns=$(askYesNo "Save config" "Do you want to save theese config values?\n\nIf you save theese values the current config file will be ovverwritten.\n NOTE: No passwords will be saved.")
+# 
+# 	if [ "${cAns}" = "y" ]; then
+# 		writeConfigFile
+# 	fi
+# 
+# 	if [ "${GUIen}" = "y" ]; then
+# 		${whiptailBin} --backtitle "${my_ctl_federation} IDP Deployer" --title "Confirm" --scrolltext --clear --textbox ${downloadPath}/confirm.tx 20 75 3>&1 1>&2 2>&3
+# 	else
+# 		cat ${downloadPath}/confirm.tx
+# 	fi
+# 	cAns=$(askYesNo "Confirm" "Do you want to install this IDP with theese options?" "no")
+# 
+# 	rm ${downloadPath}/confirm.tx
+# 	if [ "${cAns}" = "n" ]; then
+# 		exit
+# 	fi
 
 }
 
@@ -1409,12 +1419,14 @@ invokeShibbolethInstallProcess ()
 		# Override per federation
 		performStepsForShibbolethUpgradeIfRequired
 
+
 		if [ "${installer_interactive}" = "y" ]
 		then
 			askForConfigurationData
 			prepConfirmBox
 			askForSaveConfigToLocalDisk
 		fi
+
 
 		notifyMessageDeployBeginning
 

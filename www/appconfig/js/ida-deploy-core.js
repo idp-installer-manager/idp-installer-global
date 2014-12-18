@@ -413,7 +413,7 @@ var cNeutral = "#FFFFFF"
             console.log('Update():enabling tooltips');
         }
 
-$(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
+        $(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
 
         var checkbox = $("#installer_interactive");
         checkbox.val(checkbox.prop("checked") ? "n" : "y");
@@ -478,6 +478,10 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
                 console.log('Update():presets: idpurl is:|' + $("#idpurl").val() + '|');
             }
 
+	    if ($("#idpurl").val().slice(-1) == "/") {
+		$("#idpurl").val($("#idpurl").val().slice(0, -1));
+	    }
+
             $("#freeRADIUS_svr_commonName").val($("#idpurl").val());
 
             try {
@@ -502,6 +506,12 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
         }
 
 
+	if (! $("#my_eduroamDomain").val() && $("#freeRADIUS_svr_commonName").val()) {
+		var scopeArray = $("#freeRADIUS_svr_commonName").val().split(".");
+		scopeArray.shift();
+		$("#my_eduroamDomain").val(scopeArray.join("."));
+	}
+
 	if ( ($("#type").val())!=="cas" ) {
 		$("#casurlRow").hide();
 	} else {
@@ -514,7 +524,7 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
 	}
 	if ($("#freeRADIUS_svr_org_name").val() && ! $("#certAcro").val()) {
 		var words = $('#freeRADIUS_svr_org_name').val().split(' ');
-		var data = ''; 
+		var data = '';
 		$.each(words, function() {
 			data += this.substring(0,1);
 		});
@@ -525,7 +535,7 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
 		$("#caslogurl").val($("#casurl").val()+"/login");
 		$("#caslogurl").css({'backgroundColor': cFilled});
 	}
-          if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
+        if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
 
 output += "installer_section0_version=\'"+generatorVersion+"\'\n";
 output += "installer_section0_builddate=\'"+builddate+"\'\n";
