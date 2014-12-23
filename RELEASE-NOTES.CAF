@@ -47,7 +47,10 @@ Branch	Details
 				Workaround:
 					Use the CentOS6.5 Minimal iso distribution for your OS.  This is the only platform CAF can support for the tool. 
 					The tool MAY run on ubuntu but is NOT a supported installation environment CAF. This is to say that it may not behave as expected at this time & require hand edits around java support for installation.
-
+			Installation completes, but may leave extra unwanted processes behind post install, prior to machine reboot
+				Workaround:
+					A reboot of the server to validate proper processes starting will eliminate the left over proceses.
+					
 
 Release History
 
