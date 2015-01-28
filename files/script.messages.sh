@@ -55,6 +55,7 @@ Rmsg="Do you want to install 'EPEL' and 'jpackage' to automaticly install depend
 # Titles for the whiptail environment for branding
 BackTitleSWAMID="SWAMID"
 BackTitleCAF="Canadian Access Federation"
+BackTitleInCommon="InCommon Federation"
 BackTitle="IDP Deployer"
 
 # define commands

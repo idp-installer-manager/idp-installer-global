@@ -1,0 +1,10 @@
+36a37,44
+>    edu.vt.middleware.ldap.jaas.LdapLoginModule required
+>       ldapUrl="LdApUrI"
+>       base="LdApBaSeDn"
+>       bindDn="LdApCrEdS"
+>       bindCredential="LdApPaSsWoRd"
+>       ssl="true"
+>       userField="samaccountname"
+>       subtreeSearch="SuBsEaRcH";
+>    

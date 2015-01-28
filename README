@@ -9,8 +9,9 @@ services.
 Configured deployment profiles listed alphabetically are:
  
  CAF - Canadian Access Federation  ( http://www.canarie.ca/en/caf-service/about )
+ InCommon - InCommon Federation ( http://www.incommon.org/ )
+          - Eduroam-US ( http://www.eduroam.us )
  SWAMID - Swedish Academic Identity ( http://www.swamid.se/ )
-
 
 Each federation may have a different deployment profile and supported 
 configurations. What follows are the generic steps to follow to do an installation.
@@ -24,7 +25,7 @@ Supported Platforms
 
 This installer script is intended to be used on a clean install of:
  - Ubuntu Server 12.04   (SWAMID only)
- - CentOS 6.5 'minimal'  (SWAMID or CAF only)
+ - CentOS 6.5 'minimal'  (SWAMID, InCommon or CAF only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
@@ -42,6 +43,7 @@ This technique helps avoid storing sensitive data like passwords anywhere.
 Configuration builders are federation specific and can be launched from:
 
 for CAF - ~/www/appconfig/CAF/index.html
+for InCommon/Eduroam-US - ~/www/appconfig/InCommon/index.html
 for SWAMID - ~/www/appconfig/SWAMID/index.html
 
 The configuration builder uses javascript to perform basic validation and 

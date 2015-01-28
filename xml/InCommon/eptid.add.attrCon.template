@@ -1,0 +1,15 @@
+    <resolver:DataConnector id="StoredId"
+            xsi:type="StoredId"
+            xmlns="urn:mace:shibboleth:2.0:resolver:dc"
+            generatedAttributeID="persistentId"
+            sourceAttributeID="uid"
+            salt="Large_Random_Salt_Value">
+       <resolver:Dependency ref="uid" />
+       <ApplicationManagedConnection
+            jdbcDriver="com.mysql.jdbc.Driver"
+            jdbcURL="jdbc:mysql://localhost:3306/shibboleth?autoReconnect=true"
+            jdbcUserName="shibboleth"
+            jdbcPassword="SqLpAsSwOrD" />
+    </resolver:DataConnector>
+
+

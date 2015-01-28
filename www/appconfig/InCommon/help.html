@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
+<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css">
+
+</head>
+<body onload="">
+
+     <div class="container" style="margin-top: 5px;">
+            <div class="row">
+                <div class="span12">
+                    <div class="hero-unit">
+                        <div class="container">
+                            <div class="row">
+                                <div class="span10">
+
+      <table width=100%>
+    <tr><td><font size="+2" ><b>Help <br>
+      Identity Appliance Interactive Configuration Builder</b></font></td>
+        <td align=right><img align="center" width="250" src="./img/logo.png" alt="CANARIE logo" /></td></tr></table>
+<br>                             
+                <h4>Introduction</h4>
+               <p id="intro">Welcome! This interactive page will guide you through an interview process to craft a configuration used to build and support an IdP installation. This interview process aims to simplify and consolidate the questions needed to configure your environment as quickly and efficiently as possible. The default behaviour of this tool is to build a base instance that can be used for testing and serve as a base for production use.<br>
+    
+                <h5>The Steps</h5>
+                <ul>
+                  <li>Fill in your answers in the form below or  import an existing configuration
+                  <li>When complete,  click 'Generate Configuration File'. This ensures the latest edits have been captured.
+                  <li>Cut and paste the results into a file named 'config' in the same directory as the installer on your server.
+                  <li>run the installer command: <i>./deploy_idp.sh</i> and follow the instructions during the build process.
+                  </ul>
+
+               <br>
+               <br>
+               <br>
+               
+
+
+<a name="more_info"></a>
+<h2>Additional Notes</h2>
+
+<h3>Intended Audience</h3>
+                                        It is recommended that the person collecting the information and using this tool has working knowledge of:<br>
+                                        <ul><li>Operating wireless networks and related infrastructure
+                                        <li>An understanding of Microsoft Active Directory and is familiar with their local  installation of it
+                                        <li>how to prepare a basic CentOS 'minimal install' image to use the installer on. 
+                                        </ul>
+
+                                       <h3>How Much Time Should I Plan For?</h3>
+                                        <p id="planning_time">The actual installation and execution of the installer is a few minutes. That said, the preparation time of collecting and planning around some of the answers for the configuration may take longer. Note that the configuration can only be generated at this time and not reverse engineered from an existing configuration file. 
+                                       <h3>What Do I get When I'm done?</h3>
+                                        <p id="when_done">The installer will install FreeRADIUS and SAMBA to connect to Active Directory to do authentication. It will use self signed certificates and is sufficient to use as a testbed and be easily operated on it's own. <br>
+                                            Deploying a production instance is simply re-using the same configuration file as needed and choosing your commercial server certificate.  The install process does generate a CSR(Certificate Signing Request) that could be used.
+                                       <h3>What about Passwords and Shared Secrets etc?</h3>
+                                        <p id="what_about">This web page does not need to be run on a server and is entirely self contained. When you use it, you CAN use it from a webserver but also within a local browser. It generates a local copy of the configuration file which you then place on the appropriate server and location</p>
+
+  <h5>A Word About Security</h5>
+                  We recognize that collecting information to key systems with credentials and passwords should be treated carefully.  With this in mind, this HTML page uses local javascript and JQuery libraries to produce the configuration file used to do the installation. It intentionally does not store any passwords and/or configuration details and allows you to cut and paste the resulting configuration file where you need it.<br>
+                  With this in mind, we've also created a feature where you can take an existing configuration file and import it. <br> Click here to import your existing configuration
+
+                
+                <h5>Intended Installer Uses</h5>
+
+                This installer is designed to provide a base configuration with self signed certificates for a streamlined installation. It is possible to have a test installation up and going in a few minutes once you have your configuration details.  To deploy a production configuration, the same configuration you used in test can be used to create the production installation with a few adjustments for production operations.
+
+                 <h5>Adjustments to a Base Install to be Production Ready</h5>
+
+                 Updates to the base install for production use are:
+                <ul>
+                  <li>Replacing the self signed certificate used on the web and RADIUS server with your commercial certificate.<sup>*</sup> 
+                  <li>Connect to the appropriate authoritative identity data source on the back end.
+                  <li>Any desired updates to the web sign on page
+                 </ul>   
+                <br>
+                <br>
+                 <sup>* a Certificate Signing Request(<a href="http://en.wikipedia.org/wiki/Certificate_signing_request" target="new">CSR</a>)
+                  </sup>
+
+                <br>
+
+
+</div>
+ </div>
+ </div>
+        </div>
+    </body>
+</html>
