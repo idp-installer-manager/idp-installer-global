@@ -5,7 +5,7 @@ mdSignerFinger="12:60:D7:09:6A:D9:C1:43:AD:31:88:14:3C:A8:C4:B7:33:8A:4F:CB"
 GUIen=y
 cleanUp=1
 upgrade=0
-shibVer="2.4.3"
+shibVer="2.4.4"
 casVer="3.3.3"
 mysqlConVer="5.1.32"
 
