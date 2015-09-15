@@ -106,66 +106,6 @@
 
 <!-- ##########################################
 #
-#   Site: OhioLink.edu
-#   Purpose: OhioLink Library Resources
-#  
-#   
-#   Notes: OhioLink is already present in the InCommon Metadata
--->
-<afp:AttributeFilterPolicy id="OhioLink">
-
-	<afp:PolicyRequirementRule xsi:type="basic:OR">
-			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://drc.ohiolink.edu/shibboleth" />
-			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://ebooks.ohiolink.edu/shibboleth" />
-			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://journals.ohiolink.edu/shibboleth" />
-			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://music.ohiolink.edu/shibboleth" />
-			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://proxy.ohiolink.edu/shibboleth" />
-	</afp:PolicyRequirementRule>
-    
-    <afp:AttributeRule attributeID="eduPersonPrincipalName">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    
-    <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-        <afp:PermitValueRule xsi:type="basic:OR">
-            <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true"/>
-        </afp:PermitValueRule>
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="eduPersonAffiliation">
-        <afp:PermitValueRule xsi:type="basic:OR">
-            <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true"/>
-            <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true"/>
-        </afp:PermitValueRule>
-    </afp:AttributeRule>
-    
-    <!-- Should contain urn:mace:dir:entitlement:common-lib-terms -->
-    <afp:AttributeRule attributeID="eduPersonEntitlement">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    
-    <!-- Schools with more than one campus may use this -->
-    <!--
-    <afp:AttributeRule attributeID="localityName">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule> 
-    -->
-</afp:AttributeFilterPolicy>
-
-<!-- ##########################################
-#
 #   Site: TestShib.org
 #   Purpose: Allows for IdP testing,
 #   Considerations: While a test site, only an opaque identifier is permitted to be released, eduPersonTargetedID.
