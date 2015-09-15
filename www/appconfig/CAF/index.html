@@ -698,12 +698,12 @@ installer_section3_title:
                   Servlet Container
 
 <img id="appservToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="Tomcat is installed by default on a non privileged port (7443) and uses IPTables to port-forward requests from 443 to this servlet container.  
+          rel="tooltip" title="Jetty is installed by default on a non privileged port (7443) and uses IPTables to port-forward requests from 443 to this servlet container.  
         &#10;&#10;
-          The self signed certificate for this host is installed into the Java Key Store (JKS) and you will be asked to set an password for this keystore during the installation process. If you do not choose one during install, a random one will be generated to be used in the startup of tomcat which is installed in /opt/tomcat."
+          The self signed certificate for this host is installed into the Java Key Store (JKS) and you will be asked to set an password for this keystore during the installation process. If you do not choose one during install, a random one will be generated to be used in the startup of Jetty which is installed in /opt/jetty."
            />
                   :
-                  <input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" >
+                  <input id="appserv" type="text" placeholder="jetty" value="jetty" readonly onchange="updateCtx(this)" >
                   <BR>
                   Authentication type 
 <img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
@@ -731,11 +731,11 @@ installer_section3_title:
 -->
                   
                   <select id="ntpserver"  onchange="updateCtx(this)" >
-                    <option name="Vancouver1" value="nt1-cdma.vncv1.bc.net" selected>
-                      Vancouver - nt1-cdma.vncv1.bc.net (Stratum 1 - CDMA)
+                    <option name="NRC1" value="tic.nrc.ca" selected>
+                      Ontario - tic.nrc.ca
                     </option>
-                    <option name="Kelowna" value="t1-cdma.keltx1.bc.net">
-                      Kelowna - t1-cdma.keltx1.bc.net (Stratum 1 - CDMA)
+                    <option name="NRC2" value="tac.nrc.ca" selected>
+                      Ontario - tac.nrc.ca
                     </option>
                     <option name="Saskatoon1" value="tick.usask.ca">
                       Saskatoon - tick.usask.ca (Stratum 1 - GPS)
@@ -750,7 +750,7 @@ installer_section3_title:
                       Winnipeg - tock.umanitoba.ca (Stratum 1 - GPS)
                     </option>
                     <option name="Halifax" value="tick.acorn-ns.ca">
-                      Halifax tick.acorn-ns.ca (Stratum 1 - GPS)
+                      Halifax - tick.acorn-ns.ca (Stratum 1 - GPS)
                     </option>
                     
                   </select>
@@ -763,6 +763,22 @@ installer_section3_title:
                   :
                   <input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="if(this.value.indexOf(':')>-1){alert(errorNotValidHostname);}else{update();}updateCtx(this)" >
                   <BR>
+                  LDAP URL
+<img id="ldapurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Examples: ldap://myldapserver.com ldaps://myldapserver.com ldap://myldapserver.com:389/ou=People"
+           />
+                  :
+                  <input  style="width: 250px;" id="ldapurl" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <BR>
+                  LDAP DN
+<img id="ldapdnToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Examples: caftest.canarie.ca"
+           />
+                  :
+                  <input  style="width: 250px;" id="ldapdn" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <BR>
+
+
                   LDAP Bind DN
 <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="The Bind DN format is the DN of the LDAP identity that FedSSO will sign in as. An example one is: CN=ShibBindUser,CN=Users, DC=somedomain,DC=ca.  Note the AD 'Users' container is a CN NOT OU unless you have customized your AD tree."
@@ -783,7 +799,86 @@ installer_section3_title:
            :
                   <input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="e.g. cn=Users,dc=somedomain,dc=ca" onchange="updateCtx(this)" >
                   <BR>
-                  
+                  LDAP Server type
+<img id="ldap_typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP Server type"
+           />
+                  :
+                  <select id="ldap_type"  onchange="updateCtx(this)" >
+                    <option name="ldapAD" value="ad" selected>
+                      AD
+                    </option>
+                    <option name="ldapOther" value="other">
+                      Other
+                    </option>
+                  </select>
+                  <BR>
+
+                  LDAP Connection Encryption technique
+<img id="sslToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Use SSL or TLS encryption to connect to the LDAP server(s)?"
+           />
+                  :
+                  <select id="ldapSSL" onchange="updateCtx(this)">
+                    <option name="ldapSSLy" value="true" selected="selected">LDAP SSL</option>
+                    <option name="ldapSSLn" value="false">LDAP TLS</option>
+                  </select>
+
+<!--
+                  LDAP SSL
+<img id="sslToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="This LDAP server uses SSL?"
+           />
+
+                  :
+                 <select id="ldapSSL"  onchange="updateCtx(this)" >
+                    <option name="ssl_no" value="false" >
+                      No
+                    </option>
+                    <option name="ssl_yes" value="true" selected>
+                      Yes (recommended)
+                    </option>
+                 </select>
+
+                  <BR>
+                  LDAP TLS
+<img id="tlsToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"          
+          rel="tooltip" title="This LDAP server uses TLS?"
+           />
+
+                  :
+                 <select id="ldapStartTLS"  onchange="updateCtx(this)" >
+                    <option name="tls_no" value="false" selected>
+                      No(recomm. with ldapssl=yes)
+                    </option>
+                    <option name="tls_yes" value="true" >
+                      Yes
+                    </option>
+                 </select>
+-->
+		 <BR>
+                  LDAP attribute filter
+                  <img id="attr_filterToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP attribute filter. Used for LDAP authentication"
+           />
+           :
+                  <input  style="width: 250px;" id="attr_filter" type="text" placeholder="e.g. uid" onchange="updateCtx(this)" >
+                  <BR>
+
+                  LDAP user field
+                  <img id="user_fieldToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP user field. Used for LDAP attribute release."
+           />
+           :
+                  <input  style="width: 250px;" id="user_field" type="text" placeholder="e.g. samaccountname" onchange="updateCtx(this)" >
+                  <BR>
+                 
+                  LDAP released attributes
+                  <img id="ldap_attrToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="List of LDAP released attributes"
+           />
+           :                  <input  style="width: 250px;" id="ldap_attr" type="text" placeholder="e.g. cn,mail" onchange="updateCtx(this)" >
+                  <BR>
                   LDAP Subtree search?
 <img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="Subtree search describes whether or not the entire tree is searched for a user or just that node and no further.  Subtree is recommended unless your directory design requires otherwise."
@@ -798,7 +893,22 @@ installer_section3_title:
                     </option>
                   </select>
                   <br>
-		<div id="casurlRow">
+                  Ask for keystore passwords?
+<img id="passw_inputToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Ask for IDP/HTTPS keystore passwords during installation. If set to No, passwords will be automatically generated."
+           />
+                  :
+                  <select id="passw_input"  onchange="updateCtx(this)" >
+                    <option name="kpwFalse" value="n" selected>
+                      No (recommended)
+                    </option>
+                    <option name="kpwTrue" value="y">
+                      Yes
+                    </option>
+                  </select>
+                  <br>
+
+		<div class="casurlRow">
                   CAS Server Login URL
                   <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="An unauthenticated user will be redirected to this URL"
@@ -867,12 +977,29 @@ installer_section3_title:
                         </option>
                       </select>
                       <br>
+
+                      Enable user consent
+
+                      <img id="consentToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="If you enable user consent the user will have to consent."
+           />
+                      <select id="consentEnabled"  onchange="updateCtx(this)" >
+                        <option name="consentEnabledY" value="y" selected>
+                          Yes(recommended)
+                        </option>
+                        <option name="consentEnabledN" value="n">
+                          No
+                        </option>
+                      </select>
+                      <br>
+
                       
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
                       
 <input type=hidden id="googleDom" value="n">
 <input type=hidden id="certAcro" value="">
 <input type=hidden id="certLongC" value="Canada">
+<input type=hidden id="SWAMIDcertChain" value="undefined" />
 <!--
 Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
                                                 <option name="googleY" value="y" selected>Yes</option>

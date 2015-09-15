@@ -15,8 +15,8 @@
 
 [realms]
 kRb5_LiBdEf_DeFaUlT_ReAlM = {
-  kdc = kRb5_rEaLmS_dEf_DoM:88
-  admin_server = kRb5_rEaLmS_dEf_DoM:749
+  kdc = Host_kRb5_rEaLmS_dEf_DoM:88
+  admin_server = Host_kRb5_rEaLmS_dEf_DoM:749
   default_domain= kRb5_rEaLmS_dEf_DoM 
  }
 

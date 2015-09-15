@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
-    
-    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
-    and their options.
+    Deployers should refer to the Shibboleth documentation for a complete list of components and their options.
+    Reference: https://wiki.shibboleth.net/confluence/display/IDP30/AttributeFilterConfiguration
 -->
-
 <afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy" 
                             xmlns:afp="urn:mace:shibboleth:2.0:afp"
                             xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" 
@@ -15,28 +13,120 @@
                                                 urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
                                                 urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
 
-    <!--  Release the transient ID to anyone -->
-    <afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
-        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+<!-- ##########################################
+#
+#   Site: any entity
+#   Purpose: this is an anonymous identifier 
+#   Considerations: 
+#   A transient NameID is constructed uniquely each time a user signs into a service.
+#   A persistent NameID is constructed once per service and consistently used for that user
+#
+#   Reference: https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf ,section 8.3.8
+#   other references: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPNameIdentifier
+-->
+    <afp:AttributeFilterPolicy id="InCommon-IdPInstaller-InCommonPolicyReleaseTransientIdToAnyone">
+
+ <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+
         <afp:AttributeRule attributeID="transientId">
             <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
     </afp:AttributeFilterPolicy>
 
 
-    <!-- 
-        Release eduPersonEntitlement and the permissible values of eduPersonAffiliation
-        to any SP that is a member of InCommon, UK federation, or SWITCHaai
-    -->
-
-<afp:AttributeFilterPolicy id="releaseToAnyone">
+<!-- ##########################################
+#
+#   Site: any entity 
+#   Purpose: this is an anonymous identifier released to services in the InCommon.
+#   Considerations: 
+#     This is an opaque identifier PER SERVICE and masks a users identity across services.
+-->
+<afp:AttributeFilterPolicy id="InCommon-IdPInstaller-InCommonPolicyReleaseEptidToInCommon">
  
     <!-- Policy requirement rule indicates this policy is active for any request -->
-    <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+     <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+
+    <afp:AttributeRule attributeID="eduPersonTargetedID">
+               <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+
+</afp:AttributeFilterPolicy>
+
+<!-- ##########################################
+#
+#    Site: any research and scholarship entity registered by InCommon
+#    Purpose: releases the minimal amount of attributes for R&S SPs 
+#     
+#
+-->
+
+<afp:AttributeFilterPolicy id="releaseRandSAttributeBundle">
  
-    <!-- Attribute rule for the eduPersonAfffiliation attribute -->
-    <afp:AttributeRule attributeID="eduPersonAffiliation">
-        <!-- Permit value rule that only releases the standard-specififed values for eduPersonAffiliation -->
+ 
+  <afp:PolicyRequirementRule xsi:type="basic:AND">
+  		<basic:Rule xsi:type="saml:EntityAttributeExactMatch"
+      		attributeName="http://macedir.org/entity-category"
+      		attributeValue="http://refeds.org/category/research-and-scholarship"/>
+  		<basic:Rule xsi:type="saml:RegistrationAuthority"
+      		registrars="https://incommon.org"/>
+   </afp:PolicyRequirementRule>
+ 
+  <!-- a fixed subset of the Research & Scholarship Attribute Bundle -->
+ 
+  <afp:AttributeRule attributeID="eduPersonPrincipalName">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+ 
+  <!-- if your deployment of ePPN is non-reassigned, release of ePTID is OPTIONAL -->
+  <afp:AttributeRule attributeID="eduPersonTargetedID">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+ 
+  <afp:AttributeRule attributeID="email">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+ 
+  <!-- either displayName or (givenName and sn) is REQUIRED but all three are RECOMMENDED -->
+  <afp:AttributeRule attributeID="displayName">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+  <afp:AttributeRule attributeID="givenName">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+  <afp:AttributeRule attributeID="surname">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>
+ 
+  <!-- release of ePSA is OPTIONAL -->
+  <!--<afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+    <afp:PermitValueRule xsi:type="basic:ANY"/>
+  </afp:AttributeRule>-->
+ 
+</afp:AttributeFilterPolicy>
+
+<!-- ##########################################
+#
+#   Site: OhioLink.edu
+#   Purpose: OhioLink Library Resources
+#  
+#   
+#   Notes: OhioLink is already present in the InCommon Metadata
+-->
+<afp:AttributeFilterPolicy id="OhioLink">
+
+	<afp:PolicyRequirementRule xsi:type="basic:OR">
+			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://drc.ohiolink.edu/shibboleth" />
+			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://ebooks.ohiolink.edu/shibboleth" />
+			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://journals.ohiolink.edu/shibboleth" />
+			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://music.ohiolink.edu/shibboleth" />
+			<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://proxy.ohiolink.edu/shibboleth" />
+	</afp:PolicyRequirementRule>
+    
+    <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+    
+    <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
         <afp:PermitValueRule xsi:type="basic:OR">
             <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true"/>
             <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true"/>
@@ -48,44 +138,50 @@
             <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true"/>
         </afp:PermitValueRule>
     </afp:AttributeRule>
-
-</afp:AttributeFilterPolicy>
-
-    <!-- 
-        Release the given name of the user to our portal service provider
+    <afp:AttributeRule attributeID="eduPersonAffiliation">
+        <afp:PermitValueRule xsi:type="basic:OR">
+            <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true"/>
+        </afp:PermitValueRule>
+    </afp:AttributeRule>
+    
+    <!-- Should contain urn:mace:dir:entitlement:common-lib-terms -->
+    <afp:AttributeRule attributeID="eduPersonEntitlement">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+    
+    <!-- Schools with more than one campus may use this -->
+    <!--
+    <afp:AttributeRule attributeID="localityName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule> 
     -->
-    <afp:AttributeFilterPolicy id="releaseToSPtestshib">
-        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+</afp:AttributeFilterPolicy>
 
-        <afp:AttributeRule attributeID="eduPersonAffiliation">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonEntitlement">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonTargetedID">
-    		<afp:PermitValueRule xsi:type="basic:ANY" />
-    	</afp:AttributeRule>
-
-    </afp:AttributeFilterPolicy>
-
-
-<afp:AttributeFilterPolicy id="releaseToCateduroamorg">
-    <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://monitor.eduroam.org/sp/module.php/saml/sp/metadata.php/default-sp" />
-    <afp:AttributeRule attributeID="eduPersonPrincipalName">
-    <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
+<!-- ##########################################
+#
+#   Site: TestShib.org
+#   Purpose: Allows for IdP testing,
+#   Considerations: While a test site, only an opaque identifier is permitted to be released, eduPersonTargetedID.
+#   
+#   Notes: This policy is in place, but requires the testshib section to be uncommented in relying-party.xml to fully work.
+-->
+<afp:AttributeFilterPolicy id="InCommon-IdPInstaller-testshib">
+    <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+        
     <afp:AttributeRule attributeID="eduPersonTargetedID">
-    <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="commonName">
-    <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="email">
-    <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
 </afp:AttributeFilterPolicy>
 
 
+
+<!-- EPTID FILTER PLACEHOLDER -->
 
 </afp:AttributeFilterPolicyGroup>

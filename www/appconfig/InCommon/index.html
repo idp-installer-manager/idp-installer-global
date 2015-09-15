@@ -56,7 +56,7 @@
                               
                               
                               <input type="hidden" id="my_ctl_federation" value="InCommon" onchange="updateCtx(this)" >
-                    		<input type="hidden" id="fticks" value="n" onchange="updateCtx(this)" />          
+                              
                               
                               
                               <a name="top_of_page">
@@ -78,8 +78,8 @@
 
                                    
 
-                                     <img align="center" width="250" height="80" src="./img/logo.png" alt="InCommon logo" />
-                                     <img align="center"  src="./img/logo-eroam.png" alt="Eduroam logo" />
+                                     <img align="center" width="250" height="80" src="./img/logo.png" alt="Federation Operator logo" />
+                                   	<img align="center" width="250" height="80" src="./img/logo-eroam.png" alt="Eduroam logo" />
 
                                   </td>
                                 </tr>
@@ -157,7 +157,7 @@
                                               type="checkbox" name="ida_component_shibboleth" value="on" />
                                             </td>
                                           </tr>
-					<tr><td><hr></td></tr>
+                                          <tr><td><hr></td></tr>
                                           <tr>
                                             <td>
                                               Non-interactive installation
@@ -290,7 +290,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
 
 
           :
-          <input id="idpurl" type="text" placeholder="https://idpdev.mydomain.edu" onchange="updateCtx(this)" >
+          <input id="idpurl" type="text" placeholder="https://idpdev.mydomain.ca" onchange="updateCtx(this)" >
           <BR>
           
         </td>
@@ -311,12 +311,12 @@ c=cFilled;if (this.checked==true){c=cNeeded}
             <td colspan="2" align="right">
               What is your organization's domain?
         <img id="my_eduroamDomainToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="This is the domain your users will use for eduroam (user@domain.edu) and the scope used for your SAML assertions."
+          rel="tooltip" title="This is the domain your users will use for eduroam (netid@domain.ca) and the scope used for your SAML assertions."
            />
 
 
               :
-              <input id="my_eduroamDomain" type="text" placeholder="mydomain.edu" 
+              <input id="my_eduroamDomain" type="text" placeholder="mydomain.ca" 
               onchange="updateCtx(this)" >
               <br>
               
@@ -461,6 +461,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                 </tr>
               <tr>
                 <td colspan="2" align="right">
+                <input type="hidden" id="freeRADIUS_svr_country" value="United States" onchange="updateCtx(this)" >
                   
                   domain used for eduroam
 <img id="freeRADIUS_realmToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
@@ -477,9 +478,9 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                   :
                   <input id="freeRADIUS_pxycfg_realm" type="text" placeholder="" onchange="updateCtx(this)" >
                   <br>
-                  RADIUS Shared Key provided by eduroam US for upstream eduroam servers
+                  RADIUS Shared Key provided by CANARIE for upstream eduroam servers
 <img id="freeRADIUS_cdn_prod_passphraseToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="This is provided to you by eduroam US for production. For test, any string may be used. The pound sign(#) is not supported in this string at this time"
+          rel="tooltip" title="This is provided to you by CANARIE for production. For test, any string may be used. The pound sign(#) is not supported in this string at this time"
            />
 
                   :
@@ -698,28 +699,28 @@ installer_section3_title:
                   Servlet Container
 
 <img id="appservToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="Tomcat is installed by default on a non privileged port (7443) and uses IPTables to port-forward requests from 443 to this servlet container.  
+          rel="tooltip" title="Jetty is installed by default on a non privileged port (7443) and uses IPTables to port-forward requests from 443 to this servlet container.  
         &#10;&#10;
-          The self signed certificate for this host is installed into the Java Key Store (JKS) and you will be asked to set an password for this keystore during the installation process. If you do not choose one during install, a random one will be generated to be used in the startup of tomcat which is installed in /opt/tomcat."
+          The self signed certificate for this host is installed into the Java Key Store (JKS) and you will be asked to set an password for this keystore during the installation process. If you do not choose one during install, a random one will be generated to be used in the startup of Jetty which is installed in /opt/jetty."
            />
                   :
-                  <input id="appserv" type="text" placeholder="tomcat" value="tomcat" readonly onchange="updateCtx(this)" >
+                  <input id="appserv" type="text" placeholder="jetty" value="jetty" readonly onchange="updateCtx(this)" >
                   <BR>
-                  Authentication type (ldap) 
+                  Authentication type 
 <img id="typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="LDAP is the default method for FedSSO.  The LDAP directory MUST be able to do SSL and be visible during installation as the LDAP SSL certificate is fetched realtime during the installation process."
            />
 
                   :
-                  <!--<input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="updateCtx(this)" >-->
-		<select id="type"  onchange="updateCtx(this)" >
+         <!-- <input id="type" type="text" placeholder="ldap" value="ldap" readonly onchange="updateCtx(this)" > -->
+                 <select id="type"  onchange="updateCtx(this)" >
                     <option name="ldap" value="ldap" selected>
                       ldap
                     </option>
                     <option name="cas" value="cas">
-                      cas
-                    </option>
-                 </select>
+		      cas
+		    </option>
+		 </select>  
                   <BR>
                   ntpserver 
                   <img id="ntpserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
@@ -731,19 +732,25 @@ installer_section3_title:
 -->
                   
                   <select id="ntpserver"  onchange="updateCtx(this)" >
-                    <option name="Hatfield" value="nist1-pa.ustiming.org" selected>
+                
+                    <option name="US NTP Pool" value="us.pool.ntp.org" selected>
+                      U.S. NTP Pool - us.pool.ntp.org
+                    </option>
+                    <option name="Hatfield" value="nist1-pa.ustiming.org">
                       Hatfield, PA - nist1-pa.ustiming.org 
                     </option>
                     <option name="NIST1" value="time-c.nist.gov">
                       NIST, Gaithersburg, Maryland - time-c.nist.gov
                     </option>
-                    <option name="Carrollton, Texas" value="nist.time.nosc.us">
-                      Carrollton, Texas - nist.time.nosc.us
-                    </option>
                     <option name="NIST2" value="time.nist.gov">
                       NIST - time.nist.gov
                     </option>
-                  
+                    <option name="OARnet, Columbus" value="clmbs-ntp1.eng.oar.net">
+                  	  Columbus, OH (OARnet) - clmbs-ntp1.eng.oar.net
+                  	</option>
+                    <!--<option name="custom" value="custom">
+                    	Custom
+                    </option>-->
                     
                   </select>
                   
@@ -755,6 +762,22 @@ installer_section3_title:
                   :
                   <input  style="width: 250px;" id="ldapserver" type="text" placeholder="" onchange="if(this.value.indexOf(':')>-1){alert(errorNotValidHostname);}else{update();}updateCtx(this)" >
                   <BR>
+                  LDAP URL
+<img id="ldapurlToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Examples: ldap://myldapserver.com ldaps://myldapserver.com ldap://myldapserver.com:389/ou=People"
+           />
+                  :
+                  <input  style="width: 250px;" id="ldapurl" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <BR>
+                  LDAP DN
+<img id="ldapdnToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Examples: caftest.canarie.ca"
+           />
+                  :
+                  <input  style="width: 250px;" id="ldapdn" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <BR>
+
+
                   LDAP Bind DN
 <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="The Bind DN format is the DN of the LDAP identity that FedSSO will sign in as. An example one is: CN=ShibBindUser,CN=Users, DC=somedomain,DC=ca.  Note the AD 'Users' container is a CN NOT OU unless you have customized your AD tree."
@@ -775,7 +798,86 @@ installer_section3_title:
            :
                   <input  style="width: 250px;" id="ldapbasedn" type="text" placeholder="e.g. cn=Users,dc=somedomain,dc=ca" onchange="updateCtx(this)" >
                   <BR>
-                  
+                  LDAP Server type
+<img id="ldap_typeToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP Server type"
+           />
+                  :
+                  <select id="ldap_type"  onchange="updateCtx(this)" >
+                    <option name="ldapAD" value="ad" selected>
+                      AD
+                    </option>
+                    <option name="ldapOther" value="other">
+                      Other
+                    </option>
+                  </select>
+                  <BR>
+
+                  LDAP Connection Encryption technique
+<img id="sslToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Use SSL or TLS encryption to connect to the LDAP server(s)?"
+           />
+                  :
+                  <select id="ldapSSL" onchange="updateCtx(this)">
+                    <option name="ldapSSLy" value="true" selected="selected">LDAP SSL</option>
+                    <option name="ldapSSLn" value="false">LDAP TLS</option>
+                  </select>
+
+<!--
+                  LDAP SSL
+<img id="sslToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="This LDAP server uses SSL?"
+           />
+
+                  :
+                 <select id="ldapSSL"  onchange="updateCtx(this)" >
+                    <option name="ssl_no" value="false" >
+                      No
+                    </option>
+                    <option name="ssl_yes" value="true" selected>
+                      Yes (recommended)
+                    </option>
+                 </select>
+
+                  <BR>
+                  LDAP TLS
+<img id="tlsToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"          
+          rel="tooltip" title="This LDAP server uses TLS?"
+           />
+
+                  :
+                 <select id="ldapStartTLS"  onchange="updateCtx(this)" >
+                    <option name="tls_no" value="false" selected>
+                      No(recomm. with ldapssl=yes)
+                    </option>
+                    <option name="tls_yes" value="true" >
+                      Yes
+                    </option>
+                 </select>
+-->
+		 <BR>
+                  LDAP attribute filter
+                  <img id="attr_filterToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP attribute filter. Used for LDAP authentication"
+           />
+           :
+                  <input  style="width: 250px;" id="attr_filter" type="text" placeholder="e.g. uid" onchange="updateCtx(this)" >
+                  <BR>
+
+                  LDAP user field
+                  <img id="user_fieldToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="LDAP user field. Used for LDAP attribute release."
+           />
+           :
+                  <input  style="width: 250px;" id="user_field" type="text" placeholder="e.g. samaccountname" onchange="updateCtx(this)" >
+                  <BR>
+                 
+                  LDAP released attributes
+                  <img id="ldap_attrToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="List of LDAP released attributes"
+           />
+           :                  <input  style="width: 250px;" id="ldap_attr" type="text" placeholder="e.g. cn,mail" onchange="updateCtx(this)" >
+                  <BR>
                   LDAP Subtree search?
 <img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="Subtree search describes whether or not the entire tree is searched for a user or just that node and no further.  Subtree is recommended unless your directory design requires otherwise."
@@ -790,23 +892,38 @@ installer_section3_title:
                     </option>
                   </select>
                   <br>
-                 <div id="casurlRow">
+                  Ask for keystore passwords?
+<img id="passw_inputToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+          rel="tooltip" title="Ask for IDP/HTTPS keystore passwords during installation. If set to No, passwords will be automatically generated."
+           />
+                  :
+                  <select id="passw_input"  onchange="updateCtx(this)" >
+                    <option name="kpwFalse" value="n" selected>
+                      No (recommended)
+                    </option>
+                    <option name="kpwTrue" value="y">
+                      Yes
+                    </option>
+                  </select>
+                  <br>
+
+		<div class="casurlRow">
                   CAS Server Login URL
-                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="An unauthenticated user will be redirected to this URL"
            />
            :
                   <input  style="width: 250px;" id="caslogurl" type="text" placeholder="e.g. http://casserver/login" onchange="updateCtx(this)" >
-                  <BR>
+                  <BR>                  
 
                  CAS Server Validation URL
-                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+                  <img id="casserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="CAS Ticket validation URL. Idp will validate the SP ticket to this CAS URL."
            />
            :
                   <input  style="width: 250px;" id="casurl" type="text" placeholder="e.g. http://casserver/" onchange="updateCtx(this)" >
                   <BR>
-                </div> 
+                </div>
                   
                 </td>
               </tr>
@@ -845,6 +962,36 @@ installer_section3_title:
                         </option>
                       </select>
                       <br>
+                      <div style="display: none;">
+                      Send anonymous usage stats to CAF 
+
+                      <img id="fticksToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="FTICKS is a logging format that anonymizes and then logs an authentication event to CAF syslog servers. These are used to gather utilization stats to provide aggregate reports."
+           />
+                      <select id="fticks"  onchange="updateCtx(this)" >
+                        <option name="ftickY" value="y" >
+                          Yes(recommended)
+                        </option>
+                        <option name="ftickN" value="n" selected>
+                          No
+                        </option>
+                      </select>
+                      <br>
+					</div>
+                      Enable user consent
+
+                      <img id="consentToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="If you enable user consent the user will have to consent."
+           />
+                      <select id="consentEnabled"  onchange="updateCtx(this)" >
+                        <option name="consentEnabledY" value="y" selected>
+                          Yes(recommended)
+                        </option>
+                        <option name="consentEnabledN" value="n">
+                          No
+                        </option>
+                      </select>
+                      <br>
 
                       
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
@@ -852,14 +999,14 @@ installer_section3_title:
 <input type=hidden id="googleDom" value="n">
 <input type=hidden id="certAcro" value="">
 <input type=hidden id="certLongC" value="United States">
-<!--
+<input type=hidden id="SWAMIDcertChain" value="undefined" />
+
 Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
-                                                <option name="googleY" value="y" selected>Yes</option>
-                                               <option name="googleN" value="n">No</option>
+                                                <option name="googleY" value="y">Yes</option>
+                                               <option name="googleN" value="n" selected>No</option>
                                              </select>
                                              <br>
 
--->
 
 
 
@@ -983,7 +1130,7 @@ installer_section2_title:
     
     <hr color="red" size="10">
     <hr>
-    IDP Installer Version 2.6_CAF &copy; 2011-13
+    IDP Installer Version 2.6_CAF &copy; 2011-13 
     
   </form>
  

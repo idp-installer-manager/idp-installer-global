@@ -234,7 +234,11 @@ encrypt passwords = yes
 #
 # You can choose a non default printing system using the Printing option
 	
-;	load printers = no
+	load printers = no
+	printcap name = /dev/null
+	printing = bsd
+	disable spoolss = yes
+
 ;	cups options = raw
 
 ;	printcap name = /etc/printcap
@@ -270,11 +274,11 @@ encrypt passwords = yes
 	
 [printers]
 ;	comment = All Printers
-;	path = /var/spool/samba
+	path = /var/spool/samba
 ;	browseable = no
 ;	guest ok = no
 ;	writable = no
-;	printable = yes
+	printable = yes
 	
 # Un-comment the following and create the netlogon directory for Domain Logons
 ;	[netlogon]

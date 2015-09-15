@@ -110,7 +110,7 @@
 		scheme="https"
 		SSLEnabled="true"
 		protocols="TLSv1, TLSv1.1, TLSv1.2"
-		clientAuth="want"
+		clientAuth="true"
 		keystoreFile="/opt/shibboleth-idp/credentials/idp.jks"
 		keystorePass="ShIbBKeyPaSs"
 	/>

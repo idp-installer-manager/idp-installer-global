@@ -80,40 +80,6 @@
                               encryptAssertions="conditional"
                               encryptNameIds="never" />
         
-
-
-	<metadata:MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-			metadataURL="http://md.incommon.org/InCommon/InCommon-metadata.xml"
-			backingFile="/opt/shibboleth-idp/metadata/inc_metadata_signed.xml">
-		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
-			<!-- <metadata:MetadataFilter xsi:type="RequiredValidUntil" xmlns="urn:mace:shibboleth:2.0:metadata"
-				maxValidityInterval="P60D" /> -->
-			<metadata:MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
-					trustEngineRef="federation-metadata-signer"
-					requireSignedMetadata="true" />
-			<!-- metadata:MetadataFilter xsi:type="EntityRoleWhiteList" xmlns="urn:mace:shibboleth:2.0:metadata">
-				<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
-			</metadata:MetadataFilter -->
-		</metadata:MetadataFilter>
-	</metadata:MetadataProvider>
-	<!-- CAF eduGAIN downstream feed to write policies against.You need to opt-in this IdP by emailing tickets@canarie.ca 
-	 <metadata:MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-			metadataURL="https://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
-			backingFile="/opt/shibboleth-idp/metadata/caf_interfed_signed.xml">
-		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
-		<metadata:MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
-				trustEngineRef="federation-metadata-signer"
-				requireSignedMetadata="true" />
-		</metadata:MetadataFilter>
-	</metadata:MetadataProvider> -->
- 
- 
-	<metadata:MetadataProvider id="URLMD3" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-			metadataURL="http://testshib.org/metadata/testshib-providers.xml"
-			backingFile="/opt/shibboleth-idp/metadata/testshib-providers.xml">
-	</metadata:MetadataProvider>
-
-
         <rp:ProfileConfiguration xsi:type="saml:SAML2ArtifactResolutionProfile" 
                               signResponses="never"
                               signAssertions="always"
@@ -123,7 +89,7 @@
     </rp:DefaultRelyingParty>
 <!-- added to validate the setting for adfs we are asking the community to deal with -->
 
-<rp:RelyingParty 	id="adfsgw:canarie:ca" 
+<!--<rp:RelyingParty 	id="adfsgw:canarie:ca" 
 			provider="http://adfsgw.canarie.ca/adfs/services/trust"
 			defaultSigningCredentialRef="IdPCredential">
 
@@ -133,27 +99,19 @@
 			                               signResponses="conditional"
 			                               signAssertions="never" />
       			<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile" signAssertions="conditional" encryptAssertions="never" />
-</rp:RelyingParty>
+</rp:RelyingParty>-->
 
 
         
 <!-- Windows Azure AD -->
-<rp:RelyingParty id="urn:federation:MicrosoftOnline" provider="https://idp.canarie.ca/idp/shibboleth" defaultSigningCredentialRef="IdPCredential">
+<!--<rp:RelyingParty id="urn:federation:MicrosoftOnline" provider="https://idp.canarie.ca/idp/shibboleth" defaultSigningCredentialRef="IdPCredential">
          
      <rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile" signAssertions="conditional" encryptAssertions="never" encryptNameIds="never" />
      <rp:ProfileConfiguration xsi:type="saml:SAML2ECPProfile" signAssertions="conditional" encryptAssertions="never" encryptNameIds="never" />
                   
-</rp:RelyingParty>
+</rp:RelyingParty>-->
     
     <!-- ========================================== -->
-	<security:TrustEngine id="federation-metadata-signer" xsi:type="security:StaticExplicitKeySignature">
-		<security:Credential id="MyFederation1Credentials" xsi:type="security:X509Filesystem">
-			<security:Certificate>/opt/shibboleth-idp/credentials/md-signer.crt</security:Certificate>
-		</security:Credential>
-	</security:TrustEngine>
-
-
-
     <!--      Metadata Configuration                -->
     <!-- ========================================== -->
     <!-- MetadataProvider the combining other MetadataProviders -->
@@ -170,8 +128,8 @@
         <!-- To use: fill in 'metadataURL' and 'backingFile' properties on MetadataResource element -->
 
         <metadata:MetadataProvider id="URLMD" xsi:type="metadata:FileBackedHTTPMetadataProvider"
-                          metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
-                          backingFile="/home/shib/live/shibboleth-idp/metadata/caf_metadata_signed.xml">
+                          metadataURL="http://md.incommon.org/InCommon/InCommon-metadata.xml"
+                          backingFile="/home/shib/live/shibboleth-idp/metadata/InCommon-metadata.xml">
             <metadata:MetadataFilter xsi:type="metadata:ChainingFilter">
                 <metadata:MetadataFilter xsi:type="metadata:RequiredValidUntil" 
                                 maxValidityInterval="P60D" />
@@ -198,7 +156,7 @@
 -->
 
 
-<metadata:MetadataProvider id="URLEDUGAIN" xsi:type="FileBackedHTTPMetadataProvider"
+<!--<metadata:MetadataProvider id="URLEDUGAIN" xsi:type="FileBackedHTTPMetadataProvider"
                         xmlns="urn:mace:shibboleth:2.0:metadata"
                         metadataURL="http://mds.edugain.org/"
                         backingFile="/home/shib/live/shibboleth-idp/metadata/edugain_signed.xml">
@@ -216,21 +174,21 @@
                   </MetadataFilter>
          </MetadataFilter>
 </MetadataProvider>
-
+-->
     </metadata:MetadataProvider>
 
     
     <!-- ========================================== -->
     <!--     Security Configurations                -->
     <!-- ========================================== -->
-    <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
+    <security:Credential id="IdPCredential" xsi:type="security:X509ResourceBacked">
         <security:PrivateKey>/home/shib/live/shibboleth-idp/credentials/idp.key</security:PrivateKey>
         <security:Certificate>/home/shib/live/shibboleth-idp/credentials/idp.crt</security:Certificate>
     </security:Credential>
     
     <!-- Trust engine used to evaluate the signature on loaded metadata. -->
     <security:TrustEngine id="shibboleth.MetadataTrustEngine" xsi:type="security:StaticExplicitKeySignature">
-        <security:Credential id="MyFederation1Credentials" xsi:type="security:X509Filesystem">
+        <security:Credential id="MyFederation1Credentials" xsi:type="security:X509ResourceBacked">
             <security:Certificate>/home/shib/live/shibboleth-idp/credentials/caf_metadata_verify.crt</security:Certificate>
             <security:Certificate>/home/shib/live/shibboleth-idp/credentials/mds.cer</security:Certificate>
         </security:Credential>

@@ -1,0 +1,21 @@
+    <!--
+    Example LDAP Connector
+
+    The connectivity details can be specified in ldap.properties to
+    share them with your authentication settings if desired.
+    -->
+    <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}">
+        <dc:FilterTemplate>
+            <![CDATA[
+                (AtTrFiLtEr=${requestContext.principalName})
+            ]]>
+        </dc:FilterTemplate>
+        <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
+            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
+        </dc:StartTLSTrustCredential>
+    </resolver:DataConnector>
+

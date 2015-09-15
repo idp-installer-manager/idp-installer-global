@@ -1,0 +1,9 @@
+36a37,44
+>    edu.vt.middleware.ldap.jaas.LdapLoginModule required
+>       ldapUrl="ldap://ldap.canarie.ca"
+>       baseDn="dc=canarie,dc=ca"
+>       //tls="true"
+>       userFilter="uid={0}"
+>       subtreeSearch="true"
+>    ;
+> 

@@ -1,0 +1,52 @@
+37c37
+< 	                  xsi:type="metadata:FileBackedHTTPMetadataProvider"
+---
+> 	                  xsi:type="FileBackedHTTPMetadataProvider"
+75c75,119
+< 	
+---
+> <!--
+>     <security:Credential id="IdPCredential" xsi:type="security:X509ResourceBacked">
+>         <security:PrivateKey>/opt/shibboleth-idp/credentials/idp.key</security:PrivateKey>
+>         <security:Certificate>/opt/shibboleth-idp/credentials/idp.crt</security:Certificate>
+>     </security:Credential>
+> -->
+>         <security:TrustEngine id="federation-metadata-signer" xsi:type="security:StaticExplicitKeySignature">
+>                 <security:Credential id="MyFederation1Credentials" xsi:type="security:X509ResourceBacked">
+>                         <security:Certificate>/opt/shibboleth-idp/credentials/md-signer.crt</security:Certificate>
+>                 </security:Credential>
+>         </security:TrustEngine>
+> 
+> 
+> 
+>         <MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                         metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
+>                         backingFile="/opt/shibboleth-idp/metadata/caf_metadata_signed.xml">
+>                 <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+>                         <!-- <MetadataFilter xsi:type="RequiredValidUntil" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                                 maxValidityInterval="P60D" /> -->
+>                         <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                                         trustEngineRef="federation-metadata-signer"
+>                                         requireSignedMetadata="true" />
+>                         <!-- MetadataFilter xsi:type="EntityRoleWhiteList" xmlns="urn:mace:shibboleth:2.0:metadata">
+>                                 <RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
+>                         </MetadataFilter -->
+>                 </MetadataFilter>
+>         </MetadataProvider>
+>         <!-- CAF eduGAIN downstream feed to write policies against.You need to opt-in this IdP by emailing tickets@canarie.ca-->
+>          <MetadataProvider id="URLMD2" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                         metadataURL="https://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
+>                         backingFile="/opt/shibboleth-idp/metadata/caf_interfed_signed.xml">
+>                 <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+>                 <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                                 trustEngineRef="federation-metadata-signer"
+>                                 requireSignedMetadata="true" />
+>                 </MetadataFilter>
+>         </MetadataProvider>
+> 
+>         <MetadataProvider id="URLMD3" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+>                         metadataURL="http://testshib.org/metadata/testshib-providers.xml"
+>                         backingFile="/opt/shibboleth-idp/metadata/testshib-providers.xml">
+>         </MetadataProvider>
+> 
+> 

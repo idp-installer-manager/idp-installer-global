@@ -239,6 +239,10 @@ var requiredFieldKeysShibboleth = {
       "idpurl": 0,
       "ntpserver": 0,
       "ldapserver": 0,
+      "ldapurl": 0,
+      "ldapdn": 0,
+      "ldapSSL": 0,
+      "ldapStartTLS": 0,
       "ldapbinddn": 0,
       "ldappass": 0,
       "ldapbasedn": 0,
@@ -253,6 +257,7 @@ var requiredFieldKeysShibboleth = {
       "certAcro": 0,
       "certLongC": 0,
       "selfsigned": 0,
+      "consentEnabled": 0,
 
     "freeRADIUS_svr_country": 0,
     "freeRADIUS_svr_state": 0,
@@ -284,28 +289,30 @@ var cNeutral = "#FFFFFF"
 
 
         for (var key in arrayOfFields) {
-            var keyLength = (document.getElementById(key)).value.length;
+		if (document.getElementById(key)) {
+			var keyLength = (document.getElementById(key)).value.length;
 
-            if (loggingEnabled) {
-                console.log('colourFields:' + key + ' is of length:' + keyLength);
-            }
+			if (loggingEnabled) {
+				console.log('colourFields:' + key + ' is of length:' + keyLength);
+			}
 
-            if (keyLength < 1) {
-                document.getElementById(key).style.backgroundColor = desiredHexColour
-            } else {
-                if (loggingEnabled) {
-                    console.log('colourFields:' + key + ' is non empty, no colour change');
-                }
+			if (keyLength < 1) {
+				document.getElementById(key).style.backgroundColor = desiredHexColour
+			} else {
+				if (loggingEnabled) {
+				console.log('colourFields:' + key + ' is non empty, no colour change');
+				}
 
-            }
-            // yellow '#FFFF00'
-
-
+			}
+			// yellow '#FFFF00'
 
 
-            if (loggingEnabled) {
-                console.log('colourFields:exiting');
-            }
+
+
+			if (loggingEnabled) {
+				console.log('colourFields:exiting');
+			}
+		}
         }
 
     }
@@ -326,6 +333,19 @@ var cNeutral = "#FFFFFF"
 
             } else {
 
+		if (key == "installer_interactive") {
+			if (keyValue == "y") {
+				$("#installer_interactive").prop("checked", false);
+				if (loggingEnabled) {
+					console.log('applyComponentCheckboxes:Setting installer_interactive checkbox on');
+				}
+			} else {
+				$("#installer_interactive").prop("checked", true);
+				if (loggingEnabled) {
+					console.log('applyComponentCheckboxes:Setting installer_interactive checkbox off');
+				}
+			}
+		}
                 $('#' + key).val(keyValue); // jquery to set the value. 
 
                 $('#' + key).css('backgroundColor', cFilled);
@@ -395,7 +415,6 @@ var cNeutral = "#FFFFFF"
 
 
     function update() {
-
         var numFields = 24;
         var progressIncrement = 1 / numFields * 100;
         var progress = 0;
@@ -416,7 +435,8 @@ var cNeutral = "#FFFFFF"
 $(document).ready(function() {            $("[rel='tooltip']").tooltip();     });
 
         var checkbox = $("#installer_interactive");
-        checkbox.val(checkbox.prop("checked") ? "n" : "y");
+	var installer_interactiveValue;
+        installer_interactiveValue = checkbox.prop("checked") ? "n" : "y";
 
         //////////////////////////// my_eduroamDomain
 
@@ -503,14 +523,19 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
 
 
 	if ( ($("#type").val())!=="cas" ) {
-		$("#casurlRow").hide();
+		$(".casurlRow").hide();
 	} else {
-		$("#casurlRow").show();
+		$(".casurlRow").show();
 	}
 	if ( ($("#google").val())!=="y" ) {
 		$("#googleRow").hide();
 	} else {
 		$("#googleRow").show();
+	}
+	if ( ($("#ldap_type").val())!=="ad" ) {
+		$("#ldapDnRow").hide();
+	} else {
+		$("#ldapDnRow").show();
 	}
 	if ($("#freeRADIUS_svr_org_name").val() && ! $("#certAcro").val()) {
 		var words = $('#freeRADIUS_svr_org_name').val().split(' ');
@@ -525,13 +550,24 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
 		$("#caslogurl").val($("#casurl").val()+"/login");
 		$("#caslogurl").css({'backgroundColor': cFilled});
 	}
+	if ($("#ldap_type").val() == "ad") {
+		if ($("#attr_filter").val() == "" || $("#attr_filter").val() == "uid")
+			$("#attr_filter").val("sAMAccountName");
+		if ($("#user_field").val() == "" || $("#user_field").val() == "uid")
+			$("#user_field").val("sAMAccountName");
+	} else {
+		if ($("#attr_filter").val() == "" || $("#attr_filter").val() == "sAMAccountName")
+			$("#attr_filter").val("uid");
+		if ($("#user_field").val() == "" || $("#user_field").val() == "sAMAccountName")
+			$("#user_field").val("uid");
+	}
           if (loggingEnabled) {console.log ('Update():presets:finished preset section'); }
 
 output += "installer_section0_version=\'"+generatorVersion+"\'\n";
 output += "installer_section0_builddate=\'"+builddate+"\'\n";
 output += "installer_section0_buildDescription=\'"+ $("#installer_section0_buildDescription").val()+ "\'\n";
 output += "installer_section0_buildComponentList=\'"+ $("#installer_section0_buildComponentList").val()+ "\'\n";
-output += "installer_interactive=\'"+ $("#installer_interactive").val()+ "\'\n";
+output += "installer_interactive=\'"+ installer_interactiveValue+ "\'\n";
 
 output += "installer_section0_title=\'Federation Settings\'\n";
 output += "my_ctl_federation=\'"+ $("#my_ctl_federation").val()+ "\'\n";
@@ -576,10 +612,62 @@ output += "type=\'"+ $("#type").val()+ "\'\n";
 output += "idpurl=\'"+ $("#idpurl").val()+ "\'\n";
 output += "ntpserver=\'"+ $("#ntpserver").val()+ "\'\n";
 output += "ldapserver=\'"+ $("#ldapserver").val()+ "\'\n";
+
+var ldapsProto = "ldaps://";
+var ldaptProto = "ldap://";
+var ldapsUrlList = "";
+var ldaptUrlList = "";
+var ldapUrlList = "";
+
+if ($("#ldapserver").val().length > 0) {
+	$("#ldapserver").val().split(" ").forEach(function(element, index) {
+		ldapsUrlList += ldapsProto + element + " ";
+	});
+	ldapsUrlList = ldapsUrlList.substring(0, ldapsUrlList.length - 1)
+	$("#ldapserver").val().split(" ").forEach(function(element, index) {
+		ldaptUrlList += ldaptProto + element + " ";
+	});
+	ldaptUrlList = ldaptUrlList.substring(0, ldaptUrlList.length - 1)
+}
+
+if ($("#ldapSSL").val() == "true") {
+	output += "ldapSSL=\'true\'\n";
+	output += "ldapStartTLS=\'false\'\n";
+	ldapUrlList = ldapsUrlList;
+} else {
+	output += "ldapSSL=\'false\'\n";
+	output += "ldapStartTLS=\'true\'\n";
+	ldapUrlList = ldaptUrlList;
+}
+
+if ($("#ldapurl").val().length > 0) {
+	if (ldapUrlList.split(":")[0] == "ldap" && $("#ldapurl").val() == ldapsUrlList) {
+		$("#ldapurl").val(ldaptUrlList);
+		$("#ldapurl").css({'backgroundColor': cFilled});
+	} else if (ldapUrlList.split(":")[0] == "ldaps" && $("#ldapurl").val() == ldaptUrlList) {
+		$("#ldapurl").val(ldapsUrlList);
+		$("#ldapurl").css({'backgroundColor': cFilled});
+	} else {
+		ldapUrlList = $("#ldapurl").val();
+	}
+} else {
+	if (ldapUrlList.length > 0) {
+		$("#ldapurl").val(ldapUrlList);
+		$("#ldapurl").css({'backgroundColor': cFilled});
+	}
+}
+output += "ldapurl=\'"+ ldapUrlList +"\'\n";
+
+output += "ldapdn=\'"+ $("#ldapdn").val()+ "\'\n";
 output += "ldapbinddn=\'"+ $("#ldapbinddn").val()+ "\'\n";
 output += "ldappass=\'"+ $("#ldappass").val()+ "\'\n";
 output += "ldapbasedn=\'"+ $("#ldapbasedn").val()+ "\'\n";
 output += "subsearch=\'"+ $("#subsearch").val()+ "\'\n";
+output += "ldap_type=\'"+ $("#ldap_type").val()+ "\'\n";
+output += "attr_filter=\'"+ $("#attr_filter").val()+ "\'\n";
+output += "user_field=\'"+ $("#user_field").val()+ "\'\n";
+output += "ldap_attr=\'"+ $("#ldap_attr").val()+ "\'\n";
+output += "passw_input='"+ $("#passw_input").val()+ "\'\n";
 output += "fticks=\'"+ $("#fticks").val()+ "\'\n";
 output += "eptid=\'"+ $("#eptid").val()+ "\'\n";
 output += "casurl=\'"+ $("#casurl").val()+ "\'\n";
@@ -590,7 +678,8 @@ output += "ninc=\'"+ $("#ninc").val()+ "\'\n";
 output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
 output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 output += "selfsigned=\'"+ $("#selfsigned").val()+ "\'\n";
-
+output += "consentEnabled=\'"+ $("#consentEnabled").val()+ "\'\n";
+output += "SWAMIDcertChain=\'"+ $("#SWAMIDcertChain").val()+ "\'\n";
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";
 

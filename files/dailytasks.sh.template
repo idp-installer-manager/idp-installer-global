@@ -1,0 +1,42 @@
+#!/bin/bash 
+#
+#  Daily IdP housekeeping tasks
+#
+#  A shell script to handle daily housekeeping tasks for the IdP
+#
+# Installation location: /opt/idp-installer/bin
+# Expected crontab to roll key at 11pm localtime daily:
+# "0 23  *   *   *     /opt/idp-installer/bin/dailytasks.sh > /dev/null 2>&1"
+# 
+# Functions:
+#
+#       perform Shib v3 secret Key roll over
+#               see: https://wiki.shibboleth.net/confluence/display/IDP30/SecretKeyManagement   
+
+JAVA_HOME=/usr/java/default 
+
+APPROOT="/opt/idp-installer"
+APPBIN="${APPROOT}/bin"
+
+LOGFILE="${APPROOT}/status.log"
+ECHO="echo -e "
+
+${ECHO} `date` "$$:==================BEGIN=========" &> >(tee -a ${LOGFILE})
+${ECHO} `date` "$$:Function 1/1:Doing Secret Key Rollover" &> >(tee -a ${LOGFILE})
+
+IDP_HOME=/opt/shibboleth-idp
+
+# trick: the pivot for the awk parsing is on the 'd=' in 'Password=' to preserve things if '=' is the last character (or not)
+
+STORE_PASS="$(cat /opt/shibboleth-idp/conf/idp.properties|grep idp.sealer.storePassword |awk -F'd=' '{print $2}'| tr -d '[[:space:]]')"
+
+        ${ECHO} `date` "$$:  Step 1/2:Make Backup of credentials/sealer.jks" &> >(tee -a ${LOGFILE})
+        CMDF1S1="cp $IDP_HOME/credentials/sealer.jks $IDP_HOME/credentials/sealer.jks.recentPreviousVersion"
+                eval ${CMDF1bkp} &> >(tee -a ${LOGFILE})
+
+        ${ECHO} `date` "$$:  Step 2/2:Perform Update" &> >(tee -a ${LOGFILE})
+        CMDF1S2='$IDP_HOME/bin/seckeygen.sh --storefile $IDP_HOME/credentials/sealer.jks --storepass "${STORE_PASS}" --versionfile $IDP_HOME/credentials/sealer.kver --alias secret'
+                eval ${CMDF1S2} &> >(tee -a ${LOGFILE})
+
+
+${ECHO} `date` "$$:==================END=========" &> >(tee -a ${LOGFILE})
