@@ -25,6 +25,7 @@ Supported Platforms
 This installer script is intended to be used on a clean install of:
  - Ubuntu Server 12.04   (SWAMID only)
  - CentOS 6.5 'minimal'  (SWAMID or CAF only)
+ - CentOS 7 'minimal'    (InCommon only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
@@ -43,6 +44,7 @@ Configuration builders are federation specific and can be launched from:
 
 for CAF - ~/www/appconfig/CAF/index.html
 for SWAMID - ~/www/appconfig/SWAMID/index.html
+for InCommon/Eduroam-US - ~/www/appconfig/InCommon/index.html
 
 The configuration builder uses javascript to perform basic validation and 
 has the ability to import existing configuration files avoiding retyping
