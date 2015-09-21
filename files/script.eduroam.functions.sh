@@ -177,6 +177,9 @@ mod_freeRADIUS_ca_email=`echo "${freeRADIUS_ca_email}" | sed 's/@/\\\\@/'`
 
 	echo "Merging variables completed " >> ${statusFile} 2>&1 
 
+	echo "Setting server hostname. ${freeRADIUS_svr_commonName}" >> ${statusFile} 2>&1 
+	echo ${freeRADIUS_svr_commonName} > /etc/hostname
+	
 # construct default certificates including a CSR for this host in case a commercial CA is used
 
 #	WARNING, see the ${distEduroamPath}/certs/README to 'clean' out certificate bits when you run

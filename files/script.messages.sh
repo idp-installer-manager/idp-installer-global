@@ -129,7 +129,7 @@ centosCmdFedSSO="yum -y install java-1.6.0-openjdk-devel tomcat6 mysql-server my
 
 centosCmdU="yum -y update"
 centosCmdUa="yum clean all"
-centosCmd1="yum -y install patch ntpdate unzip curl"
+centosCmd1="yum -y install patch ntpdate unzip curl wget vim gcc openssl-devel unzip libnl-devel yum-cron"
 centosCmd2="yum -y install git"
 centosCmd3="yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel"
 centosCmd4="yum -y install tomcat6"

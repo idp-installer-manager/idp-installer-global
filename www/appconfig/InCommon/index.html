@@ -478,9 +478,9 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                   :
                   <input id="freeRADIUS_pxycfg_realm" type="text" placeholder="" onchange="updateCtx(this)" >
                   <br>
-                  RADIUS Shared Key provided by CANARIE for upstream eduroam servers
+                  RADIUS Shared Key provided by Eduroam US for upstream eduroam servers
 <img id="freeRADIUS_cdn_prod_passphraseToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="This is provided to you by CANARIE for production. For test, any string may be used. The pound sign(#) is not supported in this string at this time"
+          rel="tooltip" title="This is provided to you by Eduroam US for production. For test, any string may be used. The pound sign(#) is not supported in this string at this time"
            />
 
                   :
@@ -771,7 +771,7 @@ installer_section3_title:
                   <BR>
                   LDAP DN
 <img id="ldapdnToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
-          rel="tooltip" title="Examples: caftest.canarie.ca"
+          rel="tooltip" title="Examples: idptest.oar.net"
            />
                   :
                   <input  style="width: 250px;" id="ldapdn" type="text" placeholder="" onchange="updateCtx(this)" >
@@ -788,7 +788,7 @@ installer_section3_title:
                   LDAP Password <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="The password for the privilaged bind user."
            />:
-                  <input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="updateCtx(this)" >
+                  <input  style="width: 250px;" id="ldappass" type="password" placeholder="" onchange="updateCtx(this)" >
                   <BR>
                   
                   LDAP Base DN
@@ -996,10 +996,11 @@ installer_section3_title:
                       
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
                       
-<input type=hidden id="googleDom" value="n">
-<input type=hidden id="certAcro" value="">
-<input type=hidden id="certLongC" value="United States">
-<input type=hidden id="SWAMIDcertChain" value="undefined" />
+<input type="hidden" id="googleDom" value="n">
+<input type="hidden" id="selfsigned" value="n" />
+<input type="hidden" id="certAcro" value="">
+<input type="hidden" id="certLongC" value="United States">
+<input type="hidden" id="SWAMIDcertChain" value="undefined" />
 
 Enable Support to sign into Google Apps  <select id="google"  onchange="update()">
                                                 <option name="googleY" value="y">Yes</option>
@@ -1012,7 +1013,7 @@ Enable Support to sign into Google Apps  <select id="google"  onchange="update()
 
 
 
-                      <input type=hidden id="google" value="n">
+                      <input type="hidden" id="google" value="n">
                       <!--
 Enable Support to sign into Google Apps  
 <select id="google"  onchange="updateCtx(this)" >
@@ -1027,7 +1028,7 @@ No
 -->
                       <!-- NorduNet NINC Support - not CAF, only SWAMID functionality, CAF uses hidden value-->
                       
-                      <input type=hidden id="ninc" value="n">
+                      <input type="hidden" id="ninc" value="n">
                       <!--
 Enable Support norEduPersonNIN  
 <select id="ninc"  onchange="updateCtx(this)" >
