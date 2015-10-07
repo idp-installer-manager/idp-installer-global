@@ -39,11 +39,11 @@ fi
 # used in eduroam configs
 #
 backupPath="${Spath}/backups/"
-templatePath="${Spath}/assets/Eduroam-US"
-templatePathEduroamCentOS="${Spath}/assets/Eduroam-US/etc/raddb"
-templatePathEduroamCentOS7="${Spath}/assets/Eduroam-US/etc/raddb7"
-templatePathEduroamUbuntu="${Spath}/assets/Eduroam-US/etc/freeradius"
-templatePathEduroamRedhat="${Spath}/assets/Eduroam-US/etc/raddb"
+templatePath="${Spath}/assets"
+templatePathEduroamCentOS="${Spath}/assets/etc/raddb"
+templatePathEduroamCentOS7="${Spath}/assets/etc/raddb7"
+templatePathEduroamUbuntu="${Spath}/assets/etc/freeradius"
+templatePathEduroamRedhat="${Spath}/assets/etc/raddb"
 CentOSEduroamModules="/mods-enabled"
 CentOS7EduroamModules="/mods-available"
 UbuntuEduroamModules="/modules"

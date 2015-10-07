@@ -27,12 +27,6 @@
     <!-- ========================================== -->
     <!--      Relying Party Configurations          -->
     <!-- ========================================== -->
-    <!--<rp:AnonymousRelyingParty provider="https://idp.canarie.ca/idp/shibboleth"
-                           defaultSigningCredentialRef="IdPCredential" />
-    
-    <rp:DefaultRelyingParty provider="https://idp.canarie.ca/idp/shibboleth"
-                         defaultSigningCredentialRef="IdPCredential"
-			defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" >-->
         <!-- 
             Each attribute in these profiles configuration is set to its default value,
             that is, the values that would be in effect if those attributes were not present.

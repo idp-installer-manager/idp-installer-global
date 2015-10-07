@@ -1119,14 +1119,6 @@ configShibbolethSSLForLDAPJavaKeystore()
 
 }
 
-patchConfigCustomizations()
-
-{
-	cp ${Spath}/images/logo.png /opt/shibboleth-idp/edit-webapp/images/
-	sed -ri 's/dummylogo.png/logo.png/' /opt/shibboleth-idp/messages/error-messages.properties
-	sed -ri 's/dummylogo.png/logo.png/' /opt/shibboleth-idp/webapp/index.jsp
-}
-
 configContainerSSLServerKey()
 
 {
@@ -1633,8 +1625,6 @@ invokeShibbolethInstallProcessJetty9 ()
 	configShibbolethFederationValidationKey
 
         patchShibbolethConfigs
-        
-    patchConfigCustomizations
 
 	performPostUpgradeSteps
 

@@ -185,6 +185,7 @@ setDistCommands() {
                         distCmd3=${centosCmd3}
                         distCmd4=${centosCmd4}
                         distCmd5=${centosCmd5}
+                        wget vim gcc openssl-devel unzip libnl-devel yum-cron
                         dist_install_nc=${centos_install_nc}
                         dist_install_netstat=${centos_install_netstat}
                         dist_install_ldaptools=${centos_install_ldaptools}

@@ -19,10 +19,10 @@ echo -e "Overriding functions: ${my_ctl_functionOverrides}" >> ${statusFile} 2>&
                 certLongC="United States"
                 certAcro="${certOrg}${certC}"
                 templatePath="${Spath}/assets/Eduroam-US"
-		templatePathEduroamCentOS="${Spath}/assets/Eduroam-US/etc/raddb"
-		templatePathEduroamCentOS7="${Spath}/assets/Eduroam-US/etc/raddb7"
-		templatePathEduroamUbuntu="${Spath}/assets/Eduroam-US/etc/freeradius"
-		templatePathEduroamRedhat="${Spath}/assets/Eduroam-US/etc/raddb"
+				templatePathEduroamCentOS="${Spath}/assets/Eduroam-US/etc/raddb"
+				templatePathEduroamCentOS7="${Spath}/assets/Eduroam-US/etc/raddb7"
+				templatePathEduroamUbuntu="${Spath}/assets/Eduroam-US/etc/freeradius"
+				templatePathEduroamRedhat="${Spath}/assets/Eduroam-US/etc/raddb"
 
 # this command takes 4min 45sec to run on a core i7 8gb ram SSD disk.
 # overriding as the other yum commands
