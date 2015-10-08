@@ -955,7 +955,7 @@ installer_section3_title:
 
                       <select id="eptid"  onchange="updateCtx(this)" >
                         <option name="eptidY" value="y" selected>
-                          Yes(recommended)
+                          Yes (recommended)
                         </option>
                         <option name="eptidN" value="n">
                           No
@@ -970,7 +970,7 @@ installer_section3_title:
            />
                       <select id="fticks"  onchange="updateCtx(this)" >
                         <option name="ftickY" value="y" >
-                          Yes(recommended)
+                          Yes (recommended)
                         </option>
                         <option name="ftickN" value="n" selected>
                           No
@@ -985,9 +985,23 @@ installer_section3_title:
            />
                       <select id="consentEnabled"  onchange="updateCtx(this)" >
                         <option name="consentEnabledY" value="y" selected>
-                          Yes(recommended)
+                          Yes (recommended)
                         </option>
                         <option name="consentEnabledN" value="n">
+                          No
+                        </option>
+                      </select>
+                      <br>
+                      Use a commercial SSL certificate
+
+                      <img id="selfSignedToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="If you choose to use a commercial certificate, an extra step will be required before the IdP is able to start up. You will need to install the commercial certificate. Instructions are provided after the installer completes."
+           />
+                      <select id="selfsigned"  onchange="updateCtx(this)" >
+                        <option name="selfsigned" value="n" selected>
+                          Yes (recommended)
+                        </option>
+                        <option name="selfsigned" value="y" >
                           No
                         </option>
                       </select>
@@ -997,7 +1011,6 @@ installer_section3_title:
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
                       
 <input type="hidden" id="googleDom" value="n">
-<input type="hidden" id="selfsigned" value="n" />
 <input type="hidden" id="certAcro" value="">
 <input type="hidden" id="certLongC" value="United States">
 <input type="hidden" id="SWAMIDcertChain" value="undefined" />
