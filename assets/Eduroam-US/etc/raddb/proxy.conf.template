@@ -714,6 +714,9 @@ realm LOCAL {
 	#  requests are not proxied to it.
 }
 
+realm NULL {
+}
+
 realm DEFAULT {
         auth_pool = EDUROAM_POOL
         acct_pool = EDUROAM_POOL
