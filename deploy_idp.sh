@@ -74,11 +74,11 @@ Spath="$(cd "$(dirname "$0")" && pwd)"
 setEcho
 # (validateConfig)
 guessLinuxDist
+setDistCommands
 
 ${Echo} "\n\n\nStarting up.\n\n\n"
 ${Echo} "Live logging can be seen by this command in another window:\ntail -f ${statusFile}"
 ${Echo} "Sleeping for 4 sec and then beginning processing..."
-touch ${statusFile}
 ${Echo} "==============================================================================="
 sleep 4
 # bootstrapping step from minimal install
@@ -93,11 +93,9 @@ if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 	if [ "${dist}" = "ubuntu" ]; then
 		apt-get -y install dos2unix &> >(tee -a ${statusFile})
 	else
-		yum -y install bind-utils dos2unix &> >(tee -a ${statusFile})
+		yum -y install bind-utils net-tools ntpdate dos2unix &> >(tee -a ${statusFile})
 	fi
 fi
-
-
 
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
@@ -116,7 +114,9 @@ then
 	fi
 
 	if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
-		validateConnectivity
+		validateConnectivity ${installer_section0_version}
+
+		checkEptidDb
 	fi
 
 else
@@ -124,9 +124,6 @@ else
 	exit
 
 fi
-
-
-
 
 
 . ${Spath}/files/script.functions.sh
@@ -175,12 +172,12 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-$Echo "" > ${statusFile}
+$Echo "" >> ${statusFile}
 
 #################################
 #################################
 
-setDistCommands
+#setDistCommands
 setHostnames
 
 

@@ -1,0 +1,31 @@
+server eduroam-inner-tunnel {
+ 
+authorize {
+	suffix
+        auth_log
+        eap
+        files
+	suffix
+        mschap
+        pap
+}
+ 
+authenticate {
+        Auth-Type PAP {
+                pap
+        }
+        Auth-Type MS-CHAP {
+                mschap
+        }
+        eap
+}
+ 
+post-auth {
+        reply_log
+        Post-Auth-Type REJECT {
+                reply_log
+        }
+ 
+}
+}
+

@@ -1,0 +1,34 @@
+82a83,106
+> 
+> 
+> 	<metadata:MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 			metadataURL="http://md.incommon.org/InCommon/InCommon-metadata.xml"
+> 			backingFile="/opt/shibboleth-idp/metadata/InCommon-metadata.xml">
+> 		<metadata:MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+> 			<!-- <metadata:MetadataFilter xsi:type="RequiredValidUntil" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 				maxValidityInterval="P60D" /> -->
+> 			<metadata:MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 					trustEngineRef="federation-metadata-signer"
+> 					requireSignedMetadata="true" />
+> 			<!-- metadata:MetadataFilter xsi:type="EntityRoleWhiteList" xmlns="urn:mace:shibboleth:2.0:metadata">
+> 				<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
+> 			</metadata:MetadataFilter -->
+> 		</metadata:MetadataFilter>
+> 	</metadata:MetadataProvider>
+>  
+>  
+> 	<!--<metadata:MetadataProvider id="URLMD3" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+> 			metadataURL="http://testshib.org/metadata/testshib-providers.xml"
+> 			backingFile="/opt/shibboleth-idp/metadata/testshib-providers.xml">
+> 	</metadata:MetadataProvider>-->
+> 
+> 
+114a169,176
+> 	<security:TrustEngine id="federation-metadata-signer" xsi:type="security:StaticExplicitKeySignature">
+> 		<security:Credential id="MyFederation1Credentials" xsi:type="security:X509ResourceBacked">
+> 			<security:Certificate>/opt/shibboleth-idp/credentials/md-signer.crt</security:Certificate>
+> 		</security:Credential>
+> 	</security:TrustEngine>
+> 
+> 
+> 

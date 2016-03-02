@@ -5,9 +5,27 @@ mdSignerFinger="12:60:D7:09:6A:D9:C1:43:AD:31:88:14:3C:A8:C4:B7:33:8A:4F:CB"
 GUIen=y
 cleanUp=1
 upgrade=0
-shibVer="2.4.3"
+
+# Important directories
+
+shibDir="shibboleth-identity-provider"
+idpInstallerBase="/opt/idp-installer"
+
+#
+# Key Component Versions
+
+shibVer="3.1.2"
 casVer="3.3.3"
-mysqlConVer="5.1.32"
+mysqlConVer="5.1.35"
+javaVer="1.8.0_25"
+jettyVer="9.2.13.v20150730"
+
+# This URL determines which base to derive 'latest' from
+# --> this is the very very latest: jettyBaseURL="http://download.eclipse.org/jetty/stable-9/dist/"
+# Below is the 9.2.11 one
+jettyBaseURL="http://download.eclipse.org/jetty/${jettyVer}/dist/"
+# this determines which file to check for in the downloads directory first.
+jetty9File="jetty-distribution-${jettyVer}.tar.gz"
 
 files=""
 ts=`date "+%s"`
@@ -21,7 +39,15 @@ fi
 # used in eduroam configs
 #
 backupPath="${Spath}/backups/"
-templatePath="${Spath}/assets"
+templatePath="${Spath}/assets/Eduroam-US"
+templatePathEduroamCentOS="${Spath}/assets/Eduroam-US/etc/raddb"
+templatePathEduroamCentOS7="${Spath}/assets/Eduroam-US/etc/raddb7"
+templatePathEduroamUbuntu="${Spath}/assets/Eduroam-US/etc/freeradius"
+templatePathEduroamRedhat="${Spath}/assets/Eduroam-US/etc/raddb"
+CentOSEduroamModules="/mods-enabled"
+CentOS7EduroamModules="/mods-available"
+UbuntuEduroamModules="/modules"
+RedhatEduroamModules="/modules"
 downloadPath="${Spath}/downloads"
 backupList="${backupPath}/recoverypoints.txt"
 freeradiusfile="${Spath}/files/freeradius.tx"
@@ -37,17 +63,28 @@ messages="${Spath}/msg.txt"
 statusFile="${Spath}/status.log"
 bupFile="/opt/backup-shibboleth-idp.${ts}.tar.gz"
 idpPath="/opt/shibboleth-idp/"
-certificateChain="http://webkonto.hig.se/chain.pem"
+certificateChain="https://webkonto.student.hig.se/chain.pem"
+digicertChain="https://webkonto.student.hig.se/digichain.pem"
 tomcatDepend="https://build.shibboleth.net/nexus/content/repositories/releases/edu/internet2/middleware/security/tomcat6/tomcat6-dta-ssl/1.0.0/tomcat6-dta-ssl-1.0.0.jar"
+jettyDepend="https://build.shibboleth.net/nexus/content/repositories/releases/net/shibboleth/utilities/jetty9/jetty9-dta-ssl/1.0.0/jetty9-dta-ssl-1.0.0.jar"
 dist=""
 distCmdU=""
+distCmdUa=""
 distCmd1=""
 distCmd2=""
 distCmd3=""
 distCmd4=""
 distCmd5=""
+dist_install_nc=""
+dist_install_netstat=""
+dist_install_ldaptools=""
+distCmdEduroam=""
+distEduroamPath=""
+distRadiusGroup=""
+templatePathEduroamDist=""
+distEduroamModules=""
 fetchCmd="curl --silent -k --output"
-shibbURL="http://shibboleth.net/downloads/identity-provider/${shibVer}/shibboleth-identityprovider-${shibVer}-bin.zip"
+shibbURL="http://shibboleth.net/downloads/identity-provider/${shibVer}/${shibDir}-${shibVer}.tar.gz"
 casClientURL="http://downloads.jasig.org/cas-clients/cas-client-${casVer}-release.zip"
 mysqlConnectorURL="http://ftp.sunet.se/pub/unix/databases/relational/mysql/Downloads/Connector-J/mysql-connector-java-${mysqlConVer}.tar.gz"
 Rmsg="Do you want to install 'EPEL' and 'jpackage' to automaticly install dependancies? (Without theese depends the install WILL fail!)"
@@ -55,40 +92,54 @@ Rmsg="Do you want to install 'EPEL' and 'jpackage' to automaticly install depend
 # Titles for the whiptail environment for branding
 BackTitleSWAMID="SWAMID"
 BackTitleCAF="Canadian Access Federation"
+BackTitleInCommon="InCommon"
 BackTitle="IDP Deployer"
 
 # define commands
-ubuntuCmdU="apt-get -qq update"
+ubuntuCmdU="apt-get update"
+ubuntuCmdUa="apt-get -y upgrade"
 ubuntuCmd1="apt-get -y install patch ntpdate unzip curl"
-ubuntuCmd2="apt-get -y install git-core maven2 openjdk-6-jdk"
-ubuntuCmd3="apt-get -y install default-jre"
+ubuntuCmd2="apt-get -y install git-core"
+ubuntuCmd3="apt-get -y install openjdk-6-jdk default-jre"
 ubuntuCmd4="apt-get -y install tomcat6"
 ubuntuCmd5="apt-get -y install mysql-server"
 tomcatSettingsFileU="/etc/default/tomcat6"
-
+ubutnu_install_nc="apt-get -y install netcat"
+ubuntu_install_ldaptools="apt-get -y install ldap-utils"
+ubuntuEduroamPath="/etc/freeradius"
+ubuntuRadiusGroup="freerad"
 
 redhatCmdU="yum -y update"
 redhatCmd1="yum -y install patch ntpdate unzip curl"
-redhatCmd2="yum -y install git-core java-1.7.0-openjdk-devel"
-redhatCmd3="yum -y install java-1.7.0-openjdk"
+redhatCmd2="yum -y install git-core"
+redhatCmd3="yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel"
 redhatCmd4="yum -y install tomcat6"
 redhatCmd5="yum -y install mysql-server"
+redhat_install_nc="yum -y install nc"
+redhat_install_netstat="yum -y install net-tools"
+redhat_install_ldaptools="yum -y install openldap-clients"
+redhatEduroamPath="/etc/raddb"
+redhatRadiusGroup="radiusd"
 
-
-redhatCmdEduroam="yum -y install bind-utils ntp samba samba-winbind freeradius freeradius-krb5 freeradius-ldap freeradius-perl freeradius-python freeradius-utils freeradius-mysql make" 
+ubuntuCmdEduroam="apt-get install -y ntpdate samba winbind freeradius freeradius-krb5 freeradius-ldap freeradius-utils freeradius-mysql make"
+redhatCmdEduroam="yum -y install bind-utils net-tools samba samba-winbind samba-winbind-clients freeradius freeradius-krb5 freeradius-ldap freeradius-perl freeradius-python freeradius-utils freeradius-mysql make" 
 #redhatCmdFedSSO="yum -y install java-1.6.0-openjdk-devel tomcat6 mysql-server mysql"
-
-centosCmdEduroam="yum -y install bind-utils ntp samba samba-winbind freeradius freeradius-krb5 freeradius-ldap freeradius-perl freeradius-python freeradius-utils freeradius-mysql make" 
+centosCmdEduroam="yum -y install bind-utils net-tools samba samba-winbind samba-winbind-clients freeradius freeradius-krb5 freeradius-ldap freeradius-perl freeradius-python freeradius-utils freeradius-mysql make" 
 centosCmdFedSSO="yum -y install java-1.6.0-openjdk-devel tomcat6 mysql-server mysql"
 
-#
-centosCmdU="yum -y update; yum clean all"
-centosCmd1="yum -y install patch ntpdate unzip curl"
-centosCmd2="yum -y install git java-1.7.0-openjdk-devel"
-centosCmd3="yum -y install java-1.7.0-openjdk"
+centosCmdU="yum -y update"
+centosCmdUa="yum clean all"
+centosCmd1="yum -y install patch ntpdate unzip curl wget vim gcc openssl-devel unzip libnl-devel yum-cron"
+centosCmd2="yum -y install git"
+centosCmd3="yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel"
 centosCmd4="yum -y install tomcat6"
 centosCmd5="yum -y install mysql-server"
 tomcatSettingsFileC="/etc/sysconfig/tomcat6"
+centos_install_nc="yum -y install nc"
+centos_install_netstat="yum -y install net-tools"
+centos_install_ldaptools="yum -y install openldap-clients"
+centosEduroamPath="/etc/raddb"
+centosRadiusGroup="radiusd"
 
 redhatEpel5="rpm -Uvh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
 redhatEpel6="rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
@@ -111,7 +162,7 @@ requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_clcfg
 requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_ca_state freeRADIUS_ca_local freeRADIUS_ca_org_name freeRADIUS_ca_email freeRADIUS_ca_commonName" 
 requiredNonEmptyFieldseduroam="${requiredNonEmptyFieldseduroam} freeRADIUS_svr_state freeRADIUS_svr_local freeRADIUS_svr_org_name freeRADIUS_svr_email freeRADIUS_svr_commonName"
 
-requiredNonEmptyFieldsshibboleth=" appserv type idpurl ntpserver ldapserver ldapbinddn ldappass ldapbasedn subsearch fticks eptid google ninc"
+requiredNonEmptyFieldsshibboleth=" appserv type idpurl ntpserver ldapserver ldapbinddn ldappass ldapbasedn subsearch fticks eptid google ninc freeRADIUS_realm freeRADIUS_svr_org_name freeRADIUS_svr_country"
 
 requiredEnforceConnectivityFieldseduroam="smb_passwd_svr ldapserver"
 requiredEnforceConnectivityFieldsshibboleth="ldapserver"

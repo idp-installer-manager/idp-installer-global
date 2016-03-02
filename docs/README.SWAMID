@@ -1,8 +1,8 @@
 Disclamer
 -------------------------------------------------------------------------------
 
-Intended to be used on a clean install of Ubuntu Server 12.04 (or newer) or
-CentOS 6.4 'minimal' or newer.
+Intended to be used on a clean install of Ubuntu Server 12.04 (or newer).
+Upgrade mode is only to be used on a previous deployment of this script.
 
 
 Introduction
@@ -28,22 +28,26 @@ If your attributes is stored in diffrent LDAP attributes, modify the file:
 For Swedish civic registration numbers see:
 https://portal.nordu.net/display/SWAMI/norEduPersonNIN+och+Svenska+Personnummer
 
-Anonymous usage reporting to SWAMID is optional but recommended.
+Anonymous usage reporting to SWAMID is optional.
 
 
 Upgrading
 -------------------------------------------------------------------------------
-To upgrade, back up the old IDP and deploy a new IDP then replace the
-certificates, metadata and optional login page.
+
+Upgrading will only upgrade shibboleth.
+You cannot change authentication method.
+If you use LDAP authentication you will have to redo the login page
+customization after an upgrade.
 
 
 Configuration
 -------------------------------------------------------------------------------
 
-Configuration is done with the GUI located in ~/www/appconfig/SWAMID/index.html.
-Place the generated config in the file "~/config".
+Configuration values can be predefined in the file "config", otherwise
+questions will be asked.
 
 Attribute release is configured for the following consumers:
 testshib.org
 antagning.se/studera.nu
 And the recommended initial attribute filter policy for swamid.se
+

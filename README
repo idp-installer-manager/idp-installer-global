@@ -9,8 +9,9 @@ services.
 Configured deployment profiles listed alphabetically are:
  
  CAF - Canadian Access Federation  ( http://www.canarie.ca/en/caf-service/about )
+ InCommon - InCommon Federation ( http://www.incommon.org/ )
+	      - Eduroam-US ( http://www.eduroam.us )
  SWAMID - Swedish Academic Identity ( http://www.swamid.se/ )
-
 
 Each federation may have a different deployment profile and supported 
 configurations. What follows are the generic steps to follow to do an installation.
@@ -25,11 +26,11 @@ Supported Platforms
 This installer script is intended to be used on a clean install of:
  - Ubuntu Server 12.04   (SWAMID only)
  - CentOS 6.5 'minimal'  (SWAMID or CAF only)
+ - CentOS 7 'minimal'    (InCommon only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
 existing host settings.
-
 
 
 Configuration
@@ -42,6 +43,7 @@ This technique helps avoid storing sensitive data like passwords anywhere.
 Configuration builders are federation specific and can be launched from:
 
 for CAF - ~/www/appconfig/CAF/index.html
+for InCommon/Eduroam-US - ~/www/appconfig/InCommon/index.html
 for SWAMID - ~/www/appconfig/SWAMID/index.html
 
 The configuration builder uses javascript to perform basic validation and 
@@ -93,17 +95,17 @@ Please see: ~/docs/README.<federation_name> for federation specific usage
 Profile of installed software 
 -------------------------------------------------------------------------------
 SAML2 Uses: 
-      tomcat6                                                        
-      shibboleth-identityprovider-2.4.3                                    
+      jetty9                                                   
+      shibboleth-identityprovider-3.1.2                                   
       cas-client-3.3.3-release                                             
-      mysql-connector-java-5.1.32 (for EPTID)                              
+      mysql-connector-java-5.1.35 (for EPTID)                              
       apache-maven-3.1.1 (for building FTICKS plugin) 
 
 
 
 eduroam uses:																 
-      freeRADIUS-2.1.12                                                    
-      samba-3.6.9 (to connect to AD for MS-CHAPv2)                         
+      freeRADIUS-3.0.4                                                    
+      samba-4.1.12 (to connect to AD for MS-CHAPv2)                         
 
 
 Disclamer

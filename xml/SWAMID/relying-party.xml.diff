@@ -35,7 +35,7 @@
 > 
 114a169,176
 > 	<security:TrustEngine id="swamid-metadata-signer" xsi:type="security:StaticExplicitKeySignature">
-> 		<security:Credential id="MyFederation1Credentials" xsi:type="security:X509Filesystem">
+> 		<security:Credential id="MyFederation1Credentials" xsi:type="security:X509ResourceBacked">
 > 			<security:Certificate>/opt/shibboleth-idp/credentials/md-signer.crt</security:Certificate>
 > 		</security:Credential>
 > 	</security:TrustEngine>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+    
+    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
+    and their options.
+-->
+
+<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy" 
+                            xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                            xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" 
+                            xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
+                                                urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
+
+    <!--  Release the transient ID to anyone -->
+    <afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
+        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+        <afp:AttributeRule attributeID="transientId">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+
+    <!-- 
+        Release eduPersonEntitlement and the permissible values of eduPersonAffiliation
+        to any SP that is a member of InCommon, UK federation, or SWITCHaai
+    -->
+
+<afp:AttributeFilterPolicy id="releaseToAnyone">
+ 
+    <!-- Policy requirement rule indicates this policy is active for any request -->
+    <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+ 
+    <!-- Attribute rule for the eduPersonAfffiliation attribute -->
+    <afp:AttributeRule attributeID="eduPersonAffiliation">
+        <!-- Permit value rule that only releases the standard-specififed values for eduPersonAffiliation -->
+        <afp:PermitValueRule xsi:type="basic:OR">
+            <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true"/>
+            <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true"/>
+        </afp:PermitValueRule>
+
+    </afp:AttributeRule>
+    <afp:AttributeRule attributeID="eduPersonTargetedID">
+               <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+    <afp:AttributeRule attributeID="eduPersonPrincipalName">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+    <afp:AttributeRule attributeID="mail">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+    </afp:AttributeRule>
+
+</afp:AttributeFilterPolicy>
+
+<!-- ##########################################
+#
+#	Release the given name of the user to our portal service provider
+#
+-->
+
+<afp:AttributeFilterPolicy>
+	<afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+        
+	<afp:AttributeRule attributeID="eduPersonAffiliation">
+        	<afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="eduPersonEntitlement">
+        	<afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="eduPersonTargetedID">
+    		<afp:PermitValueRule xsi:type="basic:ANY" />
+    	</afp:AttributeRule>
+
+</afp:AttributeFilterPolicy>
+
+<!-- ##########################################
+#
+#	InCommon Research and Scholarship Attribute Filter Ploicy
+#
+-->  
+
+<afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AND">
+                <basic:Rule xsi:type="saml:AttributeRequesterEntityAttributeExactMatch"
+			attributeName="http://macedir.org/entity-category"
+			attributeValue="http://id.incommon.org/category/research-and-scholarship"/>
+	</afp:PolicyRequirementRule>
+	
+	<afp:AttributeRule attributeID="eduPersonTargetedID">
+        	<afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="mail">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule> 
+	<afp:AttributeRule attributeID="email">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule> 
+	<afp:AttributeRule attributeID="cn">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="surname">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="mail">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="givenName">
+                <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+                 <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+                 <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="displayName">
+                 <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="eduPersonEntitlement">
+                 <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	<afp:AttributeRule attributeID="preferredLanguage">
+                 <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+</afp:AttributeFilterPolicy>
+
+</afp:AttributeFilterPolicyGroup>

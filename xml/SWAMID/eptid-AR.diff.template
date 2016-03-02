@@ -38,7 +38,7 @@
 >        <resolver:Dependency ref="uid" />
 >        <ApplicationManagedConnection
 >             jdbcDriver="com.mysql.jdbc.Driver"
->             jdbcURL="jdbc:mysql://localhost:3306/shibboleth?autoReconnect=true"
+>             jdbcURL="jdbc:mysql://127.0.0.1:3306/shibboleth?autoReconnect=true&amp;localSocketAddress=127.0.0.1&amp;connectTimeout=1800&amp;initialTimeout=2&amp;logSlowQueries=true&amp;autoReconnectForPools=true"
 >             jdbcUserName="shibboleth"
 >             jdbcPassword="SqLpAsSwOrD" />
 >     </resolver:DataConnector>

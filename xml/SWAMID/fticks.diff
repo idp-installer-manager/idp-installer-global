@@ -1,11 +1,19 @@
-55a56,63
-> 	<appender name="IDP_FTICKS" class="net.nordu.logback.FTicksAppender">
-> 		<syslogHost>syslog.swamid.se</syslogHost>
-> 		<federationIdentifier>swamid</federationIdentifier>
-> 		<version>1.0</version>
-> 		<keyFile>/opt/shibboleth-idp/conf/fticks-key.txt</keyFile>
-> 	</appender>
+77c77,85
+<     
+---
+>    
+>         <appender name="IDP_FTICKS" class="net.nordu.logback.FTicksAppender">
+>                 <syslogHost>syslog.swamid.se</syslogHost>
+>                 <federationIdentifier>swamid</federationIdentifier>
+>                 <version>1.0</version>
+>                 <keyFile>/opt/shibboleth-idp/conf/fticks-key.txt</keyFile>
+>         </appender>
 > 
-> 
-74a83
-> 	<appender-ref ref="IDP_FTICKS" />
+>  
+94a103
+>         <appender-ref ref="IDP_FTICKS" />
+106c115
+< </configuration>
+\ No newline at end of file
+---
+> </configuration>
