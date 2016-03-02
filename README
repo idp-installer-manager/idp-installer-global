@@ -9,9 +9,9 @@ services.
 Configured deployment profiles listed alphabetically are:
  
  CAF - Canadian Access Federation  ( http://www.canarie.ca/en/caf-service/about )
- SWAMID - Swedish Academic Identity ( http://www.swamid.se/ )
  InCommon - InCommon Federation ( http://www.incommon.org/ )
-	  - Eduroam-US ( http://www.eduroam.us )
+	      - Eduroam-US ( http://www.eduroam.us )
+ SWAMID - Swedish Academic Identity ( http://www.swamid.se/ )
 
 Each federation may have a different deployment profile and supported 
 configurations. What follows are the generic steps to follow to do an installation.
@@ -33,7 +33,6 @@ presume the installed services are 'alone' on the machine and may modify your
 existing host settings.
 
 
-
 Configuration
 -------------------------------------------------------------------------------
 
@@ -44,8 +43,8 @@ This technique helps avoid storing sensitive data like passwords anywhere.
 Configuration builders are federation specific and can be launched from:
 
 for CAF - ~/www/appconfig/CAF/index.html
-for SWAMID - ~/www/appconfig/SWAMID/index.html
 for InCommon/Eduroam-US - ~/www/appconfig/InCommon/index.html
+for SWAMID - ~/www/appconfig/SWAMID/index.html
 
 The configuration builder uses javascript to perform basic validation and 
 has the ability to import existing configuration files avoiding retyping
